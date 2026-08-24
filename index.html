@@ -160,8 +160,11 @@ a{color:var(--primary);text-decoration:none}
 .auth-status[data-kind="error"]{color:var(--danger)}
 .auth-status[data-kind="ok"]{color:var(--ok)}
 .auth-security{display:flex;gap:9px;margin-top:20px;padding-top:17px;border-top:1px solid var(--line);font-size:11.5px;color:var(--text-3)}
-body.auth-locked{overflow:hidden}
-body.auth-locked .shell{visibility:hidden;pointer-events:none}
+.auth-cancel{justify-content:center}
+body.auth-dialog-open{overflow:hidden}
+.dashboard-guest{align-items:center;margin-bottom:18px}
+.dashboard-guest>div{flex:1}
+@media(max-width:760px){.dashboard-guest{align-items:flex-start;flex-wrap:wrap}.dashboard-guest .btn{width:100%;justify-content:center}}
 
 .shell{display:grid;grid-template-columns:266px minmax(0,1fr);min-height:100vh}
 
@@ -616,7 +619,7 @@ td.actions{text-align:right}
 }
 </style>
 </head>
-<body class="auth-locked">
+<body>
 
 <!-- ===== Icon sprite ===== -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -667,7 +670,7 @@ td.actions{text-align:right}
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10" width="15" height="10.5" rx="2"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/></symbol>
 </defs></svg>
 
-<section class="auth-gate" id="authGate" aria-labelledby="authGateTitle">
+<section class="auth-gate" id="authGate" role="dialog" aria-modal="true" aria-labelledby="authGateTitle" hidden>
   <div class="auth-card">
     <div class="auth-brand">
       <div class="logo"><svg class="ic" aria-hidden="true"><use href="#i-pulse"/></svg></div>
@@ -696,13 +699,16 @@ td.actions{text-align:right}
       <button type="submit" class="btn primary auth-submit" id="authGateSubmit">
         <svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg>เข้าสู่ระบบ
       </button>
+      <button type="button" class="btn ghost auth-cancel" onclick="closeAuthGate()">
+        กลับไป Dashboard
+      </button>
       <p class="auth-status" id="authGateStatus" role="status" aria-live="polite">กำลังตรวจสอบการเชื่อมต่อ Supabase…</p>
     </form>
     <div class="auth-security"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-shield"/></svg><span>ระบบจะล้างข้อมูลผู้ป่วยออกจาก local cache เมื่อออกจากระบบ</span></div>
   </div>
 </section>
 
-<div class="shell" id="appShell" aria-hidden="true" inert>
+<div class="shell" id="appShell" aria-hidden="false">
 
 <!-- ===== Sidebar ===== -->
 <aside class="sidebar">
@@ -773,6 +779,12 @@ td.actions{text-align:right}
     <div class="eyebrow">Command Center</div>
     <h2>Trauma Command Dashboard</h2>
     <p class="sub">ภาพรวมผู้บาดเจ็บแบบ episode เดียว ตั้งแต่รับแจ้งเหตุ ก่อนถึงโรงพยาบาล ห้องฉุกเฉิน จนถึง outcome และการทบทวนคุณภาพ</p>
+  </div>
+
+  <div class="callout info dashboard-guest" id="dashboardGuestNotice">
+    <svg class="ic ic-sm" aria-hidden="true"><use href="#i-shield"/></svg>
+    <div><b>Dashboard เปิดดูได้โดยไม่ต้องเข้าสู่ระบบ</b><br>รายชื่อผู้ป่วย รายละเอียดเคส และข้อมูลทางคลินิกสงวนไว้สำหรับเจ้าหน้าที่ที่เข้าสู่ระบบแล้วเท่านั้น</div>
+    <button type="button" class="btn primary sm" onclick="openAuthGate('registry')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg>เข้าสู่ระบบเพื่อดูรายชื่อ</button>
   </div>
 
   <div class="grid g4">
@@ -1367,9 +1379,10 @@ function loadState(){
     return raw;
   }catch(e){return structuredClone(defaultState)}
 }
-let state=loadState();
+let state=structuredClone(defaultState);
 let pipsFilter='';
 function persist(remote=true){
+  if(!database?.session)return;
   try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){toast('บันทึก local cache ไม่สำเร็จ — พื้นที่จัดเก็บเต็ม','err')}
   if(!remote)return;
   if(!readDatabaseConfig().url)return;
@@ -1424,7 +1437,8 @@ function levelBadge(l){const v=['L1','L2','L3'].includes(l)?l:'L3';return `<span
 const database={
   client:null,session:null,channel:null,authSubscription:null,status:'offline',detail:'',
   syncTimer:null,syncChain:Promise.resolve(),syncing:false,loading:false,lastSync:null,
-  caseHashes:new Map(),settingsHash:'',auditIds:new Set(),realtimeTimer:null,unlocked:false
+  caseHashes:new Map(),settingsHash:'',auditIds:new Set(),realtimeTimer:null,unlocked:false,
+  cacheLoaded:false,pendingView:null
 };
 
 function readDatabaseConfig(){
@@ -1445,6 +1459,7 @@ function databaseReady(){return !!(database.client&&database.session)}
 function databaseHash(value){return JSON.stringify(value??null)}
 function clearProtectedLocalData(){
   state=structuredClone(defaultState);
+  database.cacheLoaded=false;
   try{
     localStorage.removeItem(KEY);
     localStorage.removeItem(DB_DIRTY_KEY);
@@ -1452,12 +1467,15 @@ function clearProtectedLocalData(){
   }catch(e){}
   refreshAll();
 }
+function restoreProtectedLocalData(){
+  if(!database.session||database.cacheLoaded)return;
+  state=loadState();
+  database.cacheLoaded=true;
+  refreshAll();
+}
 function renderAuthGate(detail=database.detail){
   const unlocked=!!(database.unlocked&&database.session);
-  const gate=$('authGate'),shell=$('appShell');
-  if(gate)gate.hidden=unlocked;
-  if(shell){shell.inert=!unlocked;shell.setAttribute('aria-hidden',String(!unlocked))}
-  document.body.classList.toggle('auth-locked',!unlocked);
+  if(unlocked)closeAuthGate();
   const cfg=readDatabaseConfig();
   const email=$('authGateEmail');
   if(email&&document.activeElement!==email)email.value=database.session?.user?.email||cfg.email||'';
@@ -1471,9 +1489,27 @@ function renderAuthGate(detail=database.detail){
     status.dataset.kind=/ไม่สำเร็จ|invalid|error|ผิดพลาด/i.test(message)?'error':database.status==='online'?'ok':'';
   }
 }
+function openAuthGate(view='registry',detail='กรุณาเข้าสู่ระบบก่อนดูข้อมูลผู้ป่วย'){
+  if(database.unlocked){go(view);return}
+  database.pendingView=view;
+  const gate=$('authGate'),shell=$('appShell');
+  if(gate)gate.hidden=false;
+  if(shell){shell.inert=true;shell.setAttribute('aria-hidden','true')}
+  document.body.classList.add('auth-dialog-open');
+  renderAuthGate(detail);
+  setTimeout(()=>$('authGateEmail')?.focus(),0);
+}
+function closeAuthGate(){
+  const gate=$('authGate'),shell=$('appShell');
+  if(gate)gate.hidden=true;
+  if(shell){shell.inert=false;shell.setAttribute('aria-hidden','false')}
+  document.body.classList.remove('auth-dialog-open');
+  database.pendingView=null;
+}
 function setApplicationAccess(unlocked,detail=''){
   database.unlocked=!!(unlocked&&database.session);
   renderAuthGate(detail);
+  renderDashboard();renderChrome();
 }
 function databaseResult(result,label){
   if(result?.error)throw new Error(`${label}: ${result.error.message}`);
@@ -1543,7 +1579,7 @@ async function disconnectDatabaseClient(){
   if(database.client&&database.channel)await database.client.removeChannel(database.channel).catch(()=>{});
   database.authSubscription?.unsubscribe?.();
   database.client=null;database.session=null;database.channel=null;database.authSubscription=null;
-  database.unlocked=false;
+  database.unlocked=false;database.cacheLoaded=false;
   database.caseHashes.clear();database.auditIds.clear();database.settingsHash='';
 }
 async function hydrateWithSessionRetry(options={}){
@@ -1572,6 +1608,9 @@ async function connectDatabase(showToast=false){
         database.unlocked=false;
         clearProtectedLocalData();
         setDatabaseStatus('auth',event==='SIGNED_OUT'?'ออกจากระบบแล้ว · ข้อมูลผู้ป่วยในเครื่องถูกล้าง':'กรุณาเข้าสู่ระบบ');
+        if(event==='SIGNED_OUT')go('dashboard');
+      }else{
+        restoreProtectedLocalData();
       }
       renderDatabaseControls();
       if(session&&['SIGNED_IN','TOKEN_REFRESHED','USER_UPDATED'].includes(event)){
@@ -1588,6 +1627,7 @@ async function connectDatabase(showToast=false){
       if(showToast)toast('เชื่อม Project แล้ว กรุณาเข้าสู่ระบบ','warn');
       return true;
     }
+    restoreProtectedLocalData();
     await hydrateWithSessionRetry({silent:!showToast});
     subscribeDatabaseRealtime();
     if(showToast)toast('เชื่อมต่อ Supabase และซิงก์ข้อมูลแล้ว');
@@ -1619,6 +1659,7 @@ async function disconnectSupabase(){
   if($('authGatePassword'))$('authGatePassword').value='';
   setDatabaseStatus('offline','ลบการตั้งค่าการเชื่อมต่อจากเครื่องนี้แล้ว');
   setApplicationAccess(false,'ลบการเชื่อมต่อแล้ว');
+  go('dashboard');
   toast('ยกเลิกการเชื่อมต่อและล้างข้อมูลผู้ป่วยในเครื่องแล้ว','warn');
 }
 async function signInSupabase(source='settings'){
@@ -1641,13 +1682,15 @@ async function signInSupabase(source='settings'){
     return toast('เข้าสู่ระบบไม่สำเร็จ: '+result.error.message,'err');
   }
   database.session=result.data.session;
+  const destination=source==='gate'?(database.pendingView||'dashboard'):null;
   try{
     const cfg=readDatabaseConfig();localStorage.setItem(DB_CONFIG_KEY,JSON.stringify({...cfg,email}));
+    restoreProtectedLocalData();
     await hydrateWithSessionRetry();subscribeDatabaseRealtime();
     if($('s_auth_password'))$('s_auth_password').value='';
     if($('authGatePassword'))$('authGatePassword').value='';
     setApplicationAccess(true,'เข้าสู่ระบบสำเร็จ');
-    if(source==='gate')go('dashboard');
+    if(source==='gate')go(destination);
     toast('เข้าสู่ระบบและซิงก์ข้อมูลแล้ว');
   }catch(e){
     database.unlocked=false;setDatabaseStatus('error','โหลดฐานข้อมูลไม่สำเร็จ: '+e.message);
@@ -1664,6 +1707,7 @@ async function signOutSupabase(){
   if($('authGatePassword'))$('authGatePassword').value='';
   setDatabaseStatus('auth','ออกจากระบบแล้ว · ข้อมูลผู้ป่วยในเครื่องถูกล้าง');
   setApplicationAccess(false,'ออกจากระบบแล้ว กรุณาเข้าสู่ระบบอีกครั้ง');
+  go('dashboard');
   toast('ออกจากระบบและล้างข้อมูลผู้ป่วยในเครื่องแล้ว');
 }
 
@@ -1879,8 +1923,8 @@ function toggleTheme(){
 applyTheme((()=>{try{return localStorage.getItem(THEME_KEY)||'light'}catch(e){return 'light'}})());
 
 function go(view){
-  if(!database.unlocked){
-    renderAuthGate('กรุณาเข้าสู่ระบบก่อนดูข้อมูลผู้ป่วย');
+  if(view!=='dashboard'&&!database.unlocked){
+    openAuthGate(view,'กรุณาเข้าสู่ระบบก่อนดูรายชื่อผู้ป่วยและรายละเอียดเคส');
     return;
   }
   const btn=document.querySelector(`.nav button[data-view="${view}"]`);
@@ -1903,7 +1947,7 @@ function openCase(id,view){
   go(view);
 }
 document.addEventListener('keydown',e=>{
-  if(!database.unlocked)return;
+  if(e.key==='Escape'&&!$('authGate').hidden){closeAuthGate();return}
   if(!e.altKey||e.ctrlKey||e.metaKey)return;
   const map={'1':'dashboard','2':'dispatch','3':'prehospital','4':'command','5':'registry','6':'pips','7':'settings'};
   if(map[e.key]){e.preventDefault();go(map[e.key])}
@@ -2243,6 +2287,18 @@ function setCase(id,val){
 }
 
 function renderDashboard(){
+  const guest=!database.unlocked;
+  $('dashboardGuestNotice')?.classList.toggle('hidden',!guest);
+  if(guest){
+    ['kpiToday','kpiIncoming','kpiL1','kpiPips'].forEach(id=>$(id).textContent='—');
+    $('liveCases').innerHTML=emptyState('i-lock','เข้าสู่ระบบเพื่อดูเคส','Dashboard สาธารณะจะไม่แสดงรายชื่อหรือรายละเอียดผู้ป่วย');
+    $('timeKpi').innerHTML=emptyState('i-lock','ข้อมูลประสิทธิภาพได้รับการปกป้อง','เข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่เพื่อดูข้อมูล');
+    [...$('triageMix').children].forEach(x=>x.style.width='0%');
+    $('triageMixLabel').textContent='ต้องเข้าสู่ระบบ';
+    $('latestAlerts').innerHTML=emptyState('i-lock','เข้าสู่ระบบเพื่อดู Alerts','ข้อมูล PIPS เชื่อมโยงกับเคสผู้ป่วย');
+    drawVolume();drawMOI();
+    return;
+  }
   const today=new Date().toDateString();
   const todayCases=state.cases.filter(c=>new Date(c.created).toDateString()===today);
   $('kpiToday').textContent=todayCases.length;
@@ -2538,6 +2594,13 @@ function clearAudit(){
 }
 
 function renderChrome(){
+  if(!database.unlocked){
+    $('navCountLive').textContent='';
+    $('navCountPips').textContent='';
+    $('footCases').textContent='ข้อมูลผู้ป่วย · ต้องเข้าสู่ระบบ';
+    $('topClock').textContent=new Date().toLocaleString('th-TH',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    return;
+  }
   const openPips=state.cases.reduce((n,c)=>n+(c.pips||[]).filter(p=>p.status==='Open').length,0);
   const live=state.cases.filter(c=>['Incoming','Transport','En route','On scene','Dispatched'].includes(c.status)).length;
   $('navCountLive').textContent=live||'';
