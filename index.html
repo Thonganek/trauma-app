@@ -3470,8 +3470,11 @@ function exportRegistryExcel(){
   if(guardEmpty())return;
   const table='<table border="1"><tr>'+CSV_HEADER.map(x=>`<th>${esc(x)}</th>`).join('')+'</tr>'+
     caseRows().map(r=>'<tr>'+r.map(x=>`<td>${esc(x)}</td>`).join('')+'</tr>').join('')+'</table>';
+  // Split closing tags so VS Code Live Server cannot inject its reload script
+  // into this export template instead of at the actual end of the document.
+  const excelHtml='<html><head><meta charset="utf-8"></head><body>'+table+'<'+'/body><'+'/html>';
   download(`trauma-registry-${new Date().toISOString().slice(0,10)}.xls`,
-    `<html><head><meta charset="utf-8"></head><body>${table}</body></html>`,'application/vnd.ms-excel');
+    excelHtml,'application/vnd.ms-excel');
   audit('Export registry Excel');toast('ส่งออกไฟล์ Excel แล้ว');
 }
 function resetAll(){
