@@ -683,10 +683,10 @@ td.actions{text-align:right}
     <p class="auth-copy">ข้อมูลผู้ป่วยเปิดให้เฉพาะบัญชีเจ้าหน้าที่ที่ผ่าน Supabase Auth เท่านั้น</p>
     <form class="auth-form" id="authGateForm" onsubmit="event.preventDefault();signInSupabase('gate')">
       <div class="field">
-        <label for="authGateEmail">อีเมลเจ้าหน้าที่</label>
+        <label for="authGateEmail">ชื่อผู้ใช้หรืออีเมล</label>
         <div class="input-wrap">
           <svg class="ic ic-sm" aria-hidden="true"><use href="#i-user"/></svg>
-          <input id="authGateEmail" type="email" autocomplete="username" placeholder="staff@hospital.org" required>
+          <input id="authGateEmail" type="text" autocomplete="username" placeholder="ชื่อผู้ใช้" autocapitalize="none" spellcheck="false" required>
         </div>
       </div>
       <div class="field">
@@ -731,6 +731,7 @@ td.actions{text-align:right}
     <button type="button" data-view="registry"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="txt">Registry</span></button>
     <button type="button" data-view="pips"><svg class="ic" aria-hidden="true"><use href="#i-flag"/></svg><span class="txt">PIPS</span><span class="count" id="navCountPips"></span></button>
     <div class="nav-label">System</div>
+    <button type="button" class="hidden" id="adminUsersNav" data-view="users"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg><span class="txt">จัดการผู้ใช้</span></button>
     <button type="button" data-view="settings"><svg class="ic" aria-hidden="true"><use href="#i-settings"/></svg><span class="txt">Settings</span></button>
   </nav>
 
@@ -768,6 +769,9 @@ td.actions{text-align:right}
         </div>
         <input type="hidden" id="roleSelect" value="ER Physician">
       </div>
+      <button type="button" class="btn no-print" id="authActionBtn" onclick="toggleAuthSession()" title="เข้าสู่ระบบ">
+        <svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock" id="authActionIcon"/></svg><span id="authActionText">Log in</span>
+      </button>
       <button type="button" class="btn icon no-print" id="themeBtn" onclick="toggleTheme()" title="สลับธีมสว่าง/มืด" aria-label="สลับธีม"><svg class="ic" aria-hidden="true"><use href="#i-sun" id="themeIcon"/></svg></button>
     </div>
   </header>
@@ -1304,6 +1308,40 @@ td.actions{text-align:right}
   </div>
 </section>
 
+<!-- ============ ADMIN USERS ============ -->
+<section class="view" id="view-users" aria-label="จัดการผู้ใช้">
+  <div class="page-head">
+    <div class="eyebrow">Admin only</div>
+    <h2>จัดการผู้ใช้งาน</h2>
+    <p class="sub">Admin สามารถสร้างบัญชีเจ้าหน้าที่ด้วยชื่อผู้ใช้และรหัสผ่าน บัญชีทั้งหมดจัดเก็บใน Supabase Auth</p>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg>เพิ่มผู้ใช้ใหม่</div></div>
+      <div class="formgrid">
+        <label>ชื่อผู้ใช้<input id="adminNewUsername" type="text" minlength="3" maxlength="32" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="เช่น trauma.nurse" required></label>
+        <label class="span2">ชื่อที่แสดง<input id="adminNewDisplayName" type="text" maxlength="80" autocomplete="off" placeholder="ชื่อ–นามสกุล / หน่วยงาน"></label>
+        <label class="span3">รหัสผ่าน<input id="adminNewPassword" type="password" minlength="8" autocomplete="new-password" placeholder="อย่างน้อย 8 ตัวอักษร" required></label>
+        <div class="field span3">
+          <span class="flabel">สิทธิ์ผู้ใช้</span>
+          <div class="segmented sm" data-picker="adminNewRole" role="radiogroup" aria-label="สิทธิ์ผู้ใช้" data-options="staff=Staff|admin=Admin!danger"></div>
+          <input type="hidden" id="adminNewRole" value="staff">
+        </div>
+      </div>
+      <div class="callout warn" style="margin-top:14px"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-shield"/></svg><div>รหัสผ่านจะส่งตรงไปยัง Supabase Auth และไม่ถูกบันทึกในหน้าเว็บหรือ local cache</div></div>
+      <div class="toolbar" style="margin:14px 0 0"><span></span><button type="button" class="btn primary" id="adminCreateUserBtn" onclick="createAdminUser()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-plus"/></svg>เพิ่มผู้ใช้</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-team"/></svg>บัญชีในระบบ <small id="adminUserCount">0 บัญชี</small></div><button type="button" class="btn sm ghost" id="adminRefreshUsersBtn" onclick="loadAdminUsers()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-refresh"/></svg>รีเฟรช</button></div>
+      <div class="tablewrap">
+        <table><thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อที่แสดง</th><th>สิทธิ์</th><th>สร้างเมื่อ</th><th>เข้าใช้ล่าสุด</th></tr></thead><tbody id="adminUsersTable"></tbody></table>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ SETTINGS ============ -->
 <section class="view" id="view-settings" aria-label="Settings">
   <div class="page-head">
@@ -1320,7 +1358,7 @@ td.actions{text-align:right}
     <div class="formgrid">
       <label class="span2">Project URL<input id="s_supabase_url" type="url" inputmode="url" placeholder="https://your-project.supabase.co" autocomplete="url"></label>
       <label>Publishable / anon key<input id="s_supabase_key" type="password" placeholder="sb_publishable_..." autocomplete="off"></label>
-      <label class="span2">อีเมลเจ้าหน้าที่<input id="s_auth_email" type="email" placeholder="staff@hospital.org" autocomplete="username"></label>
+      <label class="span2">ชื่อผู้ใช้หรืออีเมล<input id="s_auth_email" type="text" placeholder="ชื่อผู้ใช้" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
       <label>รหัสผ่าน<input id="s_auth_password" type="password" placeholder="••••••••" autocomplete="new-password"></label>
     </div>
     <div class="db-detail" id="dbConnectionDetail" style="margin-top:10px">ใส่ Project URL และ publishable key จาก Supabase แล้วเข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่</div>
@@ -1397,6 +1435,7 @@ const DB_CONFIG_KEY='traumalink360_supabase';
 const DB_PROJECT_KEY='traumalink360_supabase_project';
 const DB_DIRTY_KEY='traumalink360_supabase_dirty';
 const DB_DELETE_KEY='traumalink360_supabase_deletes';
+const AUTH_USERNAME_DOMAIN='traumalink.app';
 const defaultState={
   settings:{hospital:'Trauma Center',siL1:1.2,ctTarget:30,orTarget:60,sceneTarget:10,webhook:''},
   cases:[],audit:[]
@@ -1475,8 +1514,17 @@ const database={
   client:null,session:null,channel:null,authSubscription:null,status:'offline',detail:'',
   syncTimer:null,syncChain:Promise.resolve(),syncing:false,loading:false,lastSync:null,
   caseHashes:new Map(),settingsHash:'',auditIds:new Set(),realtimeTimer:null,unlocked:false,
-  cacheLoaded:false,pendingView:null
+  cacheLoaded:false,pendingView:null,staffUsers:[],staffLoading:false
 };
+
+function authIdentifierToEmail(value){
+  const identifier=String(value||'').trim().toLowerCase();
+  return identifier.includes('@')?identifier:`${identifier}@${AUTH_USERNAME_DOMAIN}`;
+}
+function authUserLabel(user=database.session?.user){
+  return user?.app_metadata?.username||user?.email||'';
+}
+function isAdmin(){return database.session?.user?.app_metadata?.role==='admin'}
 
 function readDatabaseConfig(){
   let stored={};
@@ -1486,7 +1534,7 @@ function readDatabaseConfig(){
   return{
     url:String(stored.url||injected.url||meta('supabase-url')||'').trim().replace(/\/$/,''),
     key:String(stored.key||injected.key||meta('supabase-key')||'').trim(),
-    email:String(stored.email||'').trim()
+    login:String(stored.login||stored.email||'').trim()
   };
 }
 function databaseProjectRef(url){
@@ -1496,7 +1544,7 @@ function databaseReady(){return !!(database.client&&database.session)}
 function databaseHash(value){return JSON.stringify(value??null)}
 function clearProtectedLocalData(){
   state=structuredClone(defaultState);
-  database.cacheLoaded=false;
+  database.cacheLoaded=false;database.staffUsers=[];
   try{
     localStorage.removeItem(KEY);
     localStorage.removeItem(DB_DIRTY_KEY);
@@ -1515,7 +1563,7 @@ function renderAuthGate(detail=database.detail){
   if(unlocked)closeAuthGate();
   const cfg=readDatabaseConfig();
   const email=$('authGateEmail');
-  if(email&&document.activeElement!==email)email.value=database.session?.user?.email||cfg.email||'';
+  if(email&&document.activeElement!==email)email.value=authUserLabel()||cfg.login||'';
   const submit=$('authGateSubmit');
   if(submit)submit.disabled=!database.client||database.status==='connecting'||database.loading;
   const status=$('authGateStatus');
@@ -1546,7 +1594,7 @@ function closeAuthGate(){
 function setApplicationAccess(unlocked,detail=''){
   database.unlocked=!!(unlocked&&database.session);
   renderAuthGate(detail);
-  renderDashboard();renderChrome();
+  renderAuthControls();renderDashboard();renderChrome();
 }
 function databaseResult(result,label){
   if(result?.error)throw new Error(`${label}: ${result.error.message}`);
@@ -1567,7 +1615,7 @@ function renderDatabaseControls(){
   const cfg=readDatabaseConfig();
   if($('s_supabase_url')&&document.activeElement!==$('s_supabase_url'))$('s_supabase_url').value=cfg.url;
   if($('s_supabase_key')&&document.activeElement!==$('s_supabase_key'))$('s_supabase_key').value=cfg.key;
-  if($('s_auth_email')&&document.activeElement!==$('s_auth_email'))$('s_auth_email').value=database.session?.user?.email||cfg.email;
+  if($('s_auth_email')&&document.activeElement!==$('s_auth_email'))$('s_auth_email').value=authUserLabel()||cfg.login;
   const signedIn=databaseReady();
   if(signedIn&&database.unlocked&&$('s_auth_password')&&document.activeElement!==$('s_auth_password'))$('s_auth_password').value='';
   if(signedIn&&database.unlocked&&$('authGatePassword')&&document.activeElement!==$('authGatePassword'))$('authGatePassword').value='';
@@ -1575,10 +1623,27 @@ function renderDatabaseControls(){
   if($('dbSignOutBtn'))$('dbSignOutBtn').disabled=!signedIn;
   if($('dbRefreshBtn'))$('dbRefreshBtn').disabled=!signedIn||database.loading;
   if($('dbDisconnectBtn'))$('dbDisconnectBtn').disabled=!cfg.url;
-  const who=database.session?.user?.email?`ผู้ใช้ ${database.session.user.email}`:'';
+  const who=authUserLabel()?`ผู้ใช้ ${authUserLabel()}${isAdmin()?' · Admin':''}`:'';
   const synced=database.lastSync?`ซิงก์ล่าสุด ${fmt(database.lastSync)}`:'';
   const detail=[database.detail,who,synced].filter(Boolean).join(' · ');
   if($('dbConnectionDetail'))$('dbConnectionDetail').textContent=detail||'ใส่ Project URL และ publishable key จาก Supabase แล้วเข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่';
+  renderAuthControls();
+}
+function renderAuthControls(){
+  const signedIn=!!(database.unlocked&&database.session);
+  if($('authActionText'))$('authActionText').textContent=signedIn?'Log out':'Log in';
+  if($('authActionIcon'))$('authActionIcon').setAttribute('href',signedIn?'#i-x':'#i-lock');
+  if($('authActionBtn')){
+    $('authActionBtn').title=signedIn?`ออกจากระบบ (${authUserLabel()})`:'เข้าสู่ระบบ';
+    $('authActionBtn').classList.toggle('danger',signedIn);
+  }
+  $('roleBtn')?.classList.toggle('hidden',!signedIn);
+  $('adminUsersNav')?.classList.toggle('hidden',!signedIn||!isAdmin());
+  if(!isAdmin()){database.staffUsers=[];renderAdminUsers()}
+}
+function toggleAuthSession(){
+  if(database.unlocked&&database.session)signOutSupabase();
+  else openAuthGate('dashboard','กรอกชื่อผู้ใช้หรืออีเมลเพื่อเข้าสู่ระบบ');
 }
 function validateDatabaseConfig(url,key){
   let parsed;
@@ -1678,12 +1743,12 @@ async function connectDatabase(showToast=false){
 async function saveSupabaseConnection(){
   const url=$('s_supabase_url').value.trim().replace(/\/$/,'');
   const key=$('s_supabase_key').value.trim();
-  const email=$('s_auth_email').value.trim();
+  const login=$('s_auth_email').value.trim();
   try{validateDatabaseConfig(url,key)}catch(e){return toast(e.message,'err')}
   try{
     const previous=databaseProjectRef(readDatabaseConfig().url),next=databaseProjectRef(url);
     if(previous&&previous!==next){localStorage.removeItem(DB_DELETE_KEY);localStorage.removeItem(DB_PROJECT_KEY);localStorage.removeItem(DB_DIRTY_KEY)}
-    localStorage.setItem(DB_CONFIG_KEY,JSON.stringify({url,key,email}));
+    localStorage.setItem(DB_CONFIG_KEY,JSON.stringify({url,key,login}));
   }catch(e){return toast('บันทึกการเชื่อมต่อในเครื่องไม่สำเร็จ','err')}
   await connectDatabase(true);
 }
@@ -1709,8 +1774,8 @@ async function signInSupabase(source='settings'){
   }
   const emailInput=source==='gate'?$('authGateEmail'):$('s_auth_email');
   const passwordInput=source==='gate'?$('authGatePassword'):$('s_auth_password');
-  const email=emailInput.value.trim(),password=passwordInput.value;
-  if(!email||!password)return toast('กรอกอีเมลและรหัสผ่านเจ้าหน้าที่','warn');
+  const login=emailInput.value.trim(),email=authIdentifierToEmail(login),password=passwordInput.value;
+  if(!login||!password)return toast('กรอกชื่อผู้ใช้และรหัสผ่าน','warn');
   setApplicationAccess(false,'กำลังตรวจสอบบัญชีเจ้าหน้าที่…');
   setDatabaseStatus('connecting','กำลังตรวจสอบบัญชีเจ้าหน้าที่');
   const result=await database.client.auth.signInWithPassword({email,password});
@@ -1721,7 +1786,7 @@ async function signInSupabase(source='settings'){
   database.session=result.data.session;
   const destination=source==='gate'?(database.pendingView||'dashboard'):null;
   try{
-    const cfg=readDatabaseConfig();localStorage.setItem(DB_CONFIG_KEY,JSON.stringify({...cfg,email}));
+    const cfg=readDatabaseConfig();localStorage.setItem(DB_CONFIG_KEY,JSON.stringify({...cfg,login}));
     restoreProtectedLocalData();
     await hydrateWithSessionRetry();subscribeDatabaseRealtime();
     if($('s_auth_password'))$('s_auth_password').value='';
@@ -1964,6 +2029,10 @@ function go(view){
     openAuthGate(view,'กรุณาเข้าสู่ระบบก่อนดูรายชื่อผู้ป่วยและรายละเอียดเคส');
     return;
   }
+  if(view==='users'&&!isAdmin()){
+    toast('เมนูจัดการผู้ใช้เปิดให้เฉพาะ Admin','err');
+    return;
+  }
   const btn=document.querySelector(`.nav button[data-view="${view}"]`);
   if(!btn)return;
   document.querySelectorAll('.nav button').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current')});
@@ -1972,6 +2041,7 @@ function go(view){
   $('view-'+view).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   refreshAll();
+  if(view==='users')setTimeout(()=>loadAdminUsers(),0);
   if(databaseReady()&&!database.loading)setTimeout(()=>refreshFromDatabase({silent:true}),0);
 }
 $('nav').addEventListener('click',e=>{
@@ -1986,7 +2056,7 @@ function openCase(id,view){
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!$('authGate').hidden){closeAuthGate();return}
   if(!e.altKey||e.ctrlKey||e.metaKey)return;
-  const map={'1':'dashboard','2':'dispatch','3':'prehospital','4':'command','5':'patients','6':'registry','7':'pips','8':'settings'};
+  const map={'1':'dashboard','2':'dispatch','3':'prehospital','4':'command','5':'patients','6':'registry','7':'pips','8':'users','9':'settings'};
   if(map[e.key]){e.preventDefault();go(map[e.key])}
 });
 
@@ -2635,6 +2705,64 @@ function renderSettings(){
   document.title=`${S.hospital} — TraumaLink 360`;
   renderDatabaseControls();
 }
+function renderAdminUsers(){
+  const table=$('adminUsersTable');
+  if(!table)return;
+  const users=database.staffUsers||[];
+  $('adminUserCount').textContent=`${users.length} บัญชี`;
+  if(database.staffLoading){
+    table.innerHTML=`<tr><td colspan="5">${emptyState('i-refresh','กำลังโหลดบัญชีผู้ใช้…')}</td></tr>`;
+    return;
+  }
+  table.innerHTML=users.length?users.map(user=>`<tr>
+    <td><b>${esc(user.username||'—')}</b><div class="t2 mono">${esc(user.email||'')}</div></td>
+    <td>${esc(user.displayName||'—')}</td>
+    <td><span class="chip ${user.role==='admin'?'dangerv':'okv'}">${esc(user.role||'staff')}</span></td>
+    <td>${fmt(user.createdAt)}</td>
+    <td>${user.lastSignInAt?fmt(user.lastSignInAt):'ยังไม่เคย'}</td>
+  </tr>`).join(''):`<tr><td colspan="5">${emptyState('i-team','ยังไม่มีบัญชีผู้ใช้')}</td></tr>`;
+}
+async function invokeAdminUsers(body){
+  if(!databaseReady()||!isAdmin())throw new Error('ต้องเข้าสู่ระบบด้วยบัญชี Admin');
+  const result=await database.client.functions.invoke('admin-users',{body});
+  if(result.error){
+    let message=result.error.message||'เรียกฟังก์ชันจัดการผู้ใช้ไม่สำเร็จ';
+    try{
+      const payload=await result.error.context?.json();
+      if(payload?.error)message=payload.error;
+    }catch(e){}
+    throw new Error(message);
+  }
+  if(result.data?.error)throw new Error(result.data.error);
+  return result.data;
+}
+async function loadAdminUsers(){
+  if(!isAdmin()||database.staffLoading)return;
+  database.staffLoading=true;renderAdminUsers();
+  try{
+    const data=await invokeAdminUsers({action:'list'});
+    database.staffUsers=Array.isArray(data?.users)?data.users:[];
+  }catch(e){toast('โหลดบัญชีผู้ใช้ไม่สำเร็จ: '+e.message,'err')}
+  finally{database.staffLoading=false;renderAdminUsers()}
+}
+async function createAdminUser(){
+  if(!isAdmin())return toast('ต้องเข้าสู่ระบบด้วยบัญชี Admin','err');
+  const username=$('adminNewUsername').value.trim().toLowerCase();
+  const displayName=$('adminNewDisplayName').value.trim();
+  const password=$('adminNewPassword').value;
+  const role=$('adminNewRole').value==='admin'?'admin':'staff';
+  if(!/^[a-z0-9._-]{3,32}$/.test(username))return toast('ชื่อผู้ใช้ต้องมี 3–32 ตัว ใช้ a-z, 0-9, จุด ขีดกลาง หรือขีดล่าง','warn');
+  if(password.length<8)return toast('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร','warn');
+  const button=$('adminCreateUserBtn');button.disabled=true;
+  try{
+    await invokeAdminUsers({action:'create',username,displayName,password,role});
+    $('adminNewUsername').value='';$('adminNewDisplayName').value='';$('adminNewPassword').value='';
+    $('adminNewRole').value='staff';syncPickers();
+    audit(`Create staff user ${username}`);toast(`เพิ่มผู้ใช้ ${username} แล้ว`);
+    await loadAdminUsers();
+  }catch(e){toast('เพิ่มผู้ใช้ไม่สำเร็จ: '+e.message,'err')}
+  finally{button.disabled=false;$('adminNewPassword').value=''}
+}
 function saveSettings(){
   state.settings={
     hospital:$('s_hospital').value.trim()||'Trauma Center',
@@ -2660,6 +2788,7 @@ function clearAudit(){
 }
 
 function renderChrome(){
+  renderAuthControls();
   if(!database.unlocked){
     $('navCountLive').textContent='';
     $('navCountPatients').textContent='';
@@ -2681,7 +2810,7 @@ function refreshAll(){
   ['ph_case','er_case','reg_case'].forEach(fillCaseSelect);
   state.cases.forEach(recalcCase);persist(false);
   renderDashboard();renderDispatch();loadPrehospitalCase();loadERCase();
-  renderPatientDirectory();loadRegistry();renderRegistryTable();renderPips();renderSettings();renderAudit();renderChrome();
+  renderPatientDirectory();loadRegistry();renderRegistryTable();renderPips();renderSettings();renderAudit();renderAdminUsers();renderChrome();
   syncPickers();
 }
 

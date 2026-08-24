@@ -7,6 +7,7 @@
 - เปิดดู Dashboard ได้โดยไม่ต้องเข้าสู่ระบบ โดยไม่เปิดเผยข้อมูลผู้ป่วย
 - Supabase Auth บังคับเข้าสู่ระบบก่อนเข้าถึงรายชื่อผู้ป่วย รายละเอียดเคส และเมนูปฏิบัติงาน
 - เมนูทะเบียนรายชื่อสำหรับค้นหา กรอง และเปิดรายละเอียดผู้ป่วยจาก Supabase
+- ปุ่ม Log in / Log out และหน้า Admin สำหรับเพิ่มบัญชีผู้ใช้ด้วย Supabase Auth
 - ฐานข้อมูล PostgreSQL พร้อม Row Level Security
 - ซิงก์ข้อมูลทุกเมนูและรองรับ Realtime
 - บันทึกเคสแบบ atomic ผ่าน RPC
@@ -17,8 +18,9 @@
 
 1. ติดตั้งสคีมาจาก `supabase/schema.sql` ใน Supabase SQL Editor
 2. สร้างผู้ใช้เจ้าหน้าที่ใน Supabase Authentication
-3. เปิดเว็บผ่าน HTTP server เช่น `python -m http.server 8765`
-4. เข้า `http://127.0.0.1:8765/` เพื่อดู Dashboard หรือเข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่เมื่อต้องการดูข้อมูลผู้ป่วย
+3. Deploy Edge Function `admin-users` และกำหนด Admin claim ตาม `supabase/README.md`
+4. เปิดเว็บผ่าน HTTP server เช่น `python -m http.server 8765`
+5. เข้า `http://127.0.0.1:8765/` เพื่อดู Dashboard หรือเข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่เมื่อต้องการดูข้อมูลผู้ป่วย
 
 รายละเอียดการติดตั้งฐานข้อมูลเพิ่มเติมอยู่ใน `supabase/README.md`
 
