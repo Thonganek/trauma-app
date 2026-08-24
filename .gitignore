@@ -1,0 +1,11 @@
+# Local backups and secrets
+index.original.backup.html
+.env
+.env.*
+!.env.example
+
+# Tooling and operating-system files
+node_modules/
+*.log
+.DS_Store
+Thumbs.db

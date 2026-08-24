@@ -1,0 +1,2842 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="TraumaLink 360 — ระบบดูแลผู้บาดเจ็บครบวงจร ตั้งแต่รับแจ้งเหตุ ก่อนถึงโรงพยาบาล ห้องฉุกเฉิน จนถึง Trauma Registry และ PIPS">
+<meta name="supabase-url" content="https://ffurivukvcfjmcmhxiab.supabase.co">
+<meta name="supabase-key" content="sb_publishable_soJUxI5OJQNPbUMFCnqiKw_JzaXZli_">
+<title>TraumaLink 360 — Trauma Care Continuum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap">
+<style>
+/* ==========================================================================
+   TraumaLink 360 — Design System
+   1 Tokens · 2 Base · 3 Layout · 4 Components · 5 Views · 6 Responsive · 7 Print
+   ========================================================================== */
+
+/* ---------- 1 · TOKENS ---------- */
+:root{
+  --font-sans:"Sarabun","Noto Sans Thai",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-mono:ui-monospace,"SF Mono",SFMono-Regular,"JetBrains Mono",Consolas,monospace;
+  --r-xs:8px; --r-sm:11px; --r-md:14px; --r-lg:18px; --r-xl:24px; --r-pill:999px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --t-fast:.15s var(--ease);
+  --t-med:.28s var(--ease);
+}
+
+/* Light Scarlet — โทนแดงสด สว่าง (ค่าเริ่มต้น) */
+:root,:root[data-theme="light"]{
+  --bg-0:#fbf5f5;
+  --bg-glow-1:rgba(232,42,58,.15);
+  --bg-glow-2:rgba(255,168,110,.18);
+  --surface:#ffffff;
+  --surface-2:#fdf5f6;
+  --surface-3:#f8e8ea;
+  --surface-inset:#fdfafa;
+  --line:rgba(124,26,38,.12);
+  --line-2:rgba(124,26,38,.21);
+  --text:#1f1013;
+  --text-2:#6a4a50;
+  --text-3:#95737a;
+  --primary:#e11d3a; --primary-2:#ff5c6e; --primary-deep:#ad0f28;
+  --primary-soft:rgba(225,29,58,.09); --primary-ring:rgba(225,29,58,.22);
+  --gold:#a97a25; --gold-2:#d4a13f; --gold-soft:rgba(169,122,37,.14);
+  --ok:#0f8f52; --ok-soft:rgba(15,143,82,.11);
+  --warn:#f08c00; --warn-ink:#95590a; --warn-soft:rgba(240,140,0,.15);
+  --danger:#c1121f; --danger-soft:rgba(193,18,31,.1);
+  --purple:#7c3aed; --purple-soft:rgba(124,58,237,.1);
+  --info:#0891b2; --info-soft:rgba(8,145,178,.1);
+  --on-solid:#ffffff;
+  --on-warn:#231400;
+  --shadow-1:0 1px 2px rgba(124,26,38,.08);
+  --shadow-2:0 12px 30px -16px rgba(124,26,38,.28);
+  --shadow-3:0 34px 70px -28px rgba(124,26,38,.32);
+  --scrim:rgba(253,246,246,.82);
+  --btn-face:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,0));
+}
+
+/* Dark Scarlet — โทนแดงบนพื้นมืด สำหรับใช้งานกลางคืน */
+:root[data-theme="dark"]{
+  --bg-0:#11070a;
+  --bg-glow-1:rgba(255,64,86,.20);
+  --bg-glow-2:rgba(255,163,92,.11);
+  --surface:#1b0e12;
+  --surface-2:#241318;
+  --surface-3:#301920;
+  --surface-inset:#160a0e;
+  --line:rgba(255,198,204,.11);
+  --line-2:rgba(255,198,204,.21);
+  --text:#fdeef0;
+  --text-2:#dbb4ba;
+  --text-3:#ae868d;
+  --primary:#ff4d63; --primary-2:#ff8f9c; --primary-deep:#c41230;
+  --primary-soft:rgba(255,77,99,.15); --primary-ring:rgba(255,77,99,.28);
+  --gold:#e8c581; --gold-2:#f9e6bb; --gold-soft:rgba(232,197,129,.14);
+  --ok:#34d399; --ok-soft:rgba(52,211,153,.14);
+  --warn:#fbbf24; --warn-ink:#fbbf24; --warn-soft:rgba(251,191,36,.14);
+  --danger:#e11d48; --danger-soft:rgba(225,29,72,.17);
+  --purple:#c084fc; --purple-soft:rgba(192,132,252,.14);
+  --info:#38bdf8; --info-soft:rgba(56,189,248,.14);
+  --on-solid:#ffffff;
+  --on-warn:#231400;
+  --shadow-1:0 1px 2px rgba(0,0,0,.5);
+  --shadow-2:0 14px 34px -18px rgba(0,0,0,.85);
+  --shadow-3:0 40px 80px -30px rgba(0,0,0,.9);
+  --scrim:rgba(17,7,10,.78);
+  --btn-face:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0));
+}
+
+/* ---------- 2 · BASE ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;
+  font-family:var(--font-sans);font-size:14px;line-height:1.6;
+  color:var(--text);background-color:var(--bg-0);
+  background-image:
+    radial-gradient(1150px 640px at 10% -14%,var(--bg-glow-1),transparent 62%),
+    radial-gradient(950px 540px at 102% -4%,var(--bg-glow-2),transparent 58%);
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  font-variant-numeric:tabular-nums;
+  transition:background-color var(--t-med),color var(--t-med);
+}
+h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.016em;line-height:1.28}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+a{color:var(--primary);text-decoration:none}
+::selection{background:var(--primary-ring);color:var(--text)}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:var(--r-pill);border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:var(--text-3);background-clip:content-box}
+
+.ic{width:20px;height:20px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ic-sm{width:15px;height:15px;stroke-width:1.8}
+.ic-lg{width:26px;height:26px;stroke-width:1.5}
+.ic-xl{width:34px;height:34px;stroke-width:1.2}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.mono{font-family:var(--font-mono);font-size:.93em;letter-spacing:-.01em}
+.hidden{display:none!important}
+.muted{color:var(--text-2)}
+.eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)}
+.gold{color:var(--gold)}
+
+/* ---------- 3 · LAYOUT ---------- */
+.auth-gate{
+  position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;
+  background:
+    radial-gradient(720px 420px at 14% 0%,var(--bg-glow-1),transparent 66%),
+    radial-gradient(620px 380px at 100% 6%,var(--bg-glow-2),transparent 62%),
+    var(--bg-0);
+}
+.auth-gate[hidden]{display:none}
+.auth-card{
+  width:min(440px,100%);padding:30px;border:1px solid var(--line-2);border-radius:var(--r-xl);
+  background:color-mix(in srgb,var(--surface) 94%,transparent);box-shadow:var(--shadow-3);
+  backdrop-filter:blur(22px) saturate(140%);
+}
+.auth-brand{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.auth-brand .logo{
+  width:50px;height:50px;border-radius:16px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(150deg,#ff7d84,var(--primary) 45%,var(--primary-deep));
+  box-shadow:0 12px 28px -10px var(--primary-ring),inset 0 1px 0 rgba(255,255,255,.45);
+}
+.auth-brand .logo .ic{width:26px;height:26px;stroke-width:2}
+.auth-title{font-size:25px;margin-bottom:7px}
+.auth-copy{margin:0 0 22px;color:var(--text-2)}
+.auth-form{display:grid;gap:15px}
+.auth-form .field{display:grid;gap:6px}
+.auth-form label{font-size:12px;font-weight:700;color:var(--text-2)}
+.auth-form .input-wrap{position:relative}
+.auth-form .input-wrap .ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-3);pointer-events:none}
+.auth-form input{padding-left:40px}
+.auth-submit{margin-top:3px;min-height:44px}
+.auth-status{min-height:24px;margin:2px 0 0;font-size:12.5px;color:var(--text-2)}
+.auth-status[data-kind="error"]{color:var(--danger)}
+.auth-status[data-kind="ok"]{color:var(--ok)}
+.auth-security{display:flex;gap:9px;margin-top:20px;padding-top:17px;border-top:1px solid var(--line);font-size:11.5px;color:var(--text-3)}
+body.auth-locked{overflow:hidden}
+body.auth-locked .shell{visibility:hidden;pointer-events:none}
+
+.shell{display:grid;grid-template-columns:266px minmax(0,1fr);min-height:100vh}
+
+.sidebar{
+  position:sticky;top:0;height:100vh;z-index:20;
+  display:flex;flex-direction:column;padding:20px 16px 16px;
+  background:var(--scrim);backdrop-filter:blur(22px) saturate(150%);
+  border-right:1px solid var(--line);
+}
+.sidebar::after{content:"";position:absolute;top:0;bottom:0;right:-1px;width:1px;background:linear-gradient(180deg,transparent,var(--gold-soft) 24%,transparent 76%);pointer-events:none}
+
+.brand{display:flex;align-items:center;gap:12px;padding:2px 6px 20px}
+.brand .logo{
+  width:42px;height:42px;flex:0 0 auto;border-radius:13px;display:grid;place-items:center;
+  background:linear-gradient(150deg,#ff7d84,var(--primary) 45%,var(--primary-deep));
+  color:#fff;box-shadow:0 10px 24px -9px var(--primary-ring),inset 0 1px 0 rgba(255,255,255,.45);
+}
+.brand .logo .ic{stroke-width:2.1}
+.brand-name{font-size:15.5px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+.brand-sub{font-size:9.5px;font-weight:700;color:var(--text-3);letter-spacing:.13em;text-transform:uppercase;white-space:nowrap}
+
+.nav{display:grid;gap:3px;align-content:start;flex:1;overflow-y:auto;overflow-x:hidden;margin:0 -8px;padding:0 8px}
+.nav-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);padding:14px 12px 6px}
+.nav button{
+  position:relative;display:flex;align-items:center;gap:11px;width:100%;
+  padding:10px 12px;border-radius:var(--r-sm);
+  color:var(--text-2);font-size:13.5px;font-weight:500;text-align:left;
+  transition:background var(--t-fast),color var(--t-fast);
+}
+.nav button .ic{color:var(--text-3);transition:color var(--t-fast)}
+.nav button:hover{background:var(--surface-2);color:var(--text)}
+.nav button:hover .ic{color:var(--text-2)}
+.nav button.active{background:var(--surface-2);color:var(--text);font-weight:600;box-shadow:var(--shadow-1)}
+.nav button.active .ic{color:var(--primary)}
+.nav button.active::before{content:"";position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:3px;height:20px;border-radius:0 3px 3px 0;background:linear-gradient(var(--primary-2),var(--primary))}
+.nav .count{margin-left:auto;font-size:11px;font-weight:700;min-width:20px;text-align:center;padding:1px 6px;border-radius:var(--r-pill);background:var(--primary-soft);color:var(--primary)}
+.nav .count:empty{display:none}
+.nav #navCountPips{background:var(--danger-soft);color:var(--danger)}
+
+.sidefoot{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;display:grid;gap:7px}
+.sidefoot .row{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text-3);line-height:1.35}
+.sidefoot .row b{color:var(--text-2);font-weight:600}
+.sidefoot .row .ic{color:var(--text-3)}
+
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{
+  position:sticky;top:0;z-index:15;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:11px 24px;background:var(--scrim);backdrop-filter:blur(20px) saturate(150%);
+  border-bottom:1px solid var(--line);
+}
+.topbar .place{display:flex;align-items:center;gap:11px;min-width:0}
+.topbar .place .mark{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);flex:0 0 auto}
+.topbar .place b{display:block;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:38vw}
+.topbar .place span{display:block;font-size:11px;color:var(--text-3);letter-spacing:.03em}
+.topbar .tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.content{width:100%;max-width:1560px;margin:0 auto;padding:24px;flex:1}
+
+/* ---------- 4 · COMPONENTS ---------- */
+
+/* 4.1 Page heading */
+.page-head{margin-bottom:20px}
+.page-head .eyebrow{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.page-head .eyebrow::after{content:"";height:1px;flex:1;max-width:110px;background:linear-gradient(90deg,var(--gold-soft),transparent)}
+.page-head h2{font-size:27px;letter-spacing:-.03em}
+.page-head .sub{color:var(--text-2);font-size:13.5px;margin-top:4px;max-width:78ch}
+
+/* 4.2 Buttons — every clickable affordance in the app is one of these */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:9px 14px;border-radius:var(--r-sm);
+  border:1px solid var(--line-2);background-color:var(--surface-2);background-image:var(--btn-face);
+  color:var(--text);font-size:13px;font-weight:600;white-space:nowrap;
+  box-shadow:var(--shadow-1);
+  transition:background-color var(--t-fast),border-color var(--t-fast),transform var(--t-fast),box-shadow var(--t-fast),color var(--t-fast);
+}
+.btn:hover{background-color:var(--surface-3);border-color:var(--text-3);transform:translateY(-1px);box-shadow:var(--shadow-2)}
+.btn:active{transform:translateY(0) scale(.985);box-shadow:none}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.btn .ic{opacity:.85}
+
+.btn.primary{background-color:var(--primary-deep);background-image:linear-gradient(180deg,var(--primary),var(--primary-deep));border-color:transparent;color:#fff;box-shadow:0 8px 20px -10px var(--primary-ring),var(--shadow-1)}
+.btn.primary:hover{filter:brightness(1.08);border-color:transparent;box-shadow:0 12px 26px -10px var(--primary-ring)}
+.btn.gold{background-color:transparent;background-image:none;border-color:var(--gold);color:var(--gold)}
+.btn.gold:hover{background-color:var(--gold-soft);border-color:var(--gold)}
+.btn.ok{background-color:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.btn.ok:hover{background-color:var(--ok-soft);border-color:var(--ok)}
+.btn.warn{background-color:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.btn.warn:hover{background-color:var(--warn-soft);border-color:var(--warn)}
+.btn.danger{background-color:var(--danger-soft);border-color:transparent;color:var(--danger)}
+.btn.danger:hover{background-color:var(--danger-soft);border-color:var(--danger)}
+.btn.ghost{background-color:transparent;background-image:none;border-color:transparent;color:var(--text-2);box-shadow:none}
+.btn.ghost:hover{background-color:var(--surface-2);color:var(--text);border-color:var(--line)}
+.btn.sm{padding:6px 10px;font-size:12px;border-radius:var(--r-xs);gap:5px}
+.btn.xs{padding:4px 9px;font-size:11.5px;border-radius:var(--r-xs);gap:4px;font-weight:600}
+.btn.block{width:100%}
+.btn.icon{padding:9px;width:36px;height:36px}
+.btn.icon.sm{padding:6px;width:30px;height:30px}
+.btn-group{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+/* File-picker button (label wrapping a hidden input) */
+.btn input[type=file]{display:none}
+
+/* 4.3 Cards */
+.card{
+  position:relative;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-lg);box-shadow:var(--shadow-2);padding:18px;min-width:0;
+  transition:border-color var(--t-fast),box-shadow var(--t-fast);
+}
+.card.featured::before{content:"";position:absolute;inset:0 0 auto;height:2px;border-radius:var(--r-lg) var(--r-lg) 0 0;background:linear-gradient(90deg,transparent,var(--primary) 35%,var(--gold) 75%,transparent);opacity:.85}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.card-title{display:flex;align-items:center;gap:9px;font-size:14.5px;font-weight:700;letter-spacing:-.01em;min-width:0}
+.card-title .ic{color:var(--primary);opacity:.95}
+.card-title small{font-weight:400;font-size:12px;color:var(--text-3);letter-spacing:0}
+.card-body-inset{background:var(--surface-inset);border:1px solid var(--line);border-radius:var(--r-md);padding:14px}
+
+.grid{display:grid;gap:14px;align-items:start}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:14px}
+.mt{margin-top:14px}
+
+/* 4.4 KPI tiles — clickable buttons that jump to the matching view */
+.kpi{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;width:100%;text-align:left;
+  padding:16px 18px;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--surface);
+  box-shadow:var(--shadow-2);transition:transform var(--t-fast),border-color var(--t-fast),box-shadow var(--t-fast);
+}
+.kpi:hover{transform:translateY(-2px);border-color:var(--line-2);box-shadow:var(--shadow-3)}
+.kpi:active{transform:translateY(0) scale(.99)}
+.kpi b{display:block;font-size:30px;font-weight:700;letter-spacing:-.035em;line-height:1.15;margin-top:3px}
+.kpi .kpi-note{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-3);margin-top:3px}
+.kpi .ic-box{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:0 0 auto;background:var(--primary-soft);color:var(--primary)}
+.kpi[data-tone=gold] .ic-box{background:var(--gold-soft);color:var(--gold)}
+.kpi[data-tone=danger] .ic-box{background:var(--danger-soft);color:var(--danger)}
+.kpi[data-tone=warn] .ic-box{background:var(--warn-soft);color:var(--warn)}
+.kpi[data-tone=ok] .ic-box{background:var(--ok-soft);color:var(--ok)}
+.kpi[data-tone=purple] .ic-box{background:var(--purple-soft);color:var(--purple)}
+
+/* 4.5 Row buttons — list items that are genuinely pressable */
+.rowbtn{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  padding:11px 12px;border-radius:var(--r-md);border:1px solid transparent;background:transparent;
+  transition:background var(--t-fast),border-color var(--t-fast),transform var(--t-fast);
+}
+.rowbtn+.rowbtn{margin-top:2px}
+.rowbtn:hover{background:var(--surface-2);border-color:var(--line)}
+.rowbtn:active{transform:scale(.995)}
+.rowbtn .grow{flex:1;min-width:0}
+.rowbtn .t1{font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.rowbtn .t2{font-size:11.5px;color:var(--text-3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rowbtn .end{text-align:right;flex:0 0 auto}
+.rowbtn .end b{font-size:14px;font-weight:700;display:block}
+.rowbtn .chev{color:var(--text-3);opacity:0;transform:translateX(-4px);transition:all var(--t-fast)}
+.rowbtn:hover .chev{opacity:1;transform:translateX(0)}
+.rowlist{display:grid;gap:2px;margin:0 -6px}
+
+/* Static (non-clickable) metric row */
+.metric{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.metric:last-child{border-bottom:0}
+.metric>span{color:var(--text-3);display:flex;align-items:center;gap:7px}
+.metric>b{font-weight:600;text-align:right}
+
+/* Row with its own trailing action buttons */
+.linerow{display:flex;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid var(--line)}
+.linerow:last-child{border-bottom:0}
+.linerow .grow{flex:1;min-width:0}
+.linerow .t1{font-size:13px;font-weight:600}
+.linerow .t2{font-size:11.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.linerow .when{font-size:11.5px;color:var(--text-3);font-variant-numeric:tabular-nums}
+
+/* 4.6 Badges, chips, levels */
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--surface-2);color:var(--text-2);font-size:11.5px;font-weight:600;white-space:nowrap}
+.statusdot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--ok-soft);animation:pulse 2.6s var(--ease) infinite}
+.badge[data-state="offline"] .statusdot,.badge[data-state="auth"] .statusdot{background:var(--text-3);box-shadow:0 0 0 3px var(--line)}
+.badge[data-state="connecting"] .statusdot,.badge[data-state="syncing"] .statusdot{background:var(--warn);box-shadow:0 0 0 3px var(--warn-soft)}
+.badge[data-state="error"] .statusdot{background:var(--danger);box-shadow:0 0 0 3px var(--danger-soft);animation:none}
+.badge[data-state="online"] .statusdot{background:var(--ok);box-shadow:0 0 0 3px var(--ok-soft)}
+.db-detail{font-size:11.5px;color:var(--text-3);overflow-wrap:anywhere}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.level{display:inline-flex;align-items:center;gap:5px;font-weight:700;padding:3px 9px;border-radius:var(--r-pill);font-size:11px;letter-spacing:.03em;border:1px solid transparent}
+.level::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.level.L1{background:var(--danger);color:var(--on-solid);border-color:transparent;box-shadow:0 3px 10px -4px var(--danger)}
+.level.L2{background:var(--warn);color:var(--on-warn);border-color:transparent;box-shadow:0 3px 10px -4px var(--warn)}
+.level.L3{background:var(--ok);color:var(--on-solid);border-color:transparent;box-shadow:0 3px 10px -4px var(--ok)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;border:1px solid var(--line);border-radius:var(--r-pill);padding:4px 9px;color:var(--text-2);background:var(--surface-2)}
+.chip.on{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+.chip.okv{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.chip.warnv{border-color:var(--warn);color:var(--warn-ink);background:var(--warn-soft)}
+.chip.dangerv{border-color:var(--danger);color:var(--danger);background:var(--danger-soft)}
+.pillrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{font-size:11px;color:var(--text-3);border:1px solid var(--line);border-radius:var(--r-xs);padding:2px 7px}
+
+/* 4.7 Forms */
+.toolbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.toolbar .left,.toolbar .right{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.toolbar .left .caseswitch{flex:1 1 240px;min-width:190px}
+.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.formgrid.g2c{grid-template-columns:repeat(2,minmax(0,1fr))}
+.span2{grid-column:span 2}
+.span3{grid-column:span 3}
+label{display:grid;gap:6px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3)}
+input,select,textarea{
+  width:100%;background:var(--surface-inset);border:1px solid var(--line-2);border-radius:var(--r-sm);
+  color:var(--text);padding:10px 11px;font-size:13.5px;font-weight:500;text-transform:none;letter-spacing:0;
+  outline:none;transition:border-color var(--t-fast),box-shadow var(--t-fast),background var(--t-fast);
+}
+input::placeholder,textarea::placeholder{color:var(--text-3);font-weight:400}
+input:hover,select:hover,textarea:hover{border-color:var(--text-3)}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-ring)}
+textarea{min-height:92px;resize:vertical;line-height:1.6}
+select{
+  appearance:none;cursor:pointer;padding-right:32px;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 17px) calc(50% + 1px),calc(100% - 12px) calc(50% + 1px);
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+}
+select.compact{width:auto;min-width:150px;padding:8px 32px 8px 11px;font-size:12.5px;background-color:var(--surface-2)}
+.search{position:relative}
+.search .ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-3);pointer-events:none}
+.search input{padding-left:34px}
+
+/* 4.7b Button pickers — every choice is a pressable button, no dropdowns */
+.field{display:grid;gap:7px;min-width:0}
+.flabel{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3)}
+.flabel .hint{text-transform:none;letter-spacing:0;font-weight:400;color:var(--text-3);opacity:.8}
+.pickerrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(224px,1fr));gap:12px}
+
+.segmented{display:flex;flex-wrap:wrap;gap:6px}
+.segmented.stack{flex-direction:column;flex-wrap:nowrap;align-items:stretch}
+.seg{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:8px 12px;border-radius:var(--r-sm);
+  border:1px solid var(--line-2);background:var(--surface-inset);
+  color:var(--text-2);font-size:12.5px;font-weight:600;white-space:nowrap;
+  transition:background var(--t-fast),border-color var(--t-fast),color var(--t-fast),transform var(--t-fast);
+}
+.seg:hover{background:var(--surface-3);border-color:var(--text-3);color:var(--text)}
+.seg:active{transform:scale(.97)}
+.seg::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0;transition:opacity var(--t-fast)}
+.seg[aria-checked="true"]{background:var(--primary-soft);border-color:var(--primary);color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary)}
+.seg[aria-checked="true"]::before{opacity:1}
+/* ตัวเลือกที่มีความหมายทางคลินิก = ปุ่มทึบสีเต็ม เห็นความรุนแรงทันที */
+.seg[data-tone="ok"][aria-checked="true"]{background:var(--ok);border-color:var(--ok);color:var(--on-solid);box-shadow:0 5px 14px -6px var(--ok)}
+.seg[data-tone="warn"][aria-checked="true"]{background:var(--warn);border-color:var(--warn);color:var(--on-warn);box-shadow:0 5px 14px -6px var(--warn)}
+.seg[data-tone="danger"][aria-checked="true"]{background:var(--danger);border-color:var(--danger);color:var(--on-solid);box-shadow:0 5px 14px -6px var(--danger)}
+.segmented.sm .seg{padding:6px 10px;font-size:11.5px}
+.segmented.stack .seg{justify-content:flex-start;width:100%}
+
+/* Case switcher — one button per active case */
+.caseswitch{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:thin;max-width:100%}
+.casebtn{
+  display:flex;align-items:center;gap:9px;padding:7px 13px 7px 11px;flex:0 0 auto;
+  border-radius:var(--r-sm);border:1px solid var(--line-2);background:var(--surface-inset);
+  text-align:left;white-space:nowrap;
+  transition:background var(--t-fast),border-color var(--t-fast),transform var(--t-fast);
+}
+.casebtn:hover{background:var(--surface-3);border-color:var(--text-3)}
+.casebtn:active{transform:scale(.985)}
+.casebtn[aria-checked="true"]{background:var(--surface-3);border-color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary)}
+.casebtn .dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.casebtn .dot.L1{background:var(--danger);box-shadow:0 0 0 3px var(--danger-soft)}
+.casebtn .dot.L2{background:var(--warn);box-shadow:0 0 0 3px var(--warn-soft)}
+.casebtn .dot.L3{background:var(--ok);box-shadow:0 0 0 3px var(--ok-soft)}
+.casebtn .cid{display:block;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--text-2)}
+.casebtn[aria-checked="true"] .cid{color:var(--text)}
+.casebtn .cst{display:block;font-size:10.5px;color:var(--text-3);margin-top:1px}
+
+/* Popover menu (role picker) */
+.menu{position:relative}
+.menu-pop{
+  position:absolute;top:calc(100% + 8px);right:0;z-index:30;min-width:212px;
+  padding:7px;border-radius:var(--r-md);background:var(--surface-2);
+  border:1px solid var(--line-2);box-shadow:var(--shadow-3);
+  animation:fade .18s var(--ease);
+}
+.menu-pop[hidden]{display:none}
+.menu-title{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--text-3);padding:6px 10px 8px}
+.menu-item{
+  display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;border-radius:var(--r-xs);
+  color:var(--text-2);font-size:13px;font-weight:500;text-align:left;
+  transition:background var(--t-fast),color var(--t-fast);
+}
+.menu-item:hover{background:var(--surface-3);color:var(--text)}
+.menu-item[aria-checked="true"]{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.menu-item .ic{opacity:0}
+.menu-item[aria-checked="true"] .ic{opacity:1}
+
+/* 4.8 Tables */
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface-inset)}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:760px}
+th,td{padding:11px 14px;text-align:left;font-size:12.5px;white-space:nowrap;border-bottom:1px solid var(--line)}
+th{
+  position:sticky;top:0;z-index:1;background:var(--surface-2);color:var(--text-3);
+  font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+}
+tbody tr{transition:background var(--t-fast)}
+tbody tr:hover td{background:var(--surface-2)}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;font-weight:600}
+td.actions{text-align:right}
+
+/* 4.9 Timeline */
+.timeline{position:relative;padding-left:20px;display:grid;gap:1px;max-height:300px;overflow:auto}
+.timeline::before{content:"";position:absolute;left:5px;top:12px;bottom:12px;width:1px;background:linear-gradient(180deg,var(--line-2),var(--line),transparent)}
+.event{position:relative;display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;padding:7px 0;font-size:12.5px}
+.event::before{content:"";position:absolute;left:-19px;top:13px;width:9px;height:9px;border-radius:50%;background:var(--surface);border:2px solid var(--primary)}
+.event.done::before{border-color:var(--ok)}
+.event time{color:var(--primary);font-weight:700;font-variant-numeric:tabular-nums}
+.event .lb{color:var(--text-2)}
+
+/* 4.10 Callouts */
+.callout{display:flex;gap:11px;padding:13px 15px;border-radius:var(--r-md);font-size:12.5px;line-height:1.6;border:1px solid}
+.callout .ic{margin-top:1px}
+.callout.info{background:var(--primary-soft);border-color:var(--primary-soft);color:var(--text-2)}
+.callout.info .ic{color:var(--primary)}
+.callout.warn{background:var(--warn-soft);border-color:var(--warn-soft);color:var(--text-2)}
+.callout.warn .ic{color:var(--warn)}
+.callout.danger{background:var(--danger-soft);border-color:var(--danger-soft);color:var(--text-2)}
+.callout.danger .ic{color:var(--danger)}
+.callout b{color:var(--text)}
+
+/* 4.11 Progress + meters */
+.meter{display:grid;gap:6px;padding:10px 0;border-bottom:1px solid var(--line)}
+.meter:last-child{border-bottom:0}
+.meter .mtop{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12.5px}
+.meter .mtop span{color:var(--text-3)}
+.meter .mtop b{font-size:15px;font-weight:700}
+.meter .mtop b small{font-size:11px;font-weight:500;color:var(--text-3);margin-left:3px}
+.track{height:6px;background:var(--surface-3);border-radius:var(--r-pill);overflow:hidden}
+.track>i{display:block;height:100%;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--primary),var(--primary-2));transition:width .6s var(--ease)}
+.track>i.over{background:linear-gradient(90deg,var(--warn),var(--danger))}
+.track>i.good{background:linear-gradient(90deg,var(--ok),var(--info))}
+
+/* Triage distribution bar */
+.stackbar{display:flex;height:10px;border-radius:var(--r-pill);overflow:hidden;background:var(--surface-3);gap:2px}
+.stackbar i{display:block;height:100%;transition:width .6s var(--ease)}
+.stackbar i.s1{background:var(--danger)}
+.stackbar i.s2{background:var(--warn)}
+.stackbar i.s3{background:var(--ok)}
+
+/* 4.12 XABCDE tiles */
+.checkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(152px,1fr));gap:10px}
+.checktile{border:1px solid var(--line);background:var(--surface-inset);border-radius:var(--r-md);padding:12px;transition:border-color var(--t-fast)}
+.checktile:focus-within{border-color:var(--primary)}
+.checktile .k{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.checktile .k b{font-size:17px;font-weight:800;letter-spacing:-.02em;color:var(--gold)}
+.checktile .k .ic{color:var(--text-3)}
+
+/* 4.13 Empty states */
+.empty{display:grid;justify-items:center;text-align:center;gap:5px;padding:26px 16px;color:var(--text-3)}
+.empty .ic{color:var(--text-3);opacity:.55;margin-bottom:4px}
+.empty b{font-size:13px;font-weight:600;color:var(--text-2)}
+.empty span{font-size:12px;max-width:34ch;line-height:1.5}
+
+/* 4.14 Charts */
+.chart{width:100%;height:230px;display:block;border-radius:var(--r-md);background:var(--surface-inset);border:1px solid var(--line)}
+.chart.tall{height:250px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11.5px;color:var(--text-3)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:middle}
+
+/* 4.15 Toast */
+.toast{
+  position:fixed;right:22px;bottom:22px;z-index:100;max-width:380px;
+  display:flex;align-items:flex-start;gap:11px;
+  padding:13px 16px;border-radius:var(--r-md);
+  background:var(--surface-2);border:1px solid var(--line-2);box-shadow:var(--shadow-3);
+  font-size:13px;font-weight:500;
+  opacity:0;transform:translateY(12px) scale(.97);pointer-events:none;
+  transition:opacity var(--t-med),transform var(--t-med);
+}
+.toast.show{opacity:1;transform:none;pointer-events:auto}
+.toast .ic{color:var(--ok);flex:0 0 auto;margin-top:1px}
+.toast[data-kind=err] .ic{color:var(--danger)}
+.toast[data-kind=warn] .ic{color:var(--warn)}
+
+/* 4.16 View switching */
+.view{display:none;animation:fade .32s var(--ease)}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ---------- 5 · RESPONSIVE ---------- */
+@media(max-width:1240px){
+  .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .split{grid-template-columns:1fr}
+}
+@media(max-width:1080px){
+  .shell{grid-template-columns:74px minmax(0,1fr)}
+  .sidebar{padding:16px 10px}
+  .brand{justify-content:center;padding:2px 0 16px}
+  .brand-text,.nav .txt,.nav-label,.nav .count,.sidefoot{display:none}
+  .nav button{justify-content:center;padding:11px 0}
+  .nav button.active::before{left:-2px}
+  .g3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .span3{grid-column:span 2}
+  .checkgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .content{padding:20px}
+}
+@media(max-width:760px){
+  .shell{display:block}
+  .sidebar{
+    position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;z-index:40;
+    flex-direction:row;border-right:0;border-top:1px solid var(--line);padding:6px 8px;
+    padding-bottom:calc(6px + env(safe-area-inset-bottom));
+  }
+  .sidebar::after{display:none}
+  .brand{display:none}
+  .nav{display:flex;gap:2px;width:100%;overflow-x:auto;margin:0;padding:0;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .nav button{flex-direction:column;gap:3px;min-width:62px;padding:7px 4px;font-size:9.5px}
+  .nav button .txt{display:block;font-size:9.5px;letter-spacing:.01em}
+  .nav button.active::before{display:none}
+  .nav button.active{background:var(--primary-soft)}
+  .nav button.active .ic{color:var(--primary)}
+  .main{padding-bottom:74px}
+  .topbar{padding:9px 14px}
+  .topbar .place .mark{display:none}
+  .topbar .badge{display:none}
+  .topbar .tools .txt{display:none}
+  .topbar .tools .btn.ghost{padding:9px;width:36px;height:36px}
+  .topbar select.compact{min-width:0;max-width:140px}
+  .content{padding:14px}
+  .g2,.g3,.g4,.split{grid-template-columns:1fr}
+  .formgrid,.formgrid.g2c{grid-template-columns:1fr}
+  .span2,.span3{grid-column:span 1}
+  .checkgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .toolbar .left,.toolbar .right{width:100%;flex:0 0 auto!important}
+  .toolbar .right .btn{flex:1 1 auto}
+  .pickerrow{grid-template-columns:1fr}
+  .page-head h2{font-size:22px}
+  .kpi b{font-size:26px}
+  .toast{left:14px;right:14px;bottom:82px;max-width:none}
+}
+
+/* ---------- 6 · PRINT ---------- */
+@media print{
+  :root{color-scheme:light}
+  .sidebar,.topbar,.no-print,.btn,.toast{display:none!important}
+  body{background:#fff!important;color:#000!important;font-size:11pt}
+  .shell{display:block}
+  .content{padding:0;max-width:none}
+  .view{display:none!important}
+  .view.active{display:block!important}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ccc;background:#fff;color:#000;padding:12px}
+  .card-title,.page-head h2{color:#000}
+  .tablewrap{overflow:visible;border:1px solid #ccc}
+  th{background:#eee;color:#000}
+  .grid{gap:10px}
+}
+</style>
+</head>
+<body class="auth-locked">
+
+<!-- ===== Icon sprite ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l2.5-7 4 14L16 12h5"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></symbol>
+<symbol id="i-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M7.8 16.2a6 6 0 0 1 0-8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 19.1a10 10 0 0 1 0-14.2M19.1 4.9a10 10 0 0 1 0 14.2"/></symbol>
+<symbol id="i-ambulance" viewBox="0 0 24 24"><path d="M2 17V8a1 1 0 0 1 1-1h11v10M14 10h4l3 3.5V17M2 17h2m4 0h8m3 0h2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 9.5v3M6.5 11h3"/></symbol>
+<symbol id="i-command" viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="14" rx="2.5"/><path d="M7 11h2.6l1.4-3 2 6 1.4-3H17M9 21h6"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4.2 6h.01M4.2 12h.01M4.2 18h.01"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4h12l-2.4 4L17 12H5"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h8M17 7h3M4 17h4M13 17h7"/><circle cx="14.5" cy="7" r="2.3"/><circle cx="10.5" cy="17" r="2.3"/></symbol>
+<symbol id="i-hospital" viewBox="0 0 24 24"><path d="M3 21h18M5 21V6.5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1V21M12 8v5M9.5 10.5h5M10 21v-4h4v4"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></symbol>
+<symbol id="i-stopwatch" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.5M9.5 2.5h5M12 2.5v3M18.5 6.5l1.5-1.5"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.6 3.8 2.6 17.4A1.6 1.6 0 0 0 4 19.9h16a1.6 1.6 0 0 0 1.4-2.5L13.4 3.8a1.6 1.6 0 0 0-2.8 0Z"/><path d="M12 9v4M12 16.6h.01"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+<symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m8.3 12.2 2.6 2.6 4.8-5.4"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4.5-4.5L12 15l4.5-4.5M4 20h16"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-4.5 4.5L12 4l4.5 4.5M4 20h16"/></symbol>
+<symbol id="i-printer" viewBox="0 0 24 24"><path d="M7 8.5V3.5h10v5M7 18H5a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2"/><rect x="7" y="14" width="10" height="6.5" rx="1"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11.5" height="11.5" rx="2"/><path d="M5.5 15H4.5a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1H14a1 1 0 0 1 1 1v1"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M21.5 2.5 10.5 13.5M21.5 2.5l-7 19-4-8.5-8.5-4Z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 6.5h16M9.5 6.5V4.2h5v2.3M6.5 6.5 7.4 20a1 1 0 0 0 1 .9h7.2a1 1 0 0 0 1-.9l.9-13.5M10.5 10.5v6M13.5 10.5v6"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.8"/><path d="m20.5 20.5-4.7-4.7"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.5A8.6 8.6 0 0 1 9.5 3.6a8.8 8.8 0 1 0 11 10.9Z"/></symbol>
+<symbol id="i-chev-right" viewBox="0 0 24 24"><path d="m9.5 5.5 7 6.5-7 6.5"/></symbol>
+<symbol id="i-chev-down" viewBox="0 0 24 24"><path d="m5.5 9 6.5 7 6.5-7"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.5s7-6.2 7-11.4a7 7 0 1 0-14 0c0 5.2 7 11.4 7 11.4Z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+<symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 3.2s6 6.5 6 10.4A6 6 0 0 1 6 13.6C6 9.7 12 3.2 12 3.2Z"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5S3.5 15 3.5 9.2A4.7 4.7 0 0 1 12 6.4a4.7 4.7 0 0 1 8.5 2.8C20.5 15 12 20.5 12 20.5Z"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 19 6v5.5c0 4.6-3 7.8-7 9.4-4-1.6-7-4.8-7-9.4V6Z"/><path d="m9 12 2.2 2.2L15.2 10"/></symbol>
+<symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7.5" ry="3"/><path d="M4.5 6v12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V6M4.5 12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11.5A8 8 0 1 0 18 17M20 5.5V11h-5.5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8h.01"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m10.2 8.6 5.3 3.4-5.3 3.4Z"/></symbol>
+<symbol id="i-inbox" viewBox="0 0 24 24"><path d="M20.5 13.5h-5l-1.5 3h-4l-1.5-3h-5M6.2 4.5h11.6a1 1 0 0 1 .9.6l2.3 5a1 1 0 0 1 .1.4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 .1-.4l2.3-5a1 1 0 0 1 .8-.6Z"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20.5V4M4 20.5h16M8 17V11M12.5 17V6.5M17 17v-4"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-siren" viewBox="0 0 24 24"><path d="M6.5 14a5.5 5.5 0 0 1 11 0v3.5h-11ZM4 21h16M12 3.5V2M5.5 6 4.4 4.9M18.5 6l1.1-1.1"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3.5H6.5a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V8Z"/><path d="M14 3.5V8h4.5M8.5 13h7M8.5 16.5h4.5"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8.5V5a1 1 0 0 1 1-1h3.5M15.5 4H19a1 1 0 0 1 1 1v3.5M20 15.5V19a1 1 0 0 1-1 1h-3.5M8.5 20H5a1 1 0 0 1-1-1v-3.5M4 12h16"/></symbol>
+<symbol id="i-team" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.3"/><path d="M2.8 19.5a6.2 6.2 0 0 1 12.4 0M16 5.6a3.3 3.3 0 0 1 0 5.9M17.6 14.2a6.2 6.2 0 0 1 3.6 5.3"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10" width="15" height="10.5" rx="2"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/></symbol>
+</defs></svg>
+
+<section class="auth-gate" id="authGate" aria-labelledby="authGateTitle">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="logo"><svg class="ic" aria-hidden="true"><use href="#i-pulse"/></svg></div>
+      <div>
+        <div class="brand-name">TraumaLink&nbsp;360</div>
+        <div class="brand-sub">Secure Trauma Continuum</div>
+      </div>
+    </div>
+    <h1 class="auth-title" id="authGateTitle">เข้าสู่ระบบเพื่อดูรายชื่อผู้ป่วย</h1>
+    <p class="auth-copy">ข้อมูลผู้ป่วยเปิดให้เฉพาะบัญชีเจ้าหน้าที่ที่ผ่าน Supabase Auth เท่านั้น</p>
+    <form class="auth-form" id="authGateForm" onsubmit="event.preventDefault();signInSupabase('gate')">
+      <div class="field">
+        <label for="authGateEmail">อีเมลเจ้าหน้าที่</label>
+        <div class="input-wrap">
+          <svg class="ic ic-sm" aria-hidden="true"><use href="#i-user"/></svg>
+          <input id="authGateEmail" type="email" autocomplete="username" placeholder="staff@hospital.org" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="authGatePassword">รหัสผ่าน</label>
+        <div class="input-wrap">
+          <svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg>
+          <input id="authGatePassword" type="password" autocomplete="current-password" placeholder="••••••••" required>
+        </div>
+      </div>
+      <button type="submit" class="btn primary auth-submit" id="authGateSubmit">
+        <svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg>เข้าสู่ระบบ
+      </button>
+      <p class="auth-status" id="authGateStatus" role="status" aria-live="polite">กำลังตรวจสอบการเชื่อมต่อ Supabase…</p>
+    </form>
+    <div class="auth-security"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-shield"/></svg><span>ระบบจะล้างข้อมูลผู้ป่วยออกจาก local cache เมื่อออกจากระบบ</span></div>
+  </div>
+</section>
+
+<div class="shell" id="appShell" aria-hidden="true" inert>
+
+<!-- ===== Sidebar ===== -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="logo"><svg class="ic" aria-hidden="true"><use href="#i-pulse"/></svg></div>
+    <div class="brand-text">
+      <div class="brand-name">TraumaLink&nbsp;360</div>
+      <div class="brand-sub">Trauma Continuum</div>
+    </div>
+  </div>
+
+  <nav class="nav" id="nav" aria-label="เมนูหลัก">
+    <div class="nav-label">Operations</div>
+    <button type="button" class="active" data-view="dashboard" aria-current="page"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg><span class="txt">Dashboard</span><span class="count" id="navCountLive"></span></button>
+    <button type="button" data-view="dispatch"><svg class="ic" aria-hidden="true"><use href="#i-radio"/></svg><span class="txt">Dispatch</span></button>
+    <button type="button" data-view="prehospital"><svg class="ic" aria-hidden="true"><use href="#i-ambulance"/></svg><span class="txt">Pre-hospital</span></button>
+    <button type="button" data-view="command"><svg class="ic" aria-hidden="true"><use href="#i-command"/></svg><span class="txt">ER Command</span></button>
+    <div class="nav-label">Quality</div>
+    <button type="button" data-view="registry"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="txt">Registry</span></button>
+    <button type="button" data-view="pips"><svg class="ic" aria-hidden="true"><use href="#i-flag"/></svg><span class="txt">PIPS</span><span class="count" id="navCountPips"></span></button>
+    <div class="nav-label">System</div>
+    <button type="button" data-view="settings"><svg class="ic" aria-hidden="true"><use href="#i-settings"/></svg><span class="txt">Settings</span></button>
+  </nav>
+
+  <div class="sidefoot">
+    <div class="row"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg><span id="storageLabel">Local cache · ยังไม่เชื่อม Supabase</span></div>
+    <div class="row"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-database"/></svg><span id="footCases">0 เคสในระบบ</span></div>
+  </div>
+</aside>
+
+<!-- ===== Main ===== -->
+<main class="main">
+  <header class="topbar">
+    <div class="place">
+      <div class="mark"><svg class="ic" aria-hidden="true"><use href="#i-hospital"/></svg></div>
+      <div>
+        <b id="hospitalNameTop">Trauma Center</b>
+        <span id="topClock">Trauma Digital Pathway</span>
+      </div>
+    </div>
+    <div class="tools">
+      <button type="button" class="badge no-print" id="dbStatusBadge" data-state="offline" onclick="go('settings')" title="เปิดการตั้งค่า Supabase"><i class="statusdot"></i><span id="dbStatusText">Local cache</span></button>
+      <div class="menu no-print">
+        <button type="button" class="btn" id="roleBtn" onclick="toggleMenu('roleMenu')" aria-haspopup="true" aria-expanded="false" title="เลือกบทบาทผู้ใช้งาน">
+          <svg class="ic ic-sm" aria-hidden="true"><use href="#i-user"/></svg>
+          <span id="roleLabel" class="txt">ER Physician</span>
+          <svg class="ic ic-sm" aria-hidden="true"><use href="#i-chev-down"/></svg>
+        </button>
+        <div class="menu-pop" id="roleMenu" role="radiogroup" aria-label="บทบาทผู้ใช้งาน" hidden>
+          <div class="menu-title">บทบาทผู้ใช้งาน</div>
+          <button type="button" class="menu-item" role="radio" data-role="ER Physician" aria-checked="true" onclick="setRole('ER Physician')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>ER Physician</button>
+          <button type="button" class="menu-item" role="radio" data-role="EMS" aria-checked="false" onclick="setRole('EMS')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>EMS</button>
+          <button type="button" class="menu-item" role="radio" data-role="Dispatch" aria-checked="false" onclick="setRole('Dispatch')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>Dispatch</button>
+          <button type="button" class="menu-item" role="radio" data-role="Trauma Nurse" aria-checked="false" onclick="setRole('Trauma Nurse')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>Trauma Nurse</button>
+          <button type="button" class="menu-item" role="radio" data-role="Admin" aria-checked="false" onclick="setRole('Admin')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>Admin</button>
+        </div>
+        <input type="hidden" id="roleSelect" value="ER Physician">
+      </div>
+      <button type="button" class="btn icon no-print" id="themeBtn" onclick="toggleTheme()" title="สลับธีมสว่าง/มืด" aria-label="สลับธีม"><svg class="ic" aria-hidden="true"><use href="#i-sun" id="themeIcon"/></svg></button>
+    </div>
+  </header>
+
+  <div class="content">
+
+<!-- ============ DASHBOARD ============ -->
+<section class="view active" id="view-dashboard" aria-label="Dashboard">
+  <div class="page-head">
+    <div class="eyebrow">Command Center</div>
+    <h2>Trauma Command Dashboard</h2>
+    <p class="sub">ภาพรวมผู้บาดเจ็บแบบ episode เดียว ตั้งแต่รับแจ้งเหตุ ก่อนถึงโรงพยาบาล ห้องฉุกเฉิน จนถึง outcome และการทบทวนคุณภาพ</p>
+  </div>
+
+  <div class="grid g4">
+    <button type="button" class="kpi" data-tone="gold" onclick="go('registry')">
+      <div><span class="eyebrow">Trauma วันนี้</span><b id="kpiToday">0</b><span class="kpi-note"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-chart"/></svg>ดูทะเบียนทั้งหมด</span></div>
+      <span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-pulse"/></svg></span>
+    </button>
+    <button type="button" class="kpi" data-tone="primary" onclick="go('command')">
+      <div><span class="eyebrow">กำลังนำส่ง</span><b id="kpiIncoming">0</b><span class="kpi-note"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-ambulance"/></svg>เตรียมรับที่ ER</span></div>
+      <span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-ambulance"/></svg></span>
+    </button>
+    <button type="button" class="kpi" data-tone="danger" onclick="go('dispatch')">
+      <div><span class="eyebrow">Level 1</span><b id="kpiL1">0</b><span class="kpi-note"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-siren"/></svg>ต้องเปิด trauma team</span></div>
+      <span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-siren"/></svg></span>
+    </button>
+    <button type="button" class="kpi" data-tone="warn" onclick="go('pips')">
+      <div><span class="eyebrow">PIPS Flag</span><b id="kpiPips">0</b><span class="kpi-note"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-flag"/></svg>รอการทบทวน</span></div>
+      <span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-flag"/></svg></span>
+    </button>
+  </div>
+
+  <div class="grid g2 mt">
+    <div class="card featured">
+      <div class="card-head">
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-siren"/></svg>Live Cases <small>เรียงตามความเร่งด่วน</small></div>
+        <button type="button" class="btn sm ghost" onclick="go('dispatch')">ทั้งหมด<svg class="ic ic-sm" aria-hidden="true"><use href="#i-chev-right"/></svg></button>
+      </div>
+      <div id="liveCases" class="rowlist"></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg>Trauma Volume <small>7 วันล่าสุด</small></div>
+        <button type="button" class="btn sm ghost icon" onclick="refreshAll()" title="รีเฟรช" aria-label="รีเฟรช"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+      </div>
+      <canvas id="volumeChart" class="chart"></canvas>
+    </div>
+  </div>
+
+  <div class="grid g3 mt">
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-stopwatch"/></svg>Time Performance</div></div>
+      <div id="timeKpi"></div>
+      <div style="margin-top:14px">
+        <div class="metric" style="border:0;padding-bottom:8px"><span>Triage mix</span><b id="triageMixLabel" class="mono">—</b></div>
+        <div class="stackbar" id="triageMix" role="img" aria-label="สัดส่วนระดับ triage"><i class="s1" style="width:0"></i><i class="s2" style="width:0"></i><i class="s3" style="width:0"></i></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-target"/></svg>Mechanism of Injury</div></div>
+      <canvas id="moiChart" class="chart"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>Latest Alerts</div>
+        <button type="button" class="btn sm ghost" onclick="go('pips')">PIPS<svg class="ic ic-sm" aria-hidden="true"><use href="#i-chev-right"/></svg></button>
+      </div>
+      <div id="latestAlerts" class="rowlist"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DISPATCH ============ -->
+<section class="view" id="view-dispatch" aria-label="Dispatch">
+  <div class="page-head">
+    <div class="eyebrow">Step 1 · Notification</div>
+    <h2>Dispatch &amp; Incident</h2>
+    <p class="sub">สร้าง Trauma Case ตั้งแต่รับแจ้งเหตุ ระบบบันทึก timeline “Call received / Dispatch” ให้อัตโนมัติ</p>
+  </div>
+
+  <div class="split">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>สร้างเคสใหม่</div>
+        <button type="button" class="btn sm ghost" onclick="setNow('d_incidentTime')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-clock"/></svg>เวลาปัจจุบัน</button>
+      </div>
+      <div class="formgrid">
+        <label>วันเวลาเกิดเหตุ<input id="d_incidentTime" type="datetime-local"></label>
+        <label>จำนวนผู้บาดเจ็บ<input id="d_count" type="number" min="1" value="1"></label>
+        <label>อายุโดยประมาณ<input id="d_age" type="number" min="0" max="120" placeholder="ปี"></label>
+
+        <div class="field span3">
+          <span class="flabel">ประเภทเหตุ <span class="hint">— เลือก 1 รายการ</span></span>
+          <div class="segmented" data-picker="d_moi" role="radiogroup" aria-label="ประเภทเหตุ"
+               data-options="Motorcycle crash|Car crash|Pedestrian|Fall|Blunt trauma|Penetrating trauma!danger|Assault|Burn!warn|Other"></div>
+        </div>
+        <input type="hidden" id="d_moi" value="Motorcycle crash">
+
+        <div class="span3 pickerrow">
+          <div class="field">
+            <span class="flabel">เพศ</span>
+            <div class="segmented sm" data-picker="d_sex" role="radiogroup" aria-label="เพศ"
+                 data-options="Unknown=ไม่ทราบ|Male=ชาย|Female=หญิง|Other=อื่น ๆ"></div>
+          </div>
+          <div class="field">
+            <span class="flabel">ระดับหน่วย</span>
+            <div class="segmented sm" data-picker="d_unitLevel" role="radiogroup" aria-label="ระดับหน่วย"
+                 data-options="ALS|BLS|FR"></div>
+          </div>
+          <div class="field">
+            <span class="flabel">หมวกนิรภัย / เข็มขัด</span>
+            <div class="segmented sm" data-picker="d_protection" role="radiogroup" aria-label="อุปกรณ์นิรภัย"
+                 data-options="Unknown=ไม่ทราบ|Used=ใช้!ok|Not used=ไม่ใช้!danger|Not applicable=ไม่เกี่ยวข้อง"></div>
+          </div>
+          <div class="field">
+            <span class="flabel">สงสัยแอลกอฮอล์</span>
+            <div class="segmented sm" data-picker="d_alcohol" role="radiogroup" aria-label="แอลกอฮอล์"
+                 data-options="Unknown=ไม่ทราบ|No=ไม่มี!ok|Suspected=สงสัย!warn|Confirmed=ยืนยัน!danger"></div>
+          </div>
+        </div>
+        <input type="hidden" id="d_sex" value="Unknown">
+        <input type="hidden" id="d_unitLevel" value="ALS">
+        <input type="hidden" id="d_protection" value="Unknown">
+        <input type="hidden" id="d_alcohol" value="Unknown">
+
+        <label>ETA ถึง รพ. (นาที)<input id="d_eta" type="number" min="0" placeholder="เช่น 15"></label>
+        <label>หน่วย EMS<input id="d_unit" placeholder="ALS-01 / BLS-02"></label>
+        <label>พิกัด GPS<input id="d_gps" placeholder="16.0000,103.0000"></label>
+        <label class="span2">จุดเกิดเหตุ<input id="d_location" placeholder="สถานที่ / ถนน / หมู่บ้าน"></label>
+        <label>ปลายทาง<input id="d_destination" placeholder="โรงพยาบาลปลายทาง"></label>
+        <label class="span3">ข้อมูลจากผู้แจ้ง<textarea id="d_note" placeholder="mechanism, ติดคาซาก, เลือดออกมาก, สารเคมี, จำนวนรถที่ต้องการ..."></textarea></label>
+      </div>
+      <div class="toolbar" style="margin:16px 0 0">
+        <button type="button" class="btn ghost" onclick="clearDispatchForm()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-x"/></svg>ล้างฟอร์ม</button>
+        <button type="button" class="btn primary" onclick="createCase()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-plus"/></svg>สร้าง Trauma Case</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-radio"/></svg>Active Dispatch <small>10 รายการล่าสุด</small></div></div>
+      <div id="dispatchList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRE-HOSPITAL ============ -->
+<section class="view" id="view-prehospital" aria-label="Pre-hospital">
+  <div class="page-head">
+    <div class="eyebrow">Step 2 · Scene &amp; Transport</div>
+    <h2>Pre-hospital Trauma</h2>
+    <p class="sub">Scene assessment แบบ XABCDE, serial vital signs, intervention และการแจ้ง pre-arrival ให้ ER ล่วงหน้า</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="left" style="flex:1 1 340px;min-width:0">
+      <span class="flabel" style="flex:0 0 auto">เคส</span>
+      <div class="caseswitch" id="ph_caseBar" role="radiogroup" aria-label="เลือกเคส"></div>
+      <input type="hidden" id="ph_case">
+      <span id="ph_caseLevel"></span>
+    </div>
+    <div class="right">
+      <button type="button" class="btn" onclick="markTimeline('scene_arrival','Scene arrival')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-pin"/></svg>ถึงจุดเกิดเหตุ</button>
+      <button type="button" class="btn" onclick="markTimeline('depart_scene','Depart scene')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-ambulance"/></svg>ออกจากจุดเกิดเหตุ</button>
+      <button type="button" class="btn primary" onclick="buildPrearrival()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-send"/></svg>สร้าง Pre-arrival</button>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>XABCDE Primary Survey</div></div>
+      <div class="checkgrid">
+        <div class="checktile">
+          <div class="k"><b>X</b><svg class="ic ic-sm" aria-hidden="true"><use href="#i-droplet"/></svg></div>
+          <div class="field"><span class="flabel">Major hemorrhage</span>
+            <div class="segmented stack sm" data-picker="x_bleed" role="radiogroup" aria-label="Major hemorrhage"
+                 data-options="No!ok|Controlled!warn|Uncontrolled!danger"></div></div>
+          <input type="hidden" id="x_bleed" value="No">
+        </div>
+        <div class="checktile">
+          <div class="k"><b>A</b><svg class="ic ic-sm" aria-hidden="true"><use href="#i-scan"/></svg></div>
+          <div class="field"><span class="flabel">Airway</span>
+            <div class="segmented stack sm" data-picker="a_airway" role="radiogroup" aria-label="Airway"
+                 data-options="Patent!ok|Threatened!warn|Obstructed!danger|Intubated"></div></div>
+          <input type="hidden" id="a_airway" value="Patent">
+        </div>
+        <div class="checktile">
+          <div class="k"><b>B</b><svg class="ic ic-sm" aria-hidden="true"><use href="#i-pulse"/></svg></div>
+          <div class="field"><span class="flabel">Breathing</span>
+            <div class="segmented stack sm" data-picker="b_breath" role="radiogroup" aria-label="Breathing"
+                 data-options="Adequate!ok|Distress!warn|Absent breath sound!danger|Ventilated"></div></div>
+          <input type="hidden" id="b_breath" value="Adequate">
+        </div>
+        <div class="checktile">
+          <div class="k"><b>C</b><svg class="ic ic-sm" aria-hidden="true"><use href="#i-heart"/></svg></div>
+          <div class="field"><span class="flabel">Circulation</span>
+            <div class="segmented stack sm" data-picker="c_circ" role="radiogroup" aria-label="Circulation"
+                 data-options="Stable!ok|Shock suspected!warn|Active bleeding!danger"></div></div>
+          <input type="hidden" id="c_circ" value="Stable">
+        </div>
+        <div class="checktile">
+          <div class="k"><b>D/E</b><svg class="ic ic-sm" aria-hidden="true"><use href="#i-eye"/></svg></div>
+          <div class="field"><span class="flabel">Exposure / Neuro</span>
+            <div class="segmented stack sm" data-picker="de_status" role="radiogroup" aria-label="Exposure / Neuro"
+                 data-options="Completed!ok|Incomplete!warn"></div></div>
+          <input type="hidden" id="de_status" value="Completed">
+        </div>
+      </div>
+      <div class="toolbar" style="margin:16px 0 0">
+        <span class="tag">บันทึกแล้วระบบจะคำนวณ triage level ใหม่ทันที</span>
+        <button type="button" class="btn ok" onclick="savePrimary()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>บันทึก XABCDE</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg>Vital Signs <small>บันทึกซ้ำเพื่อดู trend</small></div>
+        <div class="pillrow"><span class="chip" id="siPill">SI —</span><span class="chip" id="rtsPill">RTS —</span></div>
+      </div>
+      <div class="formgrid">
+        <label>SBP<input id="v_sbp" type="number" min="0" max="300" placeholder="mmHg"></label>
+        <label>DBP<input id="v_dbp" type="number" min="0" max="200" placeholder="mmHg"></label>
+        <label>HR<input id="v_hr" type="number" min="0" max="300" placeholder="/min"></label>
+        <label>RR<input id="v_rr" type="number" min="0" max="80" placeholder="/min"></label>
+        <label>SpO₂<input id="v_spo2" type="number" min="0" max="100" placeholder="%"></label>
+        <label>GCS<input id="v_gcs" type="number" min="3" max="15" placeholder="3–15"></label>
+      </div>
+      <div class="toolbar" style="margin:14px 0 0">
+        <button type="button" class="btn ghost sm" onclick="clearVitalForm()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-x"/></svg>ล้างค่า</button>
+        <button type="button" class="btn ok" onclick="addVital()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-plus"/></svg>เพิ่ม Vital</button>
+      </div>
+      <canvas id="vitalChart" class="chart tall" style="margin-top:14px"></canvas>
+      <div class="legend"><span><i style="background:var(--primary)"></i>SBP</span><span><i style="background:var(--ok)"></i>HR</span><span><i style="background:var(--warn)"></i>GCS ×10</span></div>
+      <div id="vitalList" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div class="grid g2 mt">
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>Intervention</div></div>
+      <div class="formgrid">
+        <div class="field span3">
+          <span class="flabel">ประเภทหัตถการ</span>
+          <div class="segmented sm" data-picker="i_type" role="radiogroup" aria-label="ประเภทหัตถการ"
+               data-options="Oxygen|Airway|ETT|IV|IO|Fluid|Blood product!danger|Tourniquet!danger|Pelvic binder!warn|Splint|Medication|Chest procedure!warn|Other"></div>
+        </div>
+        <input type="hidden" id="i_type" value="Oxygen">
+        <label class="span3">รายละเอียด<input id="i_detail" placeholder="เช่น O2 NRBM 10 L/min"></label>
+      </div>
+      <div class="toolbar" style="margin:14px 0 6px">
+        <span class="tag">Enter เพื่อบันทึกเร็ว</span>
+        <button type="button" class="btn" onclick="addIntervention()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-plus"/></svg>เพิ่ม Intervention</button>
+      </div>
+      <div id="interventionList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Pre-arrival / MIST</div></div>
+      <label class="sr-only" for="prearrivalText">ข้อความ pre-arrival</label>
+      <textarea id="prearrivalText" style="min-height:196px" class="mono" readonly placeholder="กด “สร้าง Pre-arrival” เพื่อสร้างข้อความ MIST สำหรับแจ้ง ER"></textarea>
+      <div class="callout info" style="margin-top:12px"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg><div>ส่งผ่าน <b>webhook ฝั่ง server</b> เท่านั้น — ไม่เก็บ LINE token ไว้ในไฟล์ HTML</div></div>
+      <div class="toolbar" style="margin:12px 0 0">
+        <button type="button" class="btn" onclick="copyPrearrival()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-copy"/></svg>คัดลอก</button>
+        <button type="button" class="btn primary" onclick="sendWebhook()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-send"/></svg>ส่ง Webhook</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ER COMMAND ============ -->
+<section class="view" id="view-command" aria-label="ER Command">
+  <div class="page-head">
+    <div class="eyebrow">Step 3 · Resuscitation</div>
+    <h2>ER Trauma Command</h2>
+    <p class="sub">รับช่วงข้อมูลจาก EMS โดยไม่ต้องกรอกซ้ำ พร้อมติดตาม investigation, consult และ disposition ในหน้าเดียว</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="left" style="flex:1 1 340px;min-width:0">
+      <span class="flabel" style="flex:0 0 auto">เคส</span>
+      <div class="caseswitch" id="er_caseBar" role="radiogroup" aria-label="เลือกเคส"></div>
+      <input type="hidden" id="er_case">
+      <span id="er_level"></span>
+    </div>
+    <div class="right">
+      <button type="button" class="btn ok" onclick="markTimelineER('er_arrival','ER arrival')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-hospital"/></svg>ER Arrival</button>
+      <button type="button" class="btn" onclick="markTimelineER('trauma_team','Trauma team activated')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-team"/></svg>เปิด Trauma Team</button>
+      <button type="button" class="btn" onclick="window.print()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-printer"/></svg>พิมพ์เคส</button>
+    </div>
+  </div>
+
+  <div class="grid g3">
+    <div class="card"><div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg>Patient / Injury</div></div><div id="erSummary"></div></div>
+    <div class="card"><div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg>Latest Vital</div></div><div id="erVital"></div></div>
+    <div class="card"><div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg>Timeline</div></div><div id="erTimeline" class="timeline"></div></div>
+  </div>
+
+  <div class="grid g2 mt">
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-scan"/></svg>Investigation / Procedure</div></div>
+      <div class="formgrid">
+        <div class="field span3">
+          <span class="flabel">รายการตรวจ</span>
+          <div class="segmented sm" data-picker="er_inv" role="radiogroup" aria-label="รายการตรวจ"
+               data-options="eFAST|CXR|CT Brain|CT C-spine|CT Chest|CT Abdomen|CBC|Lactate|Crossmatch!warn|Other"></div>
+        </div>
+        <input type="hidden" id="er_inv" value="eFAST">
+        <div class="field span3">
+          <span class="flabel">สถานะ</span>
+          <div class="segmented sm" data-picker="er_invStatus" role="radiogroup" aria-label="สถานะการตรวจ"
+               data-options="Ordered|Done|Resulted!ok"></div>
+        </div>
+        <input type="hidden" id="er_invStatus" value="Ordered">
+        <label class="span3">ผล / หมายเหตุ<input id="er_invResult" placeholder="เช่น Free fluid RUQ"></label>
+      </div>
+      <div class="toolbar" style="margin:14px 0 6px">
+        <span class="tag">CT ที่ Done/Resulted จะบันทึกเวลา Door-to-CT ให้อัตโนมัติ</span>
+        <button type="button" class="btn" onclick="addInvestigation()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-plus"/></svg>เพิ่มรายการ</button>
+      </div>
+      <div id="invList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-team"/></svg>Consult &amp; Disposition</div></div>
+      <div class="formgrid">
+        <div class="field span3">
+          <span class="flabel">ทีมที่ปรึกษา</span>
+          <div class="segmented sm" data-picker="er_consult" role="radiogroup" aria-label="ทีมที่ปรึกษา"
+               data-options="General Surgery|Orthopedics|Neurosurgery!warn|Anesthesia|Blood Bank!danger|Other"></div>
+        </div>
+        <input type="hidden" id="er_consult" value="General Surgery">
+        <div class="field span3">
+          <span class="flabel">สถานะ</span>
+          <div class="segmented sm" data-picker="er_consultStatus" role="radiogroup" aria-label="สถานะ consult"
+               data-options="Requested|ACK|Arrived!ok"></div>
+        </div>
+        <input type="hidden" id="er_consultStatus" value="Requested">
+        <label class="span3">หมายเหตุ<input id="er_consultNote" placeholder="ชื่อแพทย์ / คำสั่ง"></label>
+      </div>
+      <div class="toolbar" style="margin:14px 0 6px">
+        <span></span>
+        <button type="button" class="btn" onclick="addConsult()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-plus"/></svg>บันทึก Consult</button>
+      </div>
+      <div id="consultList"></div>
+
+      <hr>
+      <div class="formgrid">
+        <div class="field span3">
+          <span class="flabel">Disposition <span class="hint">— ปลายทางของผู้ป่วย</span></span>
+          <div class="segmented sm" data-picker="er_disp" role="radiogroup" aria-label="Disposition"
+               data-options="Observation|Ward|ICU!warn|OR!warn|Refer|Discharge!ok|Death!danger"></div>
+        </div>
+        <input type="hidden" id="er_disp" value="Observation">
+        <label class="span3">หมายเหตุ<input id="er_dispNote" placeholder="เช่น Exploratory laparotomy"></label>
+      </div>
+      <div class="toolbar" style="margin:14px 0 0">
+        <span></span>
+        <button type="button" class="btn primary" onclick="saveDisposition()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>บันทึก Disposition</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REGISTRY ============ -->
+<section class="view" id="view-registry" aria-label="Registry">
+  <div class="page-head">
+    <div class="eyebrow">Step 4 · Definitive Care</div>
+    <h2>Trauma Registry</h2>
+    <p class="sub">บันทึก AIS รายอวัยวะ คำนวณ ISS / NISS / RTS อัตโนมัติ พร้อม outcome และการส่งออกข้อมูล</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="left" style="flex:1 1 340px;min-width:0">
+      <span class="flabel" style="flex:0 0 auto">เคส</span>
+      <div class="caseswitch" id="reg_caseBar" role="radiogroup" aria-label="เลือกเคส"></div>
+      <input type="hidden" id="reg_case">
+    </div>
+    <div class="right">
+      <button type="button" class="btn" onclick="exportRegistryCSV()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-download"/></svg>CSV</button>
+      <button type="button" class="btn" onclick="exportRegistryExcel()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-file"/></svg>Excel</button>
+      <button type="button" class="btn" onclick="window.print()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-printer"/></svg>พิมพ์</button>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Definitive Injury (AIS)</div></div>
+      <div class="formgrid">
+        <div class="field span3">
+          <span class="flabel">Body region</span>
+          <div class="segmented sm" data-picker="ais_region" role="radiogroup" aria-label="Body region"
+               data-options="Head/Neck|Face|Chest|Abdomen/Pelvis|Extremities/Pelvic girdle|External"></div>
+        </div>
+        <input type="hidden" id="ais_region" value="Head/Neck">
+        <div class="field span3">
+          <span class="flabel">AIS severity <span class="hint">— ใช้คำนวณ ISS / NISS</span></span>
+          <div class="segmented sm" data-picker="ais_sev" role="radiogroup" aria-label="AIS severity"
+               data-options="1=1 Minor|2=2 Moderate|3=3 Serious!warn|4=4 Severe!danger|5=5 Critical!danger|6=6 Maximal!danger"></div>
+        </div>
+        <input type="hidden" id="ais_sev" value="1">
+        <label class="span3">Description<input id="ais_desc" placeholder="เช่น Splenic laceration gr.III"></label>
+      </div>
+      <div class="toolbar" style="margin:14px 0 6px">
+        <span class="tag">ISS = ผลรวมกำลังสองของ AIS สูงสุด 3 บริเวณ</span>
+        <button type="button" class="btn" onclick="addAIS()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-plus"/></svg>เพิ่ม Injury</button>
+      </div>
+      <div id="aisList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-target"/></svg>Score &amp; Outcome</div></div>
+      <div class="grid g3">
+        <div class="card-body-inset"><div class="eyebrow">ISS</div><b style="font-size:26px;font-weight:700;letter-spacing:-.03em" id="issVal">0</b></div>
+        <div class="card-body-inset"><div class="eyebrow">NISS</div><b style="font-size:26px;font-weight:700;letter-spacing:-.03em" id="nissVal">0</b></div>
+        <div class="card-body-inset"><div class="eyebrow">RTS ล่าสุด</div><b style="font-size:26px;font-weight:700;letter-spacing:-.03em" id="regRts">—</b></div>
+      </div>
+      <div class="formgrid" style="margin-top:14px">
+        <label class="span3">Final diagnosis<textarea id="reg_dx" style="min-height:76px" placeholder="สรุปการวินิจฉัยขั้นสุดท้าย"></textarea></label>
+        <label>ICU LOS (วัน)<input id="reg_icul" type="number" min="0"></label>
+        <label class="span2">Hospital LOS (วัน)<input id="reg_los" type="number" min="0"></label>
+        <div class="field span3">
+          <span class="flabel">Outcome</span>
+          <div class="segmented sm" data-picker="reg_outcome" role="radiogroup" aria-label="Outcome"
+               data-options="Alive=Alive!ok|Death=Death!danger|Transferred=Transferred"></div>
+        </div>
+        <input type="hidden" id="reg_outcome" value="Alive">
+      </div>
+      <div class="toolbar" style="margin:14px 0 0">
+        <span></span>
+        <button type="button" class="btn primary" onclick="saveRegistry()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>บันทึก Registry</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt">
+    <div class="card-head">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-database"/></svg>Registry Table <small id="regCount">0 เคส</small></div>
+      <div class="btn-group">
+        <div class="search"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="regSearch">ค้นหา</label><input id="regSearch" placeholder="ค้นหา case / MOI / สถานที่" oninput="renderRegistryTable()" style="width:230px"></div>
+        <div class="segmented sm" data-picker="regLevelFilter" data-onchange="renderRegistryTable" role="radiogroup" aria-label="กรองระดับ triage"
+             data-options="=ทุกระดับ|L1=Level 1!danger|L2=Level 2!warn|L3=Level 3!ok"></div>
+        <input type="hidden" id="regLevelFilter" value="">
+      </div>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Case ID</th><th>วันเวลาเกิดเหตุ</th><th>MOI</th><th>Level</th><th>ISS</th><th>NISS</th><th>Disposition</th><th>Outcome</th><th style="text-align:right">จัดการ</th></tr></thead>
+        <tbody id="registryTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PIPS ============ -->
+<section class="view" id="view-pips" aria-label="PIPS">
+  <div class="page-head">
+    <div class="eyebrow">Step 5 · Quality Loop</div>
+    <h2>PIPS / Quality Review</h2>
+    <p class="sub">ระบบตรวจจับ process gap อัตโนมัติ เพื่อใช้ใน trauma conference และการพัฒนาคุณภาพอย่างต่อเนื่อง</p>
+  </div>
+
+  <div class="grid g3">
+    <button type="button" class="kpi" data-tone="warn" onclick="go('registry')">
+      <div><span class="eyebrow">เคสที่ถูก flag</span><b id="pipsCases">0</b><span class="kpi-note">จากทั้งหมดในระบบ</span></div>
+      <span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-flag"/></svg></span>
+    </button>
+    <button type="button" class="kpi" data-tone="danger" onclick="filterPips('Open')">
+      <div><span class="eyebrow">ยังไม่ปิด</span><b id="pipsOpen">0</b><span class="kpi-note">คลิกเพื่อกรองเฉพาะ Open</span></div>
+      <span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg></span>
+    </button>
+    <button type="button" class="kpi" data-tone="ok" onclick="filterPips('Closed')">
+      <div><span class="eyebrow">ปิดแล้ว</span><b id="pipsClosed">0</b><span class="kpi-note">คลิกเพื่อกรองเฉพาะ Closed</span></div>
+      <span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg></span>
+    </button>
+  </div>
+
+  <div class="card mt">
+    <div class="card-head">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>PIPS Review Board</div>
+      <div class="btn-group" id="pipsFilters">
+        <button type="button" class="btn sm" data-f="" onclick="filterPips('')">ทั้งหมด</button>
+        <button type="button" class="btn sm" data-f="Open" onclick="filterPips('Open')">Open</button>
+        <button type="button" class="btn sm" data-f="Closed" onclick="filterPips('Closed')">Closed</button>
+      </div>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Case</th><th>Flag</th><th>ตรวจพบเมื่อ</th><th>สถานะ</th><th style="text-align:right">จัดการ</th></tr></thead>
+        <tbody id="pipsTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SETTINGS ============ -->
+<section class="view" id="view-settings" aria-label="Settings">
+  <div class="page-head">
+    <div class="eyebrow">System</div>
+    <h2>Settings &amp; Data</h2>
+    <p class="sub">ตั้งค่าเกณฑ์ทางคลินิก ปลายทาง webhook และการสำรอง / กู้คืนข้อมูล</p>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-database"/></svg>Supabase Database <small>ฐานข้อมูลกลางของทุกเมนู</small></div>
+      <span class="badge" id="dbStatusPanel" data-state="offline"><i class="statusdot"></i><span id="dbPanelStatusText">ยังไม่เชื่อมต่อ</span></span>
+    </div>
+    <div class="formgrid">
+      <label class="span2">Project URL<input id="s_supabase_url" type="url" inputmode="url" placeholder="https://your-project.supabase.co" autocomplete="url"></label>
+      <label>Publishable / anon key<input id="s_supabase_key" type="password" placeholder="sb_publishable_..." autocomplete="off"></label>
+      <label class="span2">อีเมลเจ้าหน้าที่<input id="s_auth_email" type="email" placeholder="staff@hospital.org" autocomplete="username"></label>
+      <label>รหัสผ่าน<input id="s_auth_password" type="password" placeholder="••••••••" autocomplete="new-password"></label>
+    </div>
+    <div class="db-detail" id="dbConnectionDetail" style="margin-top:10px">ใส่ Project URL และ publishable key จาก Supabase แล้วเข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่</div>
+    <div class="callout warn" style="margin-top:14px"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg><div>ใช้ได้เฉพาะ <b>publishable/anon key</b> เท่านั้น ห้ามใส่ secret หรือ service-role key ในหน้าเว็บ ข้อมูลผู้ป่วยเปิดให้เฉพาะผู้ใช้ที่ผ่าน Supabase Auth ตาม RLS ใน <span class="mono">supabase/schema.sql</span></div></div>
+    <div class="toolbar" style="margin:14px 0 0">
+      <button type="button" class="btn danger" id="dbDisconnectBtn" onclick="disconnectSupabase()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-x"/></svg>ลบการเชื่อมต่อ</button>
+      <div class="right">
+        <button type="button" class="btn" id="dbSaveBtn" onclick="saveSupabaseConnection()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-settings"/></svg>บันทึกและทดสอบ</button>
+        <button type="button" class="btn" id="dbSignOutBtn" onclick="signOutSupabase()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg>ออกจากระบบ</button>
+        <button type="button" class="btn primary" id="dbSignInBtn" onclick="signInSupabase()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-user"/></svg>เข้าสู่ระบบและซิงก์</button>
+        <button type="button" class="btn ok" id="dbRefreshBtn" onclick="refreshFromDatabase()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-refresh"/></svg>ดึงข้อมูลล่าสุด</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-settings"/></svg>General &amp; Thresholds</div></div>
+      <div class="formgrid">
+        <label class="span2">ชื่อโรงพยาบาล<input id="s_hospital" placeholder="Trauma Center"></label>
+        <label>Level 1 เมื่อ SI ≥<input id="s_si" type="number" step=".01" min="0"></label>
+        <label>Door-to-CT target (นาที)<input id="s_ct" type="number" min="0"></label>
+        <label>Door-to-OR target (นาที)<input id="s_or" type="number" min="0"></label>
+        <label>Scene time target (นาที)<input id="s_scene" type="number" min="0"></label>
+        <label class="span3">LINE / Webhook URL<input id="s_webhook" placeholder="https://your-secure-endpoint.example/trauma-alert"></label>
+      </div>
+      <div class="callout warn" style="margin-top:14px"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg><div>Standalone HTML <b>ไม่ควรฝัง LINE Channel Access Token</b> เพราะผู้ใช้เปิดดู source ได้ ให้ส่งผ่าน webhook / API ที่ควบคุมสิทธิ์จากฝั่ง server แทน</div></div>
+      <div class="toolbar" style="margin:14px 0 0">
+        <button type="button" class="btn ghost" onclick="renderSettings()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-refresh"/></svg>ยกเลิกการแก้ไข</button>
+        <button type="button" class="btn primary" onclick="saveSettings()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>บันทึก Settings</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-database"/></svg>Backup / Restore</div></div>
+      <div class="pillrow" style="margin-bottom:14px"><span class="chip">Supabase primary</span><span class="chip">local cache</span><span class="chip">JSON backup</span><span class="chip">CSV / Excel export</span></div>
+      <div class="grid" style="gap:8px">
+        <button type="button" class="btn block" onclick="exportJSON()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-download"/></svg>Export JSON Backup</button>
+        <label class="btn block" style="text-transform:none;letter-spacing:0;font-size:13px"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-upload"/></svg>Import JSON Backup<input id="jsonImport" type="file" accept=".json" onchange="importJSON(this.files[0]);this.value=''"></label>
+        <button type="button" class="btn block" onclick="exportAllCSV()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-file"/></svg>Export Cases CSV</button>
+        <button type="button" class="btn block danger" onclick="resetAll()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg>ล้างข้อมูลทั้งหมด</button>
+      </div>
+      <div class="callout info" style="margin-top:14px"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-info"/></svg><div>เมื่อเชื่อมต่อแล้ว Supabase เป็นฐานข้อมูลหลัก ส่วน localStorage เป็น cache กรณีเครือข่ายขัดข้อง ระบบจะส่งการเปลี่ยนแปลงที่ค้างไว้เมื่อเข้าสู่ระบบอีกครั้ง</div></div>
+    </div>
+  </div>
+
+  <div class="card mt">
+    <div class="card-head">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>Audit Log <small>250 รายการล่าสุด</small></div>
+      <button type="button" class="btn sm ghost" onclick="clearAudit()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg>ล้าง log</button>
+    </div>
+    <div id="auditLog" style="max-height:340px;overflow:auto"></div>
+  </div>
+</section>
+
+  </div>
+</main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check-circle" id="toastIcon"/></svg><span id="toastMsg"></span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ==========================================================================
+   TraumaLink 360 — Application
+   1 State · 2 Utilities · 3 Theme & Nav · 4 Scoring · 5 Case flow
+   6 Rendering · 7 Charts · 8 Data I/O
+   ========================================================================== */
+
+/* ---------- 1 · STATE ---------- */
+const KEY='traumalink360_v1';
+const THEME_KEY='traumalink360_theme';
+const DB_CONFIG_KEY='traumalink360_supabase';
+const DB_PROJECT_KEY='traumalink360_supabase_project';
+const DB_DIRTY_KEY='traumalink360_supabase_dirty';
+const DB_DELETE_KEY='traumalink360_supabase_deletes';
+const defaultState={
+  settings:{hospital:'Trauma Center',siL1:1.2,ctTarget:30,orTarget:60,sceneTarget:10,webhook:''},
+  cases:[],audit:[]
+};
+
+function loadState(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(KEY));
+    if(!raw||typeof raw!=='object')return structuredClone(defaultState);
+    raw.settings={...defaultState.settings,...(raw.settings||{})};
+    raw.cases=Array.isArray(raw.cases)?raw.cases:[];
+    raw.audit=Array.isArray(raw.audit)?raw.audit:[];
+    raw.cases.forEach(c=>{
+      c.timeline??=[];c.vitals??=[];c.interventions??=[];c.investigations??=[];
+      c.consults??=[];c.ais??=[];c.pips??=[];c.registry??={};
+    });
+    return raw;
+  }catch(e){return structuredClone(defaultState)}
+}
+let state=loadState();
+let pipsFilter='';
+function persist(remote=true){
+  try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){toast('บันทึก local cache ไม่สำเร็จ — พื้นที่จัดเก็บเต็ม','err')}
+  if(!remote)return;
+  if(!readDatabaseConfig().url)return;
+  try{localStorage.setItem(DB_DIRTY_KEY,'1')}catch(e){}
+  if(databaseReady())queueDatabaseSync();
+  else setDatabaseStatus('offline','มีข้อมูลรอซิงก์');
+}
+
+/* ---------- 2 · UTILITIES ---------- */
+const $=id=>document.getElementById(id);
+const now=()=>new Date().toISOString();
+const uid=()=>globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2)+Date.now().toString(36);
+const caseById=id=>state.cases.find(c=>c.id===id);
+const mins=(a,b)=>(!a||!b)?null:Math.round((new Date(b)-new Date(a))/60000);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const csvCell=v=>'"'+String(v??'').replaceAll('"','""')+'"';
+
+function dtLocal(d=new Date()){const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,16)}
+function fmt(iso){return iso?new Date(iso).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'}):'—'}
+function tOnly(iso){return iso?new Date(iso).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'—'}
+function relTime(iso){
+  if(!iso)return '—';
+  const m=Math.round((Date.now()-new Date(iso))/60000);
+  if(m<1)return 'เมื่อสักครู่';
+  if(m<60)return m+' นาทีที่แล้ว';
+  if(m<1440)return Math.floor(m/60)+' ชม.ที่แล้ว';
+  return Math.floor(m/1440)+' วันที่แล้ว';
+}
+function download(name,content,type='text/plain'){
+  const a=document.createElement('a'),url=URL.createObjectURL(new Blob([content],{type}));
+  a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function toast(msg,kind='ok'){
+  const el=$('toast');
+  $('toastMsg').textContent=msg;
+  el.dataset.kind=kind;
+  $('toastIcon').setAttribute('href',kind==='err'?'#i-alert':kind==='warn'?'#i-info':'#i-check-circle');
+  el.classList.add('show');
+  clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2800);
+}
+function audit(action,caseId=''){
+  state.audit.unshift({id:uid(),time:now(),role:$('roleSelect')?.value||'User',action,caseId});
+  state.audit=state.audit.slice(0,250);persist();renderAudit();
+}
+function emptyState(icon,title,desc=''){
+  return `<div class="empty"><svg class="ic ic-lg" aria-hidden="true"><use href="#${icon}"/></svg><b>${esc(title)}</b>${desc?`<span>${esc(desc)}</span>`:''}</div>`;
+}
+function levelBadge(l){const v=['L1','L2','L3'].includes(l)?l:'L3';return `<span class="level ${v}">${v}</span>`}
+
+/* ---------- 2.5 · SUPABASE DATA LAYER ---------- */
+const database={
+  client:null,session:null,channel:null,authSubscription:null,status:'offline',detail:'',
+  syncTimer:null,syncChain:Promise.resolve(),syncing:false,loading:false,lastSync:null,
+  caseHashes:new Map(),settingsHash:'',auditIds:new Set(),realtimeTimer:null,unlocked:false
+};
+
+function readDatabaseConfig(){
+  let stored={};
+  try{stored=JSON.parse(localStorage.getItem(DB_CONFIG_KEY))||{}}catch(e){}
+  const injected=window.TRAUMALINK_SUPABASE||{};
+  const meta=name=>document.querySelector(`meta[name="${name}"]`)?.content?.trim()||'';
+  return{
+    url:String(stored.url||injected.url||meta('supabase-url')||'').trim().replace(/\/$/,''),
+    key:String(stored.key||injected.key||meta('supabase-key')||'').trim(),
+    email:String(stored.email||'').trim()
+  };
+}
+function databaseProjectRef(url){
+  try{return new URL(url).host.toLowerCase()}catch(e){return url||''}
+}
+function databaseReady(){return !!(database.client&&database.session)}
+function databaseHash(value){return JSON.stringify(value??null)}
+function clearProtectedLocalData(){
+  state=structuredClone(defaultState);
+  try{
+    localStorage.removeItem(KEY);
+    localStorage.removeItem(DB_DIRTY_KEY);
+    localStorage.removeItem(DB_DELETE_KEY);
+  }catch(e){}
+  refreshAll();
+}
+function renderAuthGate(detail=database.detail){
+  const unlocked=!!(database.unlocked&&database.session);
+  const gate=$('authGate'),shell=$('appShell');
+  if(gate)gate.hidden=unlocked;
+  if(shell){shell.inert=!unlocked;shell.setAttribute('aria-hidden',String(!unlocked))}
+  document.body.classList.toggle('auth-locked',!unlocked);
+  const cfg=readDatabaseConfig();
+  const email=$('authGateEmail');
+  if(email&&document.activeElement!==email)email.value=database.session?.user?.email||cfg.email||'';
+  const submit=$('authGateSubmit');
+  if(submit)submit.disabled=!database.client||database.status==='connecting'||database.loading;
+  const status=$('authGateStatus');
+  if(status){
+    const fallback=!cfg.url?'ยังไม่ได้ตั้งค่า Supabase':database.client?'กรุณาเข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่':'กำลังเชื่อมต่อ Supabase…';
+    const message=detail||fallback;
+    status.textContent=message;
+    status.dataset.kind=/ไม่สำเร็จ|invalid|error|ผิดพลาด/i.test(message)?'error':database.status==='online'?'ok':'';
+  }
+}
+function setApplicationAccess(unlocked,detail=''){
+  database.unlocked=!!(unlocked&&database.session);
+  renderAuthGate(detail);
+}
+function databaseResult(result,label){
+  if(result?.error)throw new Error(`${label}: ${result.error.message}`);
+  return result?.data;
+}
+function setDatabaseStatus(status,detail=''){
+  database.status=status;database.detail=detail;
+  const labels={offline:'Local cache',auth:'รอเข้าสู่ระบบ',connecting:'กำลังเชื่อมต่อ',syncing:'กำลังซิงก์',online:'Supabase online',error:'เชื่อมต่อผิดพลาด'};
+  const panel={offline:'ยังไม่เชื่อมต่อ',auth:'เชื่อมต่อแล้ว · รอเข้าสู่ระบบ',connecting:'กำลังทดสอบการเชื่อมต่อ',syncing:'กำลังบันทึกข้อมูล',online:'เชื่อมต่อ Supabase แล้ว',error:'เชื่อมต่อไม่สำเร็จ'};
+  ['dbStatusBadge','dbStatusPanel'].forEach(id=>{const el=$(id);if(el)el.dataset.state=status});
+  if($('dbStatusText'))$('dbStatusText').textContent=labels[status]||status;
+  if($('dbPanelStatusText'))$('dbPanelStatusText').textContent=panel[status]||status;
+  if($('storageLabel'))$('storageLabel').textContent=databaseReady()?'Supabase sync · local cache':readDatabaseConfig().url?'Local cache · รอ Supabase':'Local cache · ยังไม่เชื่อม Supabase';
+  renderDatabaseControls();
+  renderAuthGate(detail);
+}
+function renderDatabaseControls(){
+  const cfg=readDatabaseConfig();
+  if($('s_supabase_url')&&document.activeElement!==$('s_supabase_url'))$('s_supabase_url').value=cfg.url;
+  if($('s_supabase_key')&&document.activeElement!==$('s_supabase_key'))$('s_supabase_key').value=cfg.key;
+  if($('s_auth_email')&&document.activeElement!==$('s_auth_email'))$('s_auth_email').value=database.session?.user?.email||cfg.email;
+  const signedIn=databaseReady();
+  if(signedIn&&database.unlocked&&$('s_auth_password')&&document.activeElement!==$('s_auth_password'))$('s_auth_password').value='';
+  if(signedIn&&database.unlocked&&$('authGatePassword')&&document.activeElement!==$('authGatePassword'))$('authGatePassword').value='';
+  if($('dbSignInBtn'))$('dbSignInBtn').disabled=!database.client||signedIn||database.status==='connecting';
+  if($('dbSignOutBtn'))$('dbSignOutBtn').disabled=!signedIn;
+  if($('dbRefreshBtn'))$('dbRefreshBtn').disabled=!signedIn||database.loading;
+  if($('dbDisconnectBtn'))$('dbDisconnectBtn').disabled=!cfg.url;
+  const who=database.session?.user?.email?`ผู้ใช้ ${database.session.user.email}`:'';
+  const synced=database.lastSync?`ซิงก์ล่าสุด ${fmt(database.lastSync)}`:'';
+  const detail=[database.detail,who,synced].filter(Boolean).join(' · ');
+  if($('dbConnectionDetail'))$('dbConnectionDetail').textContent=detail||'ใส่ Project URL และ publishable key จาก Supabase แล้วเข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่';
+}
+function validateDatabaseConfig(url,key){
+  let parsed;
+  try{parsed=new URL(url)}catch(e){throw new Error('Project URL ไม่ถูกต้อง')}
+  const local=['localhost','127.0.0.1'].includes(parsed.hostname);
+  if(parsed.protocol!=='https:'&&!(local&&parsed.protocol==='http:'))throw new Error('Project URL ต้องใช้ HTTPS');
+  if(!key)throw new Error('กรุณาใส่ publishable / anon key');
+  if(/^sb_secret_/i.test(key))throw new Error('ห้ามใช้ secret key ใน browser');
+  if(key.split('.').length===3){
+    try{
+      let part=key.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+      part=part.padEnd(Math.ceil(part.length/4)*4,'=');
+      const body=JSON.parse(atob(part));
+      if(body.role==='service_role')throw new Error('ห้ามใช้ service-role key ใน browser');
+    }catch(e){if(/service-role/.test(e.message))throw e}
+  }
+}
+function readPendingDeletes(){
+  try{return{caseIds:[],clearCases:false,clearAudit:false,...(JSON.parse(localStorage.getItem(DB_DELETE_KEY))||{})}}catch(e){return{caseIds:[],clearCases:false,clearAudit:false}}
+}
+function writePendingDeletes(value){
+  try{localStorage.setItem(DB_DELETE_KEY,JSON.stringify(value));localStorage.setItem(DB_DIRTY_KEY,'1')}catch(e){}
+}
+function queueCaseDeletion(caseId){
+  if(!readDatabaseConfig().url)return;
+  const pending=readPendingDeletes();
+  if(!pending.caseIds.includes(caseId))pending.caseIds.push(caseId);
+  writePendingDeletes(pending);
+}
+function queueClearCases(){if(!readDatabaseConfig().url)return;const pending=readPendingDeletes();pending.clearCases=true;pending.caseIds=[];writePendingDeletes(pending)}
+function queueClearAudit(){if(!readDatabaseConfig().url)return;const pending=readPendingDeletes();pending.clearAudit=true;writePendingDeletes(pending)}
+
+async function disconnectDatabaseClient(){
+  clearTimeout(database.syncTimer);clearTimeout(database.realtimeTimer);
+  if(database.client&&database.channel)await database.client.removeChannel(database.channel).catch(()=>{});
+  database.authSubscription?.unsubscribe?.();
+  database.client=null;database.session=null;database.channel=null;database.authSubscription=null;
+  database.unlocked=false;
+  database.caseHashes.clear();database.auditIds.clear();database.settingsHash='';
+}
+async function hydrateWithSessionRetry(options={}){
+  try{return await hydrateFromDatabase(options)}
+  catch(e){
+    if(!/JWT issued at future/i.test(e.message))throw e;
+    setDatabaseStatus('connecting','กำลังยืนยันเวลาเซสชัน Supabase…');
+    await new Promise(resolve=>setTimeout(resolve,5500));
+    return hydrateFromDatabase(options);
+  }
+}
+async function connectDatabase(showToast=false){
+  const cfg=readDatabaseConfig();
+  if(!cfg.url||!cfg.key){setDatabaseStatus('offline','ยังไม่ได้ตั้งค่า Supabase');return false}
+  try{
+    validateDatabaseConfig(cfg.url,cfg.key);
+    if(!window.supabase?.createClient)throw new Error('โหลด Supabase client ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต');
+    await disconnectDatabaseClient();
+    setDatabaseStatus('connecting','กำลังตรวจสอบ Project URL');
+    database.client=window.supabase.createClient(cfg.url,cfg.key,{
+      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+    });
+    const auth=database.client.auth.onAuthStateChange((event,session)=>{
+      database.session=session;
+      if(!session){
+        database.unlocked=false;
+        clearProtectedLocalData();
+        setDatabaseStatus('auth',event==='SIGNED_OUT'?'ออกจากระบบแล้ว · ข้อมูลผู้ป่วยในเครื่องถูกล้าง':'กรุณาเข้าสู่ระบบ');
+      }
+      renderDatabaseControls();
+      if(session&&['SIGNED_IN','TOKEN_REFRESHED','USER_UPDATED'].includes(event)){
+        setTimeout(()=>refreshFromDatabase({silent:true}),0);
+      }
+    });
+    database.authSubscription=auth.data.subscription;
+    const sessionResult=await database.client.auth.getSession();
+    if(sessionResult.error)throw sessionResult.error;
+    database.session=sessionResult.data.session;
+    if(!database.session){
+      database.unlocked=false;clearProtectedLocalData();
+      setDatabaseStatus('auth','Project พร้อมแล้ว · กรุณาเข้าสู่ระบบ');
+      if(showToast)toast('เชื่อม Project แล้ว กรุณาเข้าสู่ระบบ','warn');
+      return true;
+    }
+    await hydrateWithSessionRetry({silent:!showToast});
+    subscribeDatabaseRealtime();
+    if(showToast)toast('เชื่อมต่อ Supabase และซิงก์ข้อมูลแล้ว');
+    return true;
+  }catch(e){
+    console.error(e);setDatabaseStatus('error',e.message);
+    if(showToast)toast('Supabase: '+e.message,'err');
+    return false;
+  }
+}
+async function saveSupabaseConnection(){
+  const url=$('s_supabase_url').value.trim().replace(/\/$/,'');
+  const key=$('s_supabase_key').value.trim();
+  const email=$('s_auth_email').value.trim();
+  try{validateDatabaseConfig(url,key)}catch(e){return toast(e.message,'err')}
+  try{
+    const previous=databaseProjectRef(readDatabaseConfig().url),next=databaseProjectRef(url);
+    if(previous&&previous!==next){localStorage.removeItem(DB_DELETE_KEY);localStorage.removeItem(DB_PROJECT_KEY);localStorage.removeItem(DB_DIRTY_KEY)}
+    localStorage.setItem(DB_CONFIG_KEY,JSON.stringify({url,key,email}));
+  }catch(e){return toast('บันทึกการเชื่อมต่อในเครื่องไม่สำเร็จ','err')}
+  await connectDatabase(true);
+}
+async function disconnectSupabase(){
+  if(database.client)await database.client.auth.signOut({scope:'local'}).catch(()=>{});
+  await disconnectDatabaseClient();
+  try{localStorage.removeItem(DB_CONFIG_KEY);localStorage.removeItem(DB_PROJECT_KEY);localStorage.removeItem(DB_DIRTY_KEY);localStorage.removeItem(DB_DELETE_KEY)}catch(e){}
+  clearProtectedLocalData();
+  if($('s_auth_password'))$('s_auth_password').value='';
+  if($('authGatePassword'))$('authGatePassword').value='';
+  setDatabaseStatus('offline','ลบการตั้งค่าการเชื่อมต่อจากเครื่องนี้แล้ว');
+  setApplicationAccess(false,'ลบการเชื่อมต่อแล้ว');
+  toast('ยกเลิกการเชื่อมต่อและล้างข้อมูลผู้ป่วยในเครื่องแล้ว','warn');
+}
+async function signInSupabase(source='settings'){
+  const cfg=readDatabaseConfig();
+  if(source!=='gate'){
+    const inputUrl=$('s_supabase_url').value.trim().replace(/\/$/,''),inputKey=$('s_supabase_key').value.trim();
+    if(!database.client||inputUrl!==cfg.url||inputKey!==cfg.key){await saveSupabaseConnection();if(!database.client)return}
+  }else if(!database.client){
+    await connectDatabase(false);if(!database.client)return;
+  }
+  const emailInput=source==='gate'?$('authGateEmail'):$('s_auth_email');
+  const passwordInput=source==='gate'?$('authGatePassword'):$('s_auth_password');
+  const email=emailInput.value.trim(),password=passwordInput.value;
+  if(!email||!password)return toast('กรอกอีเมลและรหัสผ่านเจ้าหน้าที่','warn');
+  setApplicationAccess(false,'กำลังตรวจสอบบัญชีเจ้าหน้าที่…');
+  setDatabaseStatus('connecting','กำลังตรวจสอบบัญชีเจ้าหน้าที่');
+  const result=await database.client.auth.signInWithPassword({email,password});
+  if(result.error){
+    setDatabaseStatus('auth','เข้าสู่ระบบไม่สำเร็จ: '+result.error.message);
+    return toast('เข้าสู่ระบบไม่สำเร็จ: '+result.error.message,'err');
+  }
+  database.session=result.data.session;
+  try{
+    const cfg=readDatabaseConfig();localStorage.setItem(DB_CONFIG_KEY,JSON.stringify({...cfg,email}));
+    await hydrateWithSessionRetry();subscribeDatabaseRealtime();
+    if($('s_auth_password'))$('s_auth_password').value='';
+    if($('authGatePassword'))$('authGatePassword').value='';
+    setApplicationAccess(true,'เข้าสู่ระบบสำเร็จ');
+    if(source==='gate')go('dashboard');
+    toast('เข้าสู่ระบบและซิงก์ข้อมูลแล้ว');
+  }catch(e){
+    database.unlocked=false;setDatabaseStatus('error','โหลดฐานข้อมูลไม่สำเร็จ: '+e.message);
+    toast('โหลดฐานข้อมูลไม่สำเร็จ: '+e.message,'err');
+  }
+}
+async function signOutSupabase(){
+  if(!database.client)return;
+  await flushDatabaseSync();
+  const result=await database.client.auth.signOut();
+  if(result.error)return toast('ออกจากระบบไม่สำเร็จ: '+result.error.message,'err');
+  database.session=null;database.unlocked=false;clearProtectedLocalData();
+  if($('s_auth_password'))$('s_auth_password').value='';
+  if($('authGatePassword'))$('authGatePassword').value='';
+  setDatabaseStatus('auth','ออกจากระบบแล้ว · ข้อมูลผู้ป่วยในเครื่องถูกล้าง');
+  setApplicationAccess(false,'ออกจากระบบแล้ว กรุณาเข้าสู่ระบบอีกครั้ง');
+  toast('ออกจากระบบและล้างข้อมูลผู้ป่วยในเครื่องแล้ว');
+}
+
+async function fetchDatabaseTable(table,orderColumn=null,ascending=true,limit=null){
+  const pageSize=1000,rows=[];
+  for(let from=0;;from+=pageSize){
+    let query=database.client.from(table).select('*');
+    if(orderColumn)query=query.order(orderColumn,{ascending});
+    const take=limit?Math.min(pageSize,limit-rows.length):pageSize;
+    query=query.range(from,from+take-1);
+    const result=await query;
+    databaseResult(result,table);
+    rows.push(...result.data);
+    if(result.data.length<take||(limit&&rows.length>=limit))break;
+  }
+  return rows;
+}
+function groupDatabaseRows(rows){
+  const grouped=new Map();
+  rows.forEach(row=>{if(!grouped.has(row.case_id))grouped.set(row.case_id,[]);grouped.get(row.case_id).push(row)});
+  return grouped;
+}
+async function loadDatabaseState(){
+  const [cases,timeline,vitals,interventions,investigations,consultations,ais,registry,pips,settings,audit]=await Promise.all([
+    fetchDatabaseTable('trauma_cases','created_at',false),
+    fetchDatabaseTable('case_timeline','event_time',true),
+    fetchDatabaseTable('vital_signs','measured_at',true),
+    fetchDatabaseTable('interventions','performed_at',true),
+    fetchDatabaseTable('investigations','ordered_at',true),
+    fetchDatabaseTable('consultations','requested_at',true),
+    fetchDatabaseTable('ais_injuries'),
+    fetchDatabaseTable('registry_records'),
+    fetchDatabaseTable('pips_flags','detected_at',true),
+    fetchDatabaseTable('app_settings'),
+    fetchDatabaseTable('audit_logs','event_time',false,250)
+  ]);
+  const T=groupDatabaseRows(timeline),V=groupDatabaseRows(vitals),I=groupDatabaseRows(interventions);
+  const X=groupDatabaseRows(investigations),C=groupDatabaseRows(consultations),A=groupDatabaseRows(ais),P=groupDatabaseRows(pips);
+  const R=new Map(registry.map(x=>[x.case_id,x]));
+  const mappedCases=cases.map(c=>{
+    const reg=R.get(c.case_id);
+    return{
+      id:c.case_id,created:c.created_at,incidentTime:c.incident_time,moi:c.moi,count:c.patient_count,
+      age:c.approx_age,sex:c.sex,eta:c.eta_minutes,protection:c.protection,alcohol:c.alcohol,
+      location:c.location||'',gps:c.gps||'',unit:c.ems_unit||'',unitLevel:c.unit_level||'',
+      destination:c.destination||'',note:c.note||'',status:c.status,level:c.triage_level,
+      primary:c.primary_survey||undefined,prearrival:c.prearrival||'',disposition:c.disposition||'',
+      dispositionNote:c.disposition_note||'',
+      timeline:(T.get(c.case_id)||[]).map(x=>({key:x.event_key,label:x.label,time:x.event_time})),
+      vitals:(V.get(c.case_id)||[]).map(x=>({id:x.id,time:x.measured_at,sbp:x.sbp,dbp:x.dbp,hr:x.hr,rr:x.rr,spo2:x.spo2,gcs:x.gcs})),
+      interventions:(I.get(c.case_id)||[]).map(x=>({id:x.id,time:x.performed_at,type:x.intervention_type,detail:x.detail})),
+      investigations:(X.get(c.case_id)||[]).map(x=>({id:x.id,time:x.ordered_at,item:x.item,status:x.status,result:x.result||''})),
+      consults:(C.get(c.case_id)||[]).map(x=>({id:x.id,time:x.requested_at,team:x.team,status:x.status,note:x.note||''})),
+      ais:(A.get(c.case_id)||[]).map(x=>({id:x.id,region:x.body_region,sev:x.severity,desc:x.description||''})),
+      pips:(P.get(c.case_id)||[]).map(x=>({id:x.id,flag:x.flag,time:x.detected_at,status:x.status,...(x.closed_at?{closed:x.closed_at}:{})})),
+      registry:reg?{dx:reg.final_diagnosis||'',icuLos:reg.icu_los_days,los:reg.hospital_los_days,outcome:reg.outcome||'',updated:reg.updated_at}:{}
+    };
+  });
+  const s=settings.find(x=>x.id==='default');
+  return{
+    settings:s?{hospital:s.hospital,siL1:+s.si_l1,ctTarget:s.ct_target_minutes,orTarget:s.or_target_minutes,sceneTarget:s.scene_target_minutes,webhook:s.webhook_url||''}:structuredClone(defaultState.settings),
+    hasSettings:!!s,
+    cases:mappedCases,
+    audit:audit.map(x=>({id:x.id,time:x.event_time,role:x.role,action:x.action,caseId:x.case_id||''}))
+  };
+}
+function mergeAuditLogs(primary,secondary){
+  const map=new Map();
+  [...secondary,...primary].forEach(x=>map.set(x.id,x));
+  return [...map.values()].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,250);
+}
+function captureDatabaseFingerprints(remote){
+  database.caseHashes=new Map(remote.cases.map(c=>[c.id,databaseHash(c)]));
+  database.settingsHash=databaseHash(remote.settings);
+  database.auditIds=new Set(remote.audit.map(a=>a.id));
+}
+async function hydrateFromDatabase({silent=false}={}){
+  if(!databaseReady()||database.loading)return;
+  database.loading=true;setDatabaseStatus('syncing','กำลังอ่านข้อมูลครบทุกตาราง');
+  try{
+    await flushDatabaseSync();
+    const remote=await loadDatabaseState();
+    const cfg=readDatabaseConfig(),project=databaseProjectRef(cfg.url);
+    const known=localStorage.getItem(DB_PROJECT_KEY)===project;
+    const dirty=localStorage.getItem(DB_DIRTY_KEY)==='1';
+    const pending=readPendingDeletes();
+    const remoteCasesForMerge=pending.clearCases?[]:remote.cases.filter(c=>!pending.caseIds.includes(c.id));
+    const remoteAuditForMerge=pending.clearAudit?[]:remote.audit;
+    captureDatabaseFingerprints(remote);
+    if(!known||dirty){
+      const mergedCases=new Map();
+      if(dirty){remoteCasesForMerge.forEach(c=>mergedCases.set(c.id,c));state.cases.forEach(c=>mergedCases.set(c.id,c))}
+      else{state.cases.forEach(c=>mergedCases.set(c.id,c));remoteCasesForMerge.forEach(c=>mergedCases.set(c.id,c))}
+      const localHasData=state.cases.length>0||state.audit.length>0||databaseHash(state.settings)!==databaseHash(defaultState.settings);
+      const remoteHasData=remote.cases.length>0||remote.audit.length>0||databaseHash(remote.settings)!==databaseHash(defaultState.settings);
+      state={
+        settings:{...defaultState.settings,...(dirty||(!remoteHasData&&localHasData)?state.settings:remote.settings)},
+        cases:[...mergedCases.values()].sort((a,b)=>new Date(b.created)-new Date(a.created)),
+        audit:mergeAuditLogs(dirty?state.audit:remoteAuditForMerge,dirty?remoteAuditForMerge:state.audit)
+      };
+      persist(false);refreshAll();
+      await syncDatabaseSnapshot(structuredClone(state),{force:true});
+    }else{
+      state={settings:{...defaultState.settings,...remote.settings},cases:remote.cases,audit:remote.audit};
+      persist(false);refreshAll();
+    }
+    if(state.cases.some(c=>database.caseHashes.get(c.id)!==databaseHash(c))){
+      await syncDatabaseSnapshot(structuredClone(state));
+    }
+    localStorage.setItem(DB_PROJECT_KEY,project);localStorage.removeItem(DB_DIRTY_KEY);
+    database.lastSync=now();setDatabaseStatus('online',`โหลด ${state.cases.length} เคสครบทุกตาราง`);
+    setApplicationAccess(true,`เข้าสู่ระบบแล้ว · โหลด ${state.cases.length} เคส`);
+    if(!silent)toast('ดึงข้อมูลล่าสุดจาก Supabase แล้ว');
+  }finally{database.loading=false;renderDatabaseControls()}
+}
+
+async function applyPendingDatabaseDeletes(){
+  const pending=readPendingDeletes();
+  if(pending.clearCases){
+    databaseResult(await database.client.from('trauma_cases').delete().neq('case_id',''),'ล้าง trauma cases');
+    database.caseHashes.clear();
+  }else if(pending.caseIds.length){
+    databaseResult(await database.client.from('trauma_cases').delete().in('case_id',pending.caseIds),'ลบ trauma case');
+    pending.caseIds.forEach(id=>database.caseHashes.delete(id));
+  }
+  if(pending.clearAudit){
+    databaseResult(await database.client.from('audit_logs').delete().neq('id',''),'ล้าง audit log');
+    database.auditIds.clear();
+  }
+  if(pending.clearCases||pending.caseIds.length||pending.clearAudit)localStorage.removeItem(DB_DELETE_KEY);
+}
+async function runWithConcurrency(items,limit,worker){
+  const queue=[...items];
+  await Promise.all(Array.from({length:Math.min(limit,queue.length)},async()=>{while(queue.length)await worker(queue.shift())}));
+}
+async function syncDatabaseSnapshot(snapshot,{force=false}={}){
+  if(!databaseReady())return;
+  database.syncing=true;setDatabaseStatus('syncing','กำลังบันทึกการเปลี่ยนแปลงจากทุกเมนู');
+  const snapshotHash=databaseHash(snapshot);
+  try{
+    await applyPendingDatabaseDeletes();
+    const changedCases=snapshot.cases.filter(c=>force||database.caseHashes.get(c.id)!==databaseHash(c));
+    await runWithConcurrency(changedCases,4,async c=>{
+      databaseResult(await database.client.rpc('save_trauma_case',{p_case:c}),`บันทึกเคส ${c.id}`);
+      database.caseHashes.set(c.id,databaseHash(c));
+    });
+    const settingsHash=databaseHash(snapshot.settings);
+    if(force||settingsHash!==database.settingsHash){
+      const S=snapshot.settings;
+      databaseResult(await database.client.from('app_settings').upsert({
+        id:'default',hospital:S.hospital,si_l1:S.siL1,ct_target_minutes:S.ctTarget,
+        or_target_minutes:S.orTarget,scene_target_minutes:S.sceneTarget,webhook_url:S.webhook||null
+      },{onConflict:'id'}),'บันทึก settings');
+      database.settingsHash=settingsHash;
+    }
+    const newAudit=snapshot.audit.filter(a=>force||!database.auditIds.has(a.id));
+    for(let i=0;i<newAudit.length;i+=100){
+      const rows=newAudit.slice(i,i+100).map(a=>({id:a.id,event_time:a.time,role:a.role,action:a.action,case_id:a.caseId||null}));
+      if(rows.length)databaseResult(await database.client.from('audit_logs').upsert(rows,{onConflict:'id'}),'บันทึก audit log');
+    }
+    newAudit.forEach(a=>database.auditIds.add(a.id));
+    database.lastSync=now();
+    if(databaseHash(state)===snapshotHash)localStorage.removeItem(DB_DIRTY_KEY);
+    else{localStorage.setItem(DB_DIRTY_KEY,'1');queueDatabaseSync()}
+    setDatabaseStatus('online',changedCases.length?`บันทึก ${changedCases.length} เคสแล้ว`:'ข้อมูลเป็นปัจจุบัน');
+  }catch(e){
+    console.error(e);localStorage.setItem(DB_DIRTY_KEY,'1');setDatabaseStatus('error',e.message);throw e;
+  }finally{database.syncing=false}
+}
+function startDatabaseSync(){
+  if(!databaseReady())return Promise.resolve();
+  const snapshot=structuredClone(state);
+  database.syncChain=database.syncChain.catch(()=>{}).then(()=>syncDatabaseSnapshot(snapshot)).catch(e=>{toast('ซิงก์ Supabase ไม่สำเร็จ: '+e.message,'err')});
+  return database.syncChain;
+}
+function queueDatabaseSync(){
+  if(!databaseReady())return;
+  clearTimeout(database.syncTimer);setDatabaseStatus('syncing','มีข้อมูลรอบันทึก');
+  database.syncTimer=setTimeout(()=>{database.syncTimer=null;startDatabaseSync()},350);
+}
+function flushDatabaseSync(){
+  if(database.syncTimer){clearTimeout(database.syncTimer);database.syncTimer=null;return startDatabaseSync()}
+  return database.syncChain;
+}
+async function refreshFromDatabase(options={}){
+  if(!databaseReady()){if(!options.silent)toast('กรุณาเชื่อมต่อและเข้าสู่ระบบ Supabase ก่อน','warn');return}
+  try{await hydrateFromDatabase(options)}catch(e){console.error(e);setDatabaseStatus('error',e.message);if(!options.silent)toast('อ่าน Supabase ไม่สำเร็จ: '+e.message,'err')}
+}
+function subscribeDatabaseRealtime(){
+  if(!databaseReady()||database.channel)return;
+  database.channel=database.client.channel('traumalink-database-changes')
+    .on('postgres_changes',{event:'*',schema:'public'},()=>{
+      clearTimeout(database.realtimeTimer);
+      database.realtimeTimer=setTimeout(()=>{if(document.visibilityState==='visible')refreshFromDatabase({silent:true})},900);
+    })
+    .subscribe(status=>{
+      if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')setDatabaseStatus('online','ฐานข้อมูลพร้อม · Realtime ขัดข้อง (กดย้อนข้อมูลล่าสุดได้)');
+    });
+}
+
+/* ---------- 3 · THEME & NAVIGATION ---------- */
+function applyTheme(t){
+  document.documentElement.dataset.theme=t;
+  $('themeIcon').setAttribute('href',t==='dark'?'#i-sun':'#i-moon');
+  $('themeBtn').title=t==='dark'?'สลับเป็นธีมสว่าง':'สลับเป็นธีมมืด';
+  requestAnimationFrame(drawAllCharts);
+}
+function toggleTheme(){
+  const t=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  try{localStorage.setItem(THEME_KEY,t)}catch(e){}
+  applyTheme(t);
+}
+applyTheme((()=>{try{return localStorage.getItem(THEME_KEY)||'light'}catch(e){return 'light'}})());
+
+function go(view){
+  if(!database.unlocked){
+    renderAuthGate('กรุณาเข้าสู่ระบบก่อนดูข้อมูลผู้ป่วย');
+    return;
+  }
+  const btn=document.querySelector(`.nav button[data-view="${view}"]`);
+  if(!btn)return;
+  document.querySelectorAll('.nav button').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current')});
+  btn.classList.add('active');btn.setAttribute('aria-current','page');
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  $('view-'+view).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  refreshAll();
+  if(databaseReady()&&!database.loading)setTimeout(()=>refreshFromDatabase({silent:true}),0);
+}
+$('nav').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-view]');
+  if(b)go(b.dataset.view);
+});
+function openCase(id,view){
+  const sel={prehospital:'ph_case',command:'er_case',registry:'reg_case'}[view];
+  if(sel){fillCaseSelect(sel);const el=$(sel);if(el)el.value=id}
+  go(view);
+}
+document.addEventListener('keydown',e=>{
+  if(!database.unlocked)return;
+  if(!e.altKey||e.ctrlKey||e.metaKey)return;
+  const map={'1':'dashboard','2':'dispatch','3':'prehospital','4':'command','5':'registry','6':'pips','7':'settings'};
+  if(map[e.key]){e.preventDefault();go(map[e.key])}
+});
+
+/* ---------- 4 · CLINICAL SCORING ---------- */
+const getLatestVital=c=>c.vitals?.[c.vitals.length-1];
+function shockIndex(v){if(!v||!+v.sbp||!+v.hr)return null;return +v.hr/+v.sbp}
+function rtsCodeGCS(g){g=+g;if(g>=13)return 4;if(g>=9)return 3;if(g>=6)return 2;if(g>=4)return 1;return 0}
+function rtsCodeSBP(s){s=+s;if(s>89)return 4;if(s>=76)return 3;if(s>=50)return 2;if(s>=1)return 1;return 0}
+function rtsCodeRR(r){r=+r;if(r>=10&&r<=29)return 4;if(r>29)return 3;if(r>=6)return 2;if(r>=1)return 1;return 0}
+function calcRTS(v){if(!v)return null;return +(0.9368*rtsCodeGCS(v.gcs)+0.7326*rtsCodeSBP(v.sbp)+0.2908*rtsCodeRR(v.rr)).toFixed(3)}
+function autoLevel(c){
+  const v=getLatestVital(c),si=shockIndex(v);
+  if(c.primary?.x==='Uncontrolled'||(v&&(+v.sbp<90||+v.gcs<=12))||(si!=null&&si>=state.settings.siL1))return 'L1';
+  if(v&&(+v.sbp<110||+v.gcs<15||+v.rr>24))return 'L2';
+  return c.level||'L3';
+}
+function calcISS(c){
+  const ais=c.ais||[];
+  if(ais.some(x=>x.sev===6))return 75;
+  const maxBy={};ais.forEach(x=>maxBy[x.region]=Math.max(maxBy[x.region]||0,x.sev));
+  return Object.values(maxBy).sort((a,b)=>b-a).slice(0,3).reduce((s,x)=>s+x*x,0);
+}
+function calcNISS(c){
+  const ais=c.ais||[];
+  if(ais.some(x=>x.sev===6))return 75;
+  return ais.map(x=>x.sev).sort((a,b)=>b-a).slice(0,3).reduce((s,x)=>s+x*x,0);
+}
+function recalcCase(c){c.level=autoLevel(c);runPips(c)}
+
+/* ---------- 5 · CASE FLOW ---------- */
+function upsertTimeline(c,key,label){
+  const x=c.timeline.find(t=>t.key===key);
+  if(x){x.time=now();x.label=label}else c.timeline.push({key,label,time:now()});
+}
+const tl=(c,key)=>c.timeline?.find(t=>t.key===key)?.time;
+
+function setNow(id){$(id).value=dtLocal()}
+function clearDispatchForm(){
+  ['d_age','d_eta','d_location','d_gps','d_unit','d_destination','d_note'].forEach(id=>$(id).value='');
+  $('d_count').value=1;$('d_incidentTime').value=dtLocal();
+  toast('ล้างฟอร์มแล้ว');
+}
+function nextCaseId(){
+  if(readDatabaseConfig().url){
+    const stamp=new Date().toISOString().slice(2,10).replaceAll('-','');
+    return `TR-OFF-${stamp}-${uid().slice(0,4).toUpperCase()}`;
+  }
+  const stamp=new Date().toISOString().slice(2,10).replaceAll('-','');
+  const prefix=`TR-${stamp}-`;
+  const used=state.cases.filter(c=>c.id.startsWith(prefix)).map(c=>+c.id.slice(prefix.length)||0);
+  return prefix+String(Math.max(0,...used)+1).padStart(4,'0');
+}
+async function allocateCaseId(){
+  if(!databaseReady())return nextCaseId();
+  const result=await database.client.rpc('next_trauma_case_id');
+  return databaseResult(result,'ออกเลข Trauma Case');
+}
+async function createCase(){
+  if(createCase.busy)return;
+  createCase.busy=true;
+  const incident=$('d_incidentTime').value;
+  try{
+    const c={
+      id:await allocateCaseId(),created:now(),
+      incidentTime:incident?new Date(incident).toISOString():now(),
+      moi:$('d_moi').value,count:+$('d_count').value||1,
+      age:+$('d_age').value||null,sex:$('d_sex').value,eta:+$('d_eta').value||null,
+      protection:$('d_protection').value,alcohol:$('d_alcohol').value,
+      location:$('d_location').value.trim(),gps:$('d_gps').value.trim(),
+      unit:$('d_unit').value.trim(),unitLevel:$('d_unitLevel').value,
+      destination:$('d_destination').value.trim()||state.settings.hospital,
+      note:$('d_note').value.trim(),status:'Dispatched',level:'L3',
+      timeline:[{key:'call_received',label:'Call received',time:now()},{key:'dispatch',label:'Dispatch',time:now()}],
+      vitals:[],interventions:[],investigations:[],consults:[],ais:[],pips:[],registry:{}
+    };
+    state.cases.unshift(c);persist();audit('Create trauma case',c.id);
+    clearDispatchForm();refreshAll();
+    toast('สร้างเคส '+c.id+(databaseReady()?' · กำลังซิงก์ Supabase':' · บันทึกใน local cache'));
+  }catch(e){setDatabaseStatus('error',e.message);toast('สร้างเคสไม่สำเร็จ: '+e.message,'err')}
+  finally{createCase.busy=false}
+}
+function deleteCase(id){
+  const c=caseById(id);if(!c)return;
+  if(!confirm(`ลบเคส ${id} ถาวร?\nข้อมูล vital, intervention, registry และ PIPS ของเคสนี้จะถูกลบทั้งหมด`))return;
+  state.cases=state.cases.filter(x=>x.id!==id);queueCaseDeletion(id);persist();audit('Delete case',id);refreshAll();
+  toast('ลบเคส '+id+' แล้ว','warn');
+}
+function requireCase(selId){
+  const c=caseById($(selId).value);
+  if(!c)toast('ยังไม่มีเคสให้เลือก — สร้างเคสที่หน้า Dispatch ก่อน','warn');
+  return c;
+}
+function markTimeline(key,label){
+  const c=requireCase('ph_case');if(!c)return;
+  upsertTimeline(c,key,label);
+  if(key==='scene_arrival')c.status='On scene';
+  if(key==='depart_scene')c.status='Transport';
+  persist();audit(label,c.id);refreshAll();toast(label+' • '+c.id);
+}
+function markTimelineER(key,label){
+  const c=requireCase('er_case');if(!c)return;
+  upsertTimeline(c,key,label);
+  if(key==='er_arrival')c.status='ER';
+  persist();audit(label,c.id);refreshAll();toast(label+' • '+c.id);
+}
+function dispatchAction(caseId,key,label,status){
+  const c=caseById(caseId);if(!c)return;
+  upsertTimeline(c,key,label);if(status)c.status=status;
+  persist();audit(label,c.id);refreshAll();toast(label+' • '+c.id);
+}
+
+function savePrimary(){
+  const c=requireCase('ph_case');if(!c)return;
+  c.primary={x:$('x_bleed').value,a:$('a_airway').value,b:$('b_breath').value,c:$('c_circ').value,de:$('de_status').value,time:now()};
+  upsertTimeline(c,'patient_contact','Patient contact');
+  recalcCase(c);persist();audit('Save XABCDE',c.id);refreshAll();
+  toast('บันทึก XABCDE • triage = '+c.level);
+}
+function clearVitalForm(){['v_sbp','v_dbp','v_hr','v_rr','v_spo2','v_gcs'].forEach(id=>$(id).value='');updateVitalPills()}
+function addVital(){
+  const c=requireCase('ph_case');if(!c)return;
+  const get=id=>+$(id).value||null;
+  const v={id:uid(),time:now(),sbp:get('v_sbp'),dbp:get('v_dbp'),hr:get('v_hr'),rr:get('v_rr'),spo2:get('v_spo2'),gcs:get('v_gcs')};
+  if(!v.sbp&&!v.hr&&!v.rr&&!v.gcs&&!v.spo2)return toast('กรอกค่า vital อย่างน้อย 1 ค่า','warn');
+  c.vitals.push(v);recalcCase(c);persist();audit('Add vital signs',c.id);
+  clearVitalForm();refreshAll();toast('เพิ่ม Vital • triage = '+c.level);
+}
+function deleteVital(caseId,vid){
+  const c=caseById(caseId);if(!c)return;
+  c.vitals=c.vitals.filter(v=>v.id!==vid);recalcCase(c);persist();audit('Delete vital',caseId);refreshAll();
+}
+function addIntervention(){
+  const c=requireCase('ph_case');if(!c)return;
+  const detail=$('i_detail').value.trim();
+  if(!detail)return toast('กรอกรายละเอียด intervention','warn');
+  c.interventions.push({id:uid(),time:now(),type:$('i_type').value,detail});
+  $('i_detail').value='';persist();audit('Add intervention',c.id);refreshAll();toast('เพิ่ม intervention แล้ว');
+}
+function deleteIntervention(caseId,iid){
+  const c=caseById(caseId);if(!c)return;
+  c.interventions=c.interventions.filter(x=>x.id!==iid);persist();audit('Delete intervention',caseId);refreshAll();
+}
+function buildPrearrival(){
+  const c=requireCase('ph_case');if(!c)return;
+  const v=getLatestVital(c)||{},si=shockIndex(v);
+  const text=[
+    `TRAUMA ${c.level} | ${c.id}`,
+    `A: ${c.age??'—'} y / ${c.sex||'Unknown'} | ETA: ${c.eta??'—'} min | Unit: ${c.unit||'—'}`,
+    `M: ${c.moi} @ ${c.location||'—'} | Protection: ${c.protection||'Unknown'} | Alcohol: ${c.alcohol||'Unknown'}`,
+    `I: ${c.primary?`X:${c.primary.x}, A:${c.primary.a}, B:${c.primary.b}, C:${c.primary.c}`:'ยังไม่มี XABCDE'}`,
+    `S: BP ${v.sbp||'—'}/${v.dbp||'—'}, HR ${v.hr||'—'}, RR ${v.rr||'—'}, SpO2 ${v.spo2||'—'}%, GCS ${v.gcs||'—'}, SI ${si?si.toFixed(2):'—'}`,
+    `T: ${c.interventions.length?c.interventions.map(x=>x.type+': '+x.detail).join(' | '):'—'}`
+  ].join('\n');
+  $('prearrivalText').value=text;c.prearrival=text;c.status='Incoming';
+  upsertTimeline(c,'prearrival','Pre-arrival notification');
+  persist();audit('Build pre-arrival',c.id);refreshAll();toast('สร้างข้อความ pre-arrival แล้ว');
+}
+async function copyPrearrival(){
+  const t=$('prearrivalText').value;
+  if(!t)return toast('ยังไม่มีข้อความ — กด “สร้าง Pre-arrival” ก่อน','warn');
+  try{await navigator.clipboard.writeText(t);toast('คัดลอกแล้ว')}
+  catch(e){$('prearrivalText').select();document.execCommand('copy');toast('คัดลอกแล้ว')}
+}
+async function sendWebhook(){
+  const c=requireCase('ph_case');if(!c)return;
+  if(!state.settings.webhook)return toast('กรุณาตั้งค่า Webhook URL ที่หน้า Settings','warn');
+  if(!c.prearrival)buildPrearrival();
+  try{
+    const r=await fetch(state.settings.webhook,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'trauma_prearrival',caseId:c.id,level:c.level,message:c.prearrival})
+    });
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    upsertTimeline(c,'webhook_sent','Webhook sent');persist();audit('Send webhook',c.id);refreshAll();
+    toast('ส่ง Webhook สำเร็จ');
+  }catch(e){toast('ส่งไม่สำเร็จ: '+e.message,'err')}
+}
+
+function addInvestigation(){
+  const c=requireCase('er_case');if(!c)return;
+  const item=$('er_inv').value,status=$('er_invStatus').value;
+  c.investigations.push({id:uid(),item,status,result:$('er_invResult').value.trim(),time:now()});
+  $('er_invResult').value='';
+  if(item.includes('CT')&&status!=='Ordered'&&!tl(c,'ct_done'))upsertTimeline(c,'ct_done','CT done');
+  persist();audit('Investigation '+item,c.id);refreshAll();toast('บันทึก '+item);
+}
+function deleteInvestigation(caseId,iid){
+  const c=caseById(caseId);if(!c)return;
+  c.investigations=c.investigations.filter(x=>x.id!==iid);persist();audit('Delete investigation',caseId);refreshAll();
+}
+function addConsult(){
+  const c=requireCase('er_case');if(!c)return;
+  c.consults.push({id:uid(),team:$('er_consult').value,status:$('er_consultStatus').value,note:$('er_consultNote').value.trim(),time:now()});
+  $('er_consultNote').value='';persist();audit('Consult '+$('er_consult').value,c.id);refreshAll();toast('บันทึก consult');
+}
+function deleteConsult(caseId,cid){
+  const c=caseById(caseId);if(!c)return;
+  c.consults=c.consults.filter(x=>x.id!==cid);persist();audit('Delete consult',caseId);refreshAll();
+}
+function saveDisposition(){
+  const c=requireCase('er_case');if(!c)return;
+  c.disposition=$('er_disp').value;c.dispositionNote=$('er_dispNote').value.trim();c.status=c.disposition;
+  upsertTimeline(c,'disposition','Disposition: '+c.disposition);
+  if(c.disposition==='OR')upsertTimeline(c,'or_arrival','OR');
+  if(c.disposition==='Death')c.registry.outcome='Death';
+  recalcCase(c);persist();audit('Disposition '+c.disposition,c.id);refreshAll();
+  toast('บันทึก disposition: '+c.disposition);
+}
+
+function addAIS(){
+  const c=requireCase('reg_case');if(!c)return;
+  c.ais.push({id:uid(),region:$('ais_region').value,sev:+$('ais_sev').value,desc:$('ais_desc').value.trim()});
+  $('ais_desc').value='';persist();audit('Add AIS injury',c.id);refreshAll();toast('เพิ่ม injury แล้ว');
+}
+function deleteAIS(caseId,aid){
+  const c=caseById(caseId);if(!c)return;
+  c.ais=c.ais.filter(x=>x.id!==aid);persist();audit('Delete AIS injury',caseId);refreshAll();
+}
+function saveRegistry(){
+  const c=requireCase('reg_case');if(!c)return;
+  c.registry={...(c.registry||{}),dx:$('reg_dx').value.trim(),icuLos:+$('reg_icul').value||0,los:+$('reg_los').value||0,outcome:$('reg_outcome').value,updated:now()};
+  recalcCase(c);persist();audit('Save trauma registry',c.id);refreshAll();toast('บันทึก registry แล้ว');
+}
+
+/* PIPS auto-detection */
+function runPips(c){
+  const flags=[];
+  const S=state.settings;
+  if(c.registry?.outcome==='Death'||c.disposition==='Death')flags.push('Death review');
+  const er=tl(c,'er_arrival'),ct=tl(c,'ct_done'),or=tl(c,'or_arrival');
+  const sceneIn=tl(c,'scene_arrival'),sceneOut=tl(c,'depart_scene');
+  if(er&&ct&&mins(er,ct)>S.ctTarget)flags.push(`Door-to-CT > ${S.ctTarget} min`);
+  if(er&&or&&mins(er,or)>S.orTarget)flags.push(`Door-to-OR > ${S.orTarget} min`);
+  if(sceneIn&&sceneOut&&mins(sceneIn,sceneOut)>S.sceneTarget)flags.push(`Scene time > ${S.sceneTarget} min`);
+  if(c.level==='L1'&&er&&!tl(c,'trauma_team'))flags.push('Level 1 ไม่ได้เปิด trauma team');
+  const vs=c.vitals||[];
+  if(vs.length>=2){
+    const a=vs[vs.length-2],b=vs[vs.length-1];
+    if(a.gcs&&b.gcs&&b.gcs<a.gcs)flags.push('GCS deterioration');
+    if(a.sbp&&b.sbp&&b.sbp<a.sbp-20)flags.push('SBP deterioration');
+  }
+  c.pips=c.pips||[];
+  flags.forEach(f=>{if(!c.pips.some(x=>x.flag===f))c.pips.push({id:uid(),flag:f,time:now(),status:'Open'})});
+}
+function closePips(caseId,pid){
+  const p=caseById(caseId)?.pips.find(x=>x.id===pid);
+  if(!p)return;
+  p.status='Closed';p.closed=now();persist();audit('Close PIPS: '+p.flag,caseId);refreshAll();toast('ปิดประเด็นแล้ว');
+}
+function reopenPips(caseId,pid){
+  const p=caseById(caseId)?.pips.find(x=>x.id===pid);
+  if(!p)return;
+  p.status='Open';delete p.closed;persist();audit('Reopen PIPS: '+p.flag,caseId);refreshAll();toast('เปิดประเด็นใหม่','warn');
+}
+function filterPips(status){pipsFilter=status;renderPips();go('pips')}
+
+/* ---------- 5.5 · BUTTON PICKERS (แทน dropdown ทั้งหมด) ----------
+   ทุกตัวเลือกเป็นปุ่มจริง ค่าที่เลือกเก็บใน <input type="hidden"> ที่มี id เดิม
+   จึงอ่าน/เขียนด้วย $('id').value ได้เหมือน select เดิมทุกประการ            */
+function parseOptions(str){
+  return str.split('|').map(part=>{
+    let tone='';
+    const bang=part.indexOf('!');
+    if(bang>=0){tone=part.slice(bang+1);part=part.slice(0,bang)}
+    const eq=part.indexOf('=');
+    return eq>=0
+      ? {value:part.slice(0,eq),label:part.slice(eq+1),tone}
+      : {value:part,label:part,tone};
+  });
+}
+function syncPicker(box){
+  const v=$(box.dataset.picker).value;
+  box.querySelectorAll('.seg').forEach(b=>b.setAttribute('aria-checked',String(b.dataset.v===v)));
+}
+function syncPickers(){document.querySelectorAll('.segmented[data-picker]').forEach(syncPicker)}
+function buildPickers(){
+  document.querySelectorAll('.segmented[data-picker]').forEach(box=>{
+    const id=box.dataset.picker,input=$(id),opts=parseOptions(box.dataset.options);
+    box.innerHTML=opts.map(o=>
+      `<button type="button" class="seg" role="radio" aria-checked="false" data-v="${esc(o.value)}"${o.tone?` data-tone="${esc(o.tone)}"`:''}>${esc(o.label)}</button>`
+    ).join('');
+    if(!input.value&&opts.length)input.value=opts[0].value;
+    box.addEventListener('click',e=>{
+      const b=e.target.closest('.seg');
+      if(!b||b.dataset.v===input.value)return;
+      input.value=b.dataset.v;
+      syncPicker(box);
+      if(box.dataset.onchange)window[box.dataset.onchange]();
+    });
+    syncPicker(box);
+  });
+}
+
+/* Role picker — popover of buttons */
+function toggleMenu(id){
+  const m=$(id),wasOpen=!m.hasAttribute('hidden');
+  document.querySelectorAll('.menu-pop').forEach(x=>x.setAttribute('hidden',''));
+  document.querySelectorAll('[aria-haspopup="true"]').forEach(b=>b.setAttribute('aria-expanded','false'));
+  if(!wasOpen){m.removeAttribute('hidden');$('roleBtn').setAttribute('aria-expanded','true')}
+}
+function closeMenus(){
+  document.querySelectorAll('.menu-pop').forEach(x=>x.setAttribute('hidden',''));
+  document.querySelectorAll('[aria-haspopup="true"]').forEach(b=>b.setAttribute('aria-expanded','false'));
+}
+function setRole(role){
+  $('roleSelect').value=role;
+  $('roleLabel').textContent=role;
+  document.querySelectorAll('#roleMenu .menu-item').forEach(b=>b.setAttribute('aria-checked',String(b.dataset.role===role)));
+  closeMenus();
+  toast('เปลี่ยนบทบาทเป็น '+role);
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.menu'))closeMenus()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenus()});
+
+/* ---------- 6 · RENDERING ---------- */
+/* Case switcher — หนึ่งปุ่มต่อหนึ่งเคส แทน dropdown เลือกเคส */
+function fillCaseSelect(id){
+  const input=$(id),bar=$(id+'Bar');
+  if(!state.cases.some(c=>c.id===input.value))input.value=state.cases[0]?.id||'';
+  bar.innerHTML=state.cases.length
+    ? state.cases.map(c=>`
+      <button type="button" class="casebtn" role="radio" data-v="${esc(c.id)}" aria-checked="${c.id===input.value}"
+              onclick="setCase('${id}','${esc(c.id)}')" title="${esc(c.moi)} · ${esc(c.status)}">
+        <i class="dot ${['L1','L2','L3'].includes(c.level)?c.level:'L3'}"></i>
+        <span><span class="cid">${esc(c.id)}</span><span class="cst">${esc(c.moi)} · ${esc(c.status)}</span></span>
+      </button>`).join('')
+    : '<span class="tag">ยังไม่มีเคส — สร้างที่หน้า Dispatch</span>';
+}
+function setCase(id,val){
+  $(id).value=val;
+  fillCaseSelect(id);
+  ({ph_case:loadPrehospitalCase,er_case:loadERCase,reg_case:loadRegistry}[id]||(()=>{}))();
+  const active=$(id+'Bar').querySelector('[aria-checked="true"]');
+  if(active)active.scrollIntoView({block:'nearest',inline:'nearest'});
+}
+
+function renderDashboard(){
+  const today=new Date().toDateString();
+  const todayCases=state.cases.filter(c=>new Date(c.created).toDateString()===today);
+  $('kpiToday').textContent=todayCases.length;
+  $('kpiIncoming').textContent=state.cases.filter(c=>c.status==='Incoming'||c.status==='Transport'||c.status==='En route').length;
+  $('kpiL1').textContent=state.cases.filter(c=>c.level==='L1').length;
+  $('kpiPips').textContent=state.cases.filter(c=>c.pips?.some(p=>p.status==='Open')).length;
+
+  const priority={L1:0,L2:1,L3:2};
+  const sorted=[...state.cases].sort((a,b)=>(priority[a.level]??9)-(priority[b.level]??9)||new Date(b.created)-new Date(a.created)).slice(0,7);
+  $('liveCases').innerHTML=sorted.length?sorted.map(c=>{
+    const v=getLatestVital(c)||{},si=shockIndex(v);
+    return `<button type="button" class="rowbtn" onclick="openCase('${esc(c.id)}','command')" title="เปิดใน ER Command">
+      <div class="grow">
+        <div class="t1"><span class="mono">${esc(c.id)}</span>${levelBadge(c.level)}</div>
+        <div class="t2">${esc(c.moi)} · ${esc(c.status)} · ${relTime(c.created)}</div>
+      </div>
+      <div class="end">
+        <b>${v.sbp||'—'}/${v.dbp||'—'}</b>
+        <div class="t2">HR ${v.hr||'—'} · GCS ${v.gcs||'—'} · SI ${si?si.toFixed(2):'—'}</div>
+      </div>
+      <svg class="ic ic-sm chev" aria-hidden="true"><use href="#i-chev-right"/></svg>
+    </button>`;
+  }).join(''):emptyState('i-inbox','ยังไม่มีเคสในระบบ','สร้างเคสแรกที่หน้า Dispatch');
+
+  const S=state.settings;
+  const collect=f=>state.cases.map(f).filter(x=>x!=null);
+  const scenes=collect(c=>mins(tl(c,'scene_arrival'),tl(c,'depart_scene')));
+  const cts=collect(c=>mins(tl(c,'er_arrival'),tl(c,'ct_done')));
+  const ors=collect(c=>mins(tl(c,'er_arrival'),tl(c,'or_arrival')));
+  const avg=a=>a.length?Math.round(a.reduce((s,x)=>s+x,0)/a.length):null;
+  const meter=(label,val,target,n)=>{
+    const has=val!=null;
+    const pct=has?Math.min(100,Math.round(val/target*100)):0;
+    const over=has&&val>target;
+    return `<div class="meter">
+      <div class="mtop"><span>${label}</span><b>${has?val:'—'}<small>${has?`นาที · เป้า ${target}`:'ยังไม่มีข้อมูล'}</small></b></div>
+      <div class="track"><i class="${over?'over':'good'}" style="width:${pct}%"></i></div>
+      <div class="t2" style="font-size:11px;color:var(--text-3)">${n} เคสที่วัดได้${over?' · เกินเป้าหมาย':''}</div>
+    </div>`;
+  };
+  $('timeKpi').innerHTML=
+    meter('Scene time',avg(scenes),S.sceneTarget,scenes.length)+
+    meter('Door-to-CT',avg(cts),S.ctTarget,cts.length)+
+    meter('Door-to-OR',avg(ors),S.orTarget,ors.length);
+
+  const n1=state.cases.filter(c=>c.level==='L1').length,
+        n2=state.cases.filter(c=>c.level==='L2').length,
+        n3=state.cases.filter(c=>c.level==='L3').length,
+        nt=Math.max(1,n1+n2+n3);
+  const mix=$('triageMix').children;
+  mix[0].style.width=(n1/nt*100)+'%';mix[1].style.width=(n2/nt*100)+'%';mix[2].style.width=(n3/nt*100)+'%';
+  $('triageMixLabel').textContent=`L1 ${n1} · L2 ${n2} · L3 ${n3}`;
+
+  const alerts=state.cases.flatMap(c=>(c.pips||[]).map(p=>({...p,caseId:c.id})))
+    .sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,6);
+  $('latestAlerts').innerHTML=alerts.length?alerts.map(x=>`
+    <button type="button" class="rowbtn" onclick="openCase('${esc(x.caseId)}','registry')" title="เปิดเคสนี้">
+      <div class="grow">
+        <div class="t1">${esc(x.flag)}</div>
+        <div class="t2"><span class="mono">${esc(x.caseId)}</span> · ${relTime(x.time)}</div>
+      </div>
+      <span class="chip ${x.status==='Open'?'dangerv':''}">${esc(x.status)}</span>
+      <svg class="ic ic-sm chev" aria-hidden="true"><use href="#i-chev-right"/></svg>
+    </button>`).join(''):emptyState('i-check-circle','ไม่มี alert','ทุกเคสอยู่ในเกณฑ์ที่กำหนด');
+
+  drawVolume();drawMOI();
+}
+
+function renderDispatch(){
+  $('dispatchList').innerHTML=state.cases.slice(0,10).map(c=>{
+    const btn=(cond,fn,icon,label,cls='')=>cond?`<button type="button" class="btn xs ${cls}" onclick="${fn}"><svg class="ic ic-sm" aria-hidden="true"><use href="#${icon}"/></svg>${label}</button>`:'';
+    return `<div style="border-bottom:1px solid var(--line);padding:4px 0 10px">
+      <button type="button" class="rowbtn" onclick="openCase('${esc(c.id)}','prehospital')" title="เปิดใน Pre-hospital">
+        <div class="grow">
+          <div class="t1"><span class="mono">${esc(c.id)}</span>${levelBadge(c.level)}</div>
+          <div class="t2">${esc(c.location||'ไม่ระบุสถานที่')} · ${esc(c.unit||'ยังไม่มีหน่วย')} · ${c.age??'—'}y/${esc(c.sex||'Unknown')}</div>
+        </div>
+        <div class="end"><b>${esc(c.status)}</b><div class="t2">${tOnly(c.created)}</div></div>
+        <svg class="ic ic-sm chev" aria-hidden="true"><use href="#i-chev-right"/></svg>
+      </button>
+      <div class="btn-group" style="padding:0 12px">
+        ${btn(!tl(c,'wheels_rolling'),`dispatchAction('${esc(c.id)}','wheels_rolling','Wheels rolling','En route')`,'i-play','รถออกฐาน')}
+        ${btn(!tl(c,'scene_arrival'),`dispatchAction('${esc(c.id)}','scene_arrival','Scene arrival','On scene')`,'i-pin','ถึงที่เกิดเหตุ')}
+        ${btn(!!tl(c,'scene_arrival')&&!tl(c,'depart_scene'),`dispatchAction('${esc(c.id)}','depart_scene','Depart scene','Transport')`,'i-ambulance','ออกจากที่เกิดเหตุ')}
+        ${btn(!tl(c,'er_arrival'),`dispatchAction('${esc(c.id)}','er_arrival','ER arrival','ER')`,'i-hospital','ถึง ER','ok')}
+        ${btn(true,`openCase('${esc(c.id)}','command')`,'i-eye','เปิดเคส')}
+        ${btn(true,`deleteCase('${esc(c.id)}')`,'i-trash','ลบ','danger')}
+      </div>
+    </div>`;
+  }).join('')||emptyState('i-radio','ยังไม่มีเคส','กรอกฟอร์มด้านซ้ายเพื่อสร้าง Trauma Case แรก');
+}
+
+function updateVitalPills(){
+  const v={sbp:+$('v_sbp').value,hr:+$('v_hr').value,rr:+$('v_rr').value,gcs:+$('v_gcs').value};
+  const si=shockIndex(v),r=(v.gcs||v.sbp||v.rr)?calcRTS(v):null;
+  const p=$('siPill');
+  p.textContent='SI '+(si?si.toFixed(2):'—');
+  p.className='chip'+(si?(si>=state.settings.siL1?' dangerv':si>=0.9?' warnv':' on'):'');
+  $('rtsPill').textContent='RTS '+(r??'—');
+  $('rtsPill').className='chip'+(r!=null?(r<6?' dangerv':r<7.5?' warnv':' on'):'');
+}
+function loadPrehospitalCase(){
+  const c=caseById($('ph_case').value);
+  if(!c){
+    $('ph_caseLevel').innerHTML='';
+    $('interventionList').innerHTML=emptyState('i-inbox','ยังไม่มีเคส');
+    $('vitalList').innerHTML='';
+    $('prearrivalText').value='';
+    drawVitals(null);return;
+  }
+  $('ph_caseLevel').innerHTML=levelBadge(c.level);
+  if(c.primary){
+    $('x_bleed').value=c.primary.x;$('a_airway').value=c.primary.a;
+    $('b_breath').value=c.primary.b;$('c_circ').value=c.primary.c;$('de_status').value=c.primary.de;
+  }
+  $('prearrivalText').value=c.prearrival||'';
+
+  $('interventionList').innerHTML=(c.interventions||[]).slice().reverse().map(x=>`
+    <div class="linerow">
+      <div class="grow"><div class="t1">${esc(x.type)}</div><div class="t2">${esc(x.detail)}</div></div>
+      <span class="when">${tOnly(x.time)}</span>
+      <button type="button" class="btn xs danger" onclick="deleteIntervention('${esc(c.id)}','${x.id}')" title="ลบรายการนี้" aria-label="ลบ"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+    </div>`).join('')||emptyState('i-plus','ยังไม่มี intervention','บันทึกหัตถการที่ทำ ณ จุดเกิดเหตุหรือระหว่างนำส่ง');
+
+  $('vitalList').innerHTML=(c.vitals||[]).slice().reverse().slice(0,6).map(v=>{
+    const si=shockIndex(v);
+    return `<div class="linerow">
+      <div class="grow"><div class="t1">BP ${v.sbp||'—'}/${v.dbp||'—'} · HR ${v.hr||'—'} · RR ${v.rr||'—'}</div>
+      <div class="t2">SpO₂ ${v.spo2||'—'}% · GCS ${v.gcs||'—'} · SI ${si?si.toFixed(2):'—'} · RTS ${calcRTS(v)??'—'}</div></div>
+      <span class="when">${tOnly(v.time)}</span>
+      <button type="button" class="btn xs danger" onclick="deleteVital('${esc(c.id)}','${v.id}')" title="ลบ vital นี้" aria-label="ลบ"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+    </div>`;
+  }).join('');
+
+  const v=getLatestVital(c),si=shockIndex(v),r=calcRTS(v);
+  $('siPill').textContent='SI '+(si?si.toFixed(2):'—');
+  $('siPill').className='chip'+(si?(si>=state.settings.siL1?' dangerv':si>=0.9?' warnv':' on'):'');
+  $('rtsPill').textContent='RTS '+(r??'—');
+  $('rtsPill').className='chip'+(r!=null?(r<6?' dangerv':r<7.5?' warnv':' on'):'');
+  syncPickers();
+  drawVitals(c);
+}
+
+function loadERCase(){
+  const c=caseById($('er_case').value);
+  if(!c){
+    $('er_level').innerHTML='';
+    ['erSummary','erVital','invList','consultList'].forEach(id=>$(id).innerHTML=emptyState('i-inbox','ยังไม่มีเคส'));
+    $('erTimeline').innerHTML='';return;
+  }
+  $('er_level').innerHTML=levelBadge(c.level);
+  const row=(label,val,icon)=>`<div class="metric"><span>${icon?`<svg class="ic ic-sm" aria-hidden="true"><use href="#${icon}"/></svg>`:''}${label}</span><b>${val}</b></div>`;
+  $('erSummary').innerHTML=
+    row('Case',`<span class="mono">${esc(c.id)}</span>`,'i-file')+
+    row('Age / Sex',`${c.age??'—'} / ${esc(c.sex||'Unknown')}`,'i-user')+
+    row('Mechanism',esc(c.moi),'i-target')+
+    row('Location',esc(c.location||'—'),'i-pin')+
+    row('Protection',esc(c.protection||'Unknown'),'i-shield')+
+    row('Alcohol',esc(c.alcohol||'Unknown'),'i-droplet')+
+    row('EMS Unit',esc(c.unit||'—'),'i-ambulance')+
+    row('ETA',c.eta!=null?c.eta+' นาที':'—','i-clock');
+
+  const v=getLatestVital(c)||{},si=shockIndex(v),rts=calcRTS(getLatestVital(c));
+  $('erVital').innerHTML=
+    row('Blood pressure',`${v.sbp||'—'}/${v.dbp||'—'}`,'i-heart')+
+    row('HR / RR',`${v.hr||'—'} / ${v.rr||'—'}`,'i-pulse')+
+    row('SpO₂ / GCS',`${v.spo2||'—'} / ${v.gcs||'—'}`,'i-scan')+
+    row('Shock Index',si?si.toFixed(2):'—','i-droplet')+
+    row('RTS',rts??'—','i-target')+
+    row('ISS / NISS',`${calcISS(c)} / ${calcNISS(c)}`,'i-shield')+
+    row('บันทึกล่าสุด',v.time?relTime(v.time):'—','i-clock');
+
+  $('erTimeline').innerHTML=[...(c.timeline||[])].sort((a,b)=>new Date(a.time)-new Date(b.time))
+    .map(x=>`<div class="event done"><time>${tOnly(x.time)}</time><div class="lb">${esc(x.label)}</div></div>`).join('')
+    ||emptyState('i-clock','ยังไม่มี timeline');
+
+  $('invList').innerHTML=(c.investigations||[]).slice().reverse().map(x=>`
+    <div class="linerow">
+      <div class="grow"><div class="t1">${esc(x.item)}</div><div class="t2">${esc(x.result||'ยังไม่มีผล')}</div></div>
+      <span class="chip ${x.status==='Resulted'?'okv':''}">${esc(x.status)}</span>
+      <span class="when">${tOnly(x.time)}</span>
+      <button type="button" class="btn xs danger" onclick="deleteInvestigation('${esc(c.id)}','${x.id}')" title="ลบ" aria-label="ลบ"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+    </div>`).join('')||emptyState('i-scan','ยังไม่มี investigation','สั่ง eFAST, CXR หรือ CT แล้วบันทึกที่นี่');
+
+  $('consultList').innerHTML=(c.consults||[]).slice().reverse().map(x=>`
+    <div class="linerow">
+      <div class="grow"><div class="t1">${esc(x.team)}</div><div class="t2">${esc(x.note||'—')}</div></div>
+      <span class="chip ${x.status==='Arrived'?'okv':''}">${esc(x.status)}</span>
+      <span class="when">${tOnly(x.time)}</span>
+      <button type="button" class="btn xs danger" onclick="deleteConsult('${esc(c.id)}','${x.id}')" title="ลบ" aria-label="ลบ"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+    </div>`).join('')||emptyState('i-team','ยังไม่มี consult');
+
+  if(c.disposition)$('er_disp').value=c.disposition;
+  $('er_dispNote').value=c.dispositionNote||'';
+  syncPickers();
+}
+
+function loadRegistry(){
+  const c=caseById($('reg_case').value);
+  if(!c){$('aisList').innerHTML=emptyState('i-inbox','ยังไม่มีเคส');return}
+  $('aisList').innerHTML=(c.ais||[]).map(x=>`
+    <div class="linerow">
+      <div class="grow"><div class="t1">${esc(x.region)}</div><div class="t2">${esc(x.desc||'—')}</div></div>
+      <span class="chip ${x.sev>=4?'dangerv':x.sev===3?'warnv':''}">AIS ${x.sev}</span>
+      <button type="button" class="btn xs danger" onclick="deleteAIS('${esc(c.id)}','${x.id}')" title="ลบ" aria-label="ลบ"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+    </div>`).join('')||emptyState('i-shield','ยังไม่มี AIS injury','เพิ่มการบาดเจ็บรายอวัยวะเพื่อคำนวณ ISS / NISS');
+  $('issVal').textContent=calcISS(c);
+  $('nissVal').textContent=calcNISS(c);
+  $('regRts').textContent=calcRTS(getLatestVital(c))??'—';
+  $('reg_dx').value=c.registry?.dx||'';
+  $('reg_icul').value=c.registry?.icuLos??0;
+  $('reg_los').value=c.registry?.los??0;
+  $('reg_outcome').value=c.registry?.outcome||'Alive';
+  syncPickers();
+}
+
+function renderRegistryTable(){
+  const q=($('regSearch')?.value||'').trim().toLowerCase();
+  const lv=$('regLevelFilter')?.value||'';
+  const rows=state.cases.filter(c=>{
+    if(lv&&c.level!==lv)return false;
+    if(!q)return true;
+    return [c.id,c.moi,c.location,c.disposition,c.registry?.dx].join(' ').toLowerCase().includes(q);
+  });
+  $('regCount').textContent=`${rows.length} เคส${rows.length!==state.cases.length?` จาก ${state.cases.length}`:''}`;
+  $('registryTable').innerHTML=rows.length?rows.map(c=>`<tr>
+    <td class="mono">${esc(c.id)}</td>
+    <td>${fmt(c.incidentTime)}</td>
+    <td>${esc(c.moi)}</td>
+    <td>${levelBadge(c.level)}</td>
+    <td class="num">${calcISS(c)}</td>
+    <td class="num">${calcNISS(c)}</td>
+    <td>${esc(c.disposition||'—')}</td>
+    <td>${esc(c.registry?.outcome||'—')}</td>
+    <td class="actions"><div class="btn-group" style="justify-content:flex-end;flex-wrap:nowrap">
+      <button type="button" class="btn xs" onclick="openCase('${esc(c.id)}','registry')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-file"/></svg>แก้ไข</button>
+      <button type="button" class="btn xs" onclick="openCase('${esc(c.id)}','command')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-eye"/></svg>ดูเคส</button>
+      <button type="button" class="btn xs danger" onclick="deleteCase('${esc(c.id)}')" aria-label="ลบเคส"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg></button>
+    </div></td></tr>`).join(''):`<tr><td colspan="9">${emptyState('i-database',state.cases.length?'ไม่พบเคสที่ตรงกับการค้นหา':'ยังไม่มีข้อมูลใน registry')}</td></tr>`;
+}
+
+function renderPips(){
+  const all=state.cases.flatMap(c=>(c.pips||[]).map(p=>({...p,caseId:c.id})));
+  $('pipsCases').textContent=new Set(all.map(x=>x.caseId)).size;
+  $('pipsOpen').textContent=all.filter(x=>x.status==='Open').length;
+  $('pipsClosed').textContent=all.filter(x=>x.status==='Closed').length;
+  const rows=all.filter(p=>!pipsFilter||p.status===pipsFilter)
+    .sort((a,b)=>(a.status===b.status?0:a.status==='Open'?-1:1)||new Date(b.time)-new Date(a.time));
+  document.querySelectorAll('#pipsFilters .btn').forEach(b=>b.classList.toggle('primary',b.dataset.f===pipsFilter));
+  $('pipsTable').innerHTML=rows.length?rows.map(p=>`<tr>
+    <td class="mono">${esc(p.caseId)}</td>
+    <td>${esc(p.flag)}</td>
+    <td>${fmt(p.time)}</td>
+    <td><span class="chip ${p.status==='Open'?'dangerv':'okv'}">${esc(p.status)}</span></td>
+    <td class="actions"><div class="btn-group" style="justify-content:flex-end;flex-wrap:nowrap">
+      <button type="button" class="btn xs" onclick="openCase('${esc(p.caseId)}','command')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-eye"/></svg>ดูเคส</button>
+      ${p.status==='Open'
+        ?`<button type="button" class="btn xs ok" onclick="closePips('${esc(p.caseId)}','${p.id}')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>ปิดประเด็น</button>`
+        :`<button type="button" class="btn xs warn" onclick="reopenPips('${esc(p.caseId)}','${p.id}')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-refresh"/></svg>เปิดใหม่</button>`}
+    </div></td></tr>`).join(''):`<tr><td colspan="5">${emptyState('i-check-circle',pipsFilter?'ไม่มีรายการในตัวกรองนี้':'ยังไม่มี PIPS flag','ระบบจะตรวจจับ process gap ให้อัตโนมัติ')}</td></tr>`;
+}
+
+function renderSettings(){
+  const S=state.settings;
+  $('s_hospital').value=S.hospital;$('s_si').value=S.siL1;$('s_ct').value=S.ctTarget;
+  $('s_or').value=S.orTarget;$('s_scene').value=S.sceneTarget;$('s_webhook').value=S.webhook||'';
+  $('hospitalNameTop').textContent=S.hospital;
+  document.title=`${S.hospital} — TraumaLink 360`;
+  renderDatabaseControls();
+}
+function saveSettings(){
+  state.settings={
+    hospital:$('s_hospital').value.trim()||'Trauma Center',
+    siL1:+$('s_si').value||1.2,
+    ctTarget:+$('s_ct').value||30,
+    orTarget:+$('s_or').value||60,
+    sceneTarget:+$('s_scene').value||10,
+    webhook:$('s_webhook').value.trim()
+  };
+  state.cases.forEach(recalcCase);persist();audit('Update settings');refreshAll();toast('บันทึกการตั้งค่าแล้ว');
+}
+function renderAudit(){
+  $('auditLog').innerHTML=(state.audit||[]).slice(0,50).map(a=>`
+    <div class="linerow">
+      <div class="grow"><div class="t1">${esc(a.action)}</div><div class="t2">${esc(a.caseId||'System')} · ${esc(a.role)}</div></div>
+      <span class="when">${fmt(a.time)}</span>
+    </div>`).join('')||emptyState('i-list','ยังไม่มี audit log');
+}
+function clearAudit(){
+  if(!state.audit.length)return;
+  if(!confirm('ล้าง audit log ทั้งหมด?'))return;
+  state.audit=[];queueClearAudit();persist();renderAudit();toast('ล้าง audit log แล้ว','warn');
+}
+
+function renderChrome(){
+  const openPips=state.cases.reduce((n,c)=>n+(c.pips||[]).filter(p=>p.status==='Open').length,0);
+  const live=state.cases.filter(c=>['Incoming','Transport','En route','On scene','Dispatched'].includes(c.status)).length;
+  $('navCountLive').textContent=live||'';
+  $('navCountPips').textContent=openPips||'';
+  $('footCases').textContent=`${state.cases.length} เคสในระบบ`;
+  $('topClock').textContent=new Date().toLocaleString('th-TH',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+}
+
+function refreshAll(){
+  ['ph_case','er_case','reg_case'].forEach(fillCaseSelect);
+  state.cases.forEach(recalcCase);persist(false);
+  renderDashboard();renderDispatch();loadPrehospitalCase();loadERCase();
+  loadRegistry();renderRegistryTable();renderPips();renderSettings();renderAudit();renderChrome();
+  syncPickers();
+}
+
+/* ---------- 7 · CHARTS ---------- */
+const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function palette(){
+  return{
+    grid:cssVar('--line'),text:cssVar('--text-3'),strong:cssVar('--text-2'),
+    primary:cssVar('--primary'),primary2:cssVar('--primary-2'),
+    ok:cssVar('--ok'),warn:cssVar('--warn'),danger:cssVar('--danger'),
+    gold:cssVar('--gold'),purple:cssVar('--purple'),info:cssVar('--info')
+  };
+}
+function setupCanvas(cv){
+  const dpr=window.devicePixelRatio||1;
+  const w=Math.max(260,Math.round(cv.clientWidth)),h=Math.max(150,Math.round(cv.clientHeight));
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr}
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  ctx.font='500 11px Sarabun,system-ui,sans-serif';
+  ctx.textBaseline='alphabetic';
+  return{ctx,w,h};
+}
+function rrect(ctx,x,y,w,h,r){
+  r=Math.max(0,Math.min(r,w/2,h/2));
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+function noData(ctx,w,h,msg){
+  const p=palette();
+  ctx.fillStyle=p.text;ctx.textAlign='center';
+  ctx.font='500 12px Sarabun,system-ui,sans-serif';
+  ctx.fillText(msg,w/2,h/2+4);
+  ctx.textAlign='left';
+}
+
+function drawVolume(){
+  const cv=$('volumeChart');if(!cv)return;
+  const{ctx,w,h}=setupCanvas(cv),p=palette();
+  const labels=[],vals=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    labels.push(d.toLocaleDateString('th-TH',{weekday:'short'}));
+    vals.push(state.cases.filter(c=>new Date(c.created).toDateString()===d.toDateString()).length);
+  }
+  if(!vals.some(v=>v>0))return noData(ctx,w,h,'ยังไม่มีเคสใน 7 วันล่าสุด');
+
+  const padL=30,padR=14,padT=20,padB=28;
+  const plotW=w-padL-padR,plotH=h-padT-padB;
+  const max=Math.max(1,...vals),ticks=Math.min(4,max);
+  ctx.strokeStyle=p.grid;ctx.lineWidth=1;ctx.fillStyle=p.text;
+  for(let i=0;i<=ticks;i++){
+    const val=Math.round(max*i/ticks),y=Math.round(padT+plotH-plotH*i/ticks)+.5;
+    ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();
+    ctx.textAlign='right';ctx.fillText(String(val),padL-8,y+4);
+  }
+  const slot=plotW/vals.length,bw=Math.min(38,slot*.56);
+  vals.forEach((v,i)=>{
+    const x=padL+slot*i+(slot-bw)/2;
+    const bh=Math.max(v>0?4:0,plotH*v/max);
+    const y=padT+plotH-bh;
+    if(bh>0){
+      const g=ctx.createLinearGradient(0,y,0,padT+plotH);
+      g.addColorStop(0,p.primary2);g.addColorStop(1,p.primary);
+      ctx.fillStyle=g;rrect(ctx,x,y,bw,bh,6);ctx.fill();
+      ctx.fillStyle=p.strong;ctx.textAlign='center';
+      ctx.font='700 11px Sarabun,system-ui,sans-serif';
+      ctx.fillText(String(v),x+bw/2,y-7);
+    }
+    ctx.fillStyle=p.text;ctx.textAlign='center';
+    ctx.font='500 11px Sarabun,system-ui,sans-serif';
+    ctx.fillText(labels[i],x+bw/2,h-9);
+  });
+  ctx.textAlign='left';
+}
+
+function drawMOI(){
+  const cv=$('moiChart');if(!cv)return;
+  const{ctx,w,h}=setupCanvas(cv),p=palette();
+  const map={};state.cases.forEach(c=>map[c.moi]=(map[c.moi]||0)+1);
+  const arr=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(!arr.length)return noData(ctx,w,h,'ยังไม่มีข้อมูล mechanism');
+
+  const max=Math.max(...arr.map(x=>x[1]));
+  const padT=12,padB=10,labelW=Math.min(104,w*.38),valW=26;
+  const rowH=Math.min(38,(h-padT-padB)/arr.length),bh=Math.min(15,rowH*.44);
+  const top=Math.max(padT,(h-rowH*arr.length)/2);
+  const barX=labelW+8,barW=Math.max(20,w-barX-valW-12);
+  const tones=[p.primary,p.info,p.ok,p.purple,p.warn];
+  arr.forEach(([name,val],i)=>{
+    const cy=top+rowH*i+rowH/2;
+    ctx.fillStyle=p.text;ctx.textAlign='right';
+    ctx.font='500 11.5px Sarabun,system-ui,sans-serif';
+    let label=name.length>17?name.slice(0,16)+'…':name;
+    ctx.fillText(label,labelW,cy+4);
+    ctx.fillStyle=p.grid;rrect(ctx,barX,cy-bh/2,barW,bh,bh/2);ctx.fill();
+    const fw=Math.max(bh,barW*val/max),tone=tones[i%tones.length];
+    const g=ctx.createLinearGradient(barX,0,barX+fw,0);
+    g.addColorStop(0,tone+'b3');g.addColorStop(1,tone);
+    ctx.fillStyle=g;rrect(ctx,barX,cy-bh/2,fw,bh,bh/2);ctx.fill();
+    ctx.fillStyle=p.strong;ctx.textAlign='left';
+    ctx.font='700 11.5px Sarabun,system-ui,sans-serif';
+    ctx.fillText(String(val),barX+fw+8,cy+4);
+  });
+  ctx.textAlign='left';
+}
+
+function drawVitals(c){
+  const cv=$('vitalChart');if(!cv)return;
+  const{ctx,w,h}=setupCanvas(cv),p=palette();
+  const vs=(c?.vitals||[]).slice(-10);
+  if(!vs.length)return noData(ctx,w,h,'ยังไม่มี vital trend — บันทึกอย่างน้อย 1 ครั้ง');
+
+  const padL=32,padR=14,padT=16,padB=26;
+  const plotW=w-padL-padR,plotH=h-padT-padB,maxY=200;
+  ctx.strokeStyle=p.grid;ctx.lineWidth=1;ctx.fillStyle=p.text;
+  for(let i=0;i<=4;i++){
+    const y=Math.round(padT+plotH-plotH*i/4)+.5;
+    ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();
+    ctx.textAlign='right';ctx.fillText(String(maxY*i/4),padL-7,y+4);
+  }
+  const X=i=>vs.length===1?padL+plotW/2:padL+plotW*i/(vs.length-1);
+  const Y=v=>padT+plotH-Math.min(maxY,Math.max(0,v))/maxY*plotH;
+
+  const series=[
+    {key:'sbp',color:p.primary,scale:1,area:true},
+    {key:'hr',color:p.ok,scale:1},
+    {key:'gcs',color:p.warn,scale:10}
+  ];
+  series.forEach(s=>{
+    const pts=vs.map((v,i)=>({x:X(i),y:Y((+v[s.key]||0)*s.scale),ok:!!+v[s.key]})).filter(pt=>pt.ok);
+    if(!pts.length)return;
+    if(s.area&&pts.length>1){
+      const g=ctx.createLinearGradient(0,padT,0,padT+plotH);
+      g.addColorStop(0,s.color+'44');g.addColorStop(1,s.color+'00');
+      ctx.beginPath();ctx.moveTo(pts[0].x,padT+plotH);
+      pts.forEach(pt=>ctx.lineTo(pt.x,pt.y));
+      ctx.lineTo(pts[pts.length-1].x,padT+plotH);ctx.closePath();
+      ctx.fillStyle=g;ctx.fill();
+    }
+    ctx.strokeStyle=s.color;ctx.lineWidth=2.4;ctx.lineJoin='round';ctx.lineCap='round';
+    ctx.beginPath();pts.forEach((pt,i)=>i?ctx.lineTo(pt.x,pt.y):ctx.moveTo(pt.x,pt.y));ctx.stroke();
+    pts.forEach(pt=>{
+      ctx.beginPath();ctx.arc(pt.x,pt.y,3.4,0,Math.PI*2);
+      ctx.fillStyle=cssVar('--surface-inset');ctx.fill();
+      ctx.lineWidth=2.2;ctx.strokeStyle=s.color;ctx.stroke();
+    });
+  });
+  ctx.fillStyle=p.text;ctx.textAlign='center';
+  ctx.font='500 10.5px Sarabun,system-ui,sans-serif';
+  vs.forEach((v,i)=>{
+    if(vs.length>6&&i%2)return;
+    ctx.fillText(tOnly(v.time),X(i),h-8);
+  });
+  ctx.textAlign='left';
+}
+function drawAllCharts(){
+  drawVolume();drawMOI();
+  drawVitals(caseById($('ph_case').value));
+}
+
+/* ---------- 8 · DATA I/O ---------- */
+const CSV_HEADER=['Case ID','Incident time','Age','Sex','MOI','Location','Protection','Alcohol','EMS Unit','Level','Status','SBP','DBP','HR','RR','SpO2','GCS','Shock Index','RTS','Scene time (min)','Door-to-CT (min)','Door-to-OR (min)','Disposition','ISS','NISS','ICU LOS','Hospital LOS','Outcome'];
+function caseRows(){
+  return state.cases.map(c=>{
+    const v=getLatestVital(c)||{};
+    return[
+      c.id,c.incidentTime,c.age??'',c.sex||'',c.moi,c.location||'',c.protection||'',c.alcohol||'',
+      c.unit||'',c.level,c.status,v.sbp??'',v.dbp??'',v.hr??'',v.rr??'',v.spo2??'',v.gcs??'',
+      shockIndex(v)?.toFixed(2)||'',calcRTS(v)??'',
+      mins(tl(c,'scene_arrival'),tl(c,'depart_scene'))??'',
+      mins(tl(c,'er_arrival'),tl(c,'ct_done'))??'',
+      mins(tl(c,'er_arrival'),tl(c,'or_arrival'))??'',
+      c.disposition||'',calcISS(c),calcNISS(c),
+      c.registry?.icuLos??'',c.registry?.los??'',c.registry?.outcome||''
+    ];
+  });
+}
+function guardEmpty(){
+  if(state.cases.length)return false;
+  toast('ยังไม่มีข้อมูลให้ส่งออก','warn');return true;
+}
+function exportJSON(){
+  download(`traumalink-backup-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(state,null,2),'application/json');
+  audit('Export JSON backup');toast('ดาวน์โหลดไฟล์สำรองแล้ว');
+}
+function importJSON(file){
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const x=JSON.parse(r.result);
+      if(!x||!Array.isArray(x.cases)||!x.settings)throw new Error('bad format');
+      if(state.cases.length&&!confirm('การนำเข้าจะแทนที่ข้อมูลทั้งหมดในเครื่องนี้ ดำเนินการต่อ?'))return;
+      queueClearCases();queueClearAudit();
+      state=x;state.settings={...defaultState.settings,...state.settings};
+      state.cases.forEach(c=>{c.timeline??=[];c.vitals??=[];c.interventions??=[];c.investigations??=[];c.consults??=[];c.ais??=[];c.pips??=[];c.registry??={}});
+      persist();refreshAll();audit('Import JSON backup');toast('นำเข้าข้อมูลสำเร็จ');
+    }catch(e){toast('ไฟล์ JSON ไม่ถูกต้อง','err')}
+  };
+  r.readAsText(file);
+}
+function exportAllCSV(){
+  if(guardEmpty())return;
+  const csv='﻿'+[CSV_HEADER,...caseRows()].map(r=>r.map(csvCell).join(',')).join('\r\n');
+  download(`trauma-cases-${new Date().toISOString().slice(0,10)}.csv`,csv,'text/csv;charset=utf-8');
+  audit('Export cases CSV');toast('ส่งออก CSV แล้ว');
+}
+function exportRegistryCSV(){exportAllCSV()}
+function exportRegistryExcel(){
+  if(guardEmpty())return;
+  const table='<table border="1"><tr>'+CSV_HEADER.map(x=>`<th>${esc(x)}</th>`).join('')+'</tr>'+
+    caseRows().map(r=>'<tr>'+r.map(x=>`<td>${esc(x)}</td>`).join('')+'</tr>').join('')+'</table>';
+  download(`trauma-registry-${new Date().toISOString().slice(0,10)}.xls`,
+    `<html><head><meta charset="utf-8"></head><body>${table}</body></html>`,'application/vnd.ms-excel');
+  audit('Export registry Excel');toast('ส่งออกไฟล์ Excel แล้ว');
+}
+function resetAll(){
+  if(!confirm('ล้างข้อมูลทั้งหมดทั้ง Supabase และ local cache?\nการกระทำนี้ย้อนกลับไม่ได้ — ควร export backup ก่อน'))return;
+  queueClearCases();queueClearAudit();
+  localStorage.removeItem(KEY);
+  state=structuredClone(defaultState);persist();refreshAll();
+  toast('ล้างข้อมูลทั้งหมดแล้ว','warn');
+}
+function seedDemo(){
+  if(state.cases.length&&!confirm('เพิ่มข้อมูลตัวอย่างต่อจากข้อมูลปัจจุบัน?'))return;
+  const base=new Date(),mk=m=>new Date(base.getTime()-m*60000).toISOString();
+  const hosp=state.settings.hospital;
+  const demo=[
+    {id:'TR-DEMO-001',created:mk(45),incidentTime:mk(58),moi:'Motorcycle crash',location:'ถนนสายหลัก กม.12',gps:'16.0500,103.6500',
+     age:42,sex:'Male',eta:8,protection:'Not used',alcohol:'Suspected',unit:'ALS-01',unitLevel:'ALS',destination:hosp,
+     note:'MC vs pickup, ผู้ป่วยกระเด็นตกข้างทาง',status:'Incoming',level:'L1',
+     timeline:[{key:'call_received',label:'Call received',time:mk(55)},{key:'dispatch',label:'Dispatch',time:mk(53)},
+       {key:'scene_arrival',label:'Scene arrival',time:mk(45)},{key:'patient_contact',label:'Patient contact',time:mk(44)},
+       {key:'depart_scene',label:'Depart scene',time:mk(28)},{key:'prearrival',label:'Pre-arrival notification',time:mk(12)}],
+     primary:{x:'Controlled',a:'Patent',b:'Distress',c:'Shock suspected',de:'Completed',time:mk(42)},
+     vitals:[{id:uid(),time:mk(42),sbp:102,dbp:66,hr:108,rr:24,spo2:95,gcs:15},
+             {id:uid(),time:mk(22),sbp:88,dbp:54,hr:126,rr:28,spo2:91,gcs:13}],
+     interventions:[{id:uid(),time:mk(38),type:'Oxygen',detail:'NRBM 10 L/min'},
+       {id:uid(),time:mk(34),type:'IV',detail:'2 large-bore IV + NSS 500 mL'},
+       {id:uid(),time:mk(30),type:'Pelvic binder',detail:'Applied at scene'}],
+     investigations:[],consults:[],ais:[],pips:[],registry:{}},
+    {id:'TR-DEMO-002',created:mk(160),incidentTime:mk(180),moi:'Fall',location:'บ้านพัก ต.ในเมือง',gps:'',
+     age:67,sex:'Female',eta:18,protection:'Not applicable',alcohol:'No',unit:'BLS-03',unitLevel:'BLS',destination:hosp,
+     note:'พลัดตกบันได สูงประมาณ 2 เมตร',status:'Ward',level:'L2',disposition:'Ward',dispositionNote:'Admit observation',
+     timeline:[{key:'call_received',label:'Call received',time:mk(175)},{key:'dispatch',label:'Dispatch',time:mk(172)},
+       {key:'scene_arrival',label:'Scene arrival',time:mk(160)},{key:'depart_scene',label:'Depart scene',time:mk(148)},
+       {key:'er_arrival',label:'ER arrival',time:mk(126)},{key:'ct_done',label:'CT done',time:mk(88)},
+       {key:'disposition',label:'Disposition: Ward',time:mk(60)}],
+     vitals:[{id:uid(),time:mk(155),sbp:128,dbp:76,hr:92,rr:20,spo2:98,gcs:15}],
+     interventions:[{id:uid(),time:mk(150),type:'Splint',detail:'Left forearm splint'}],
+     investigations:[{id:uid(),item:'CT Brain',status:'Resulted',result:'No intracranial hemorrhage',time:mk(88)}],
+     consults:[{id:uid(),team:'Orthopedics',status:'Arrived',note:'Closed reduction',time:mk(80)}],
+     ais:[{id:uid(),region:'Head/Neck',sev:2,desc:'Scalp laceration'},{id:uid(),region:'Extremities/Pelvic girdle',sev:2,desc:'Left radius fracture'}],
+     pips:[],registry:{dx:'Scalp laceration, closed left radius fracture',icuLos:0,los:2,outcome:'Alive'}}
+  ];
+  state.cases=[...demo.filter(d=>!caseById(d.id)),...state.cases];
+  state.cases.forEach(recalcCase);persist();audit('Seed demo data');refreshAll();
+  toast('เพิ่มข้อมูลตัวอย่างแล้ว');
+}
+
+/* ---------- INIT ---------- */
+buildPickers();
+$('d_incidentTime').value=dtLocal();
+['v_sbp','v_dbp','v_hr','v_rr','v_spo2','v_gcs'].forEach(id=>$(id).addEventListener('input',updateVitalPills));
+$('i_detail').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addIntervention()}});
+$('er_invResult').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addInvestigation()}});
+$('ais_desc').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addAIS()}});
+$('regSearch').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';renderRegistryTable()}});
+
+let resizeTimer;
+window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(drawAllCharts,180)});
+setInterval(renderChrome,30000);
+window.addEventListener('beforeprint',drawAllCharts);
+window.addEventListener('online',()=>database.client?(databaseReady()?flushDatabaseSync():connectDatabase(false)):connectDatabase(false));
+window.addEventListener('offline',()=>setDatabaseStatus('offline','เครือข่ายขัดข้อง · บันทึกลง local cache ชั่วคราว'));
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&databaseReady())refreshFromDatabase({silent:true})});
+
+refreshAll();
+setDatabaseStatus(readDatabaseConfig().url?'connecting':'offline',readDatabaseConfig().url?'กำลังเริ่มการเชื่อมต่อ':'ยังไม่ได้ตั้งค่า Supabase');
+connectDatabase(false);
+</script>
+</body>
+</html>
