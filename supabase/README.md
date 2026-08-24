@@ -28,6 +28,14 @@ Never move `SUPABASE_SERVICE_ROLE_KEY` into `index.html`. Supabase injects that
 secret into the Edge Function environment; the public browser receives only the
 publishable key.
 
+## Public dashboard aggregates
+
+Signed-out visitors can call `get_public_dashboard_stats()` to see aggregate KPI,
+7-day volume, triage mix, mechanism counts, and time-performance numbers. The
+security-definer function returns no case IDs, demographics, locations, notes, or
+clinical records. Existing projects can install or update it by running
+[`public-dashboard.sql`](./public-dashboard.sql) in SQL Editor.
+
 The browser keeps a local cache for temporary offline use. Supabase is the source
 of truth after the first successful connection. On a first connection, any cases
 already stored in the local browser are migrated into the empty project.

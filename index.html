@@ -788,7 +788,7 @@ td.actions{text-align:right}
 
   <div class="callout info dashboard-guest" id="dashboardGuestNotice">
     <svg class="ic ic-sm" aria-hidden="true"><use href="#i-shield"/></svg>
-    <div><b>Dashboard เปิดดูได้โดยไม่ต้องเข้าสู่ระบบ</b><br>รายชื่อผู้ป่วย รายละเอียดเคส และข้อมูลทางคลินิกสงวนไว้สำหรับเจ้าหน้าที่ที่เข้าสู่ระบบแล้วเท่านั้น</div>
+    <div><b>Dashboard และตัวเลขสรุปเปิดดูได้โดยไม่ต้องเข้าสู่ระบบ</b><br>รายชื่อผู้ป่วย รายละเอียดเคส และข้อมูลทางคลินิกสงวนไว้สำหรับเจ้าหน้าที่ที่เข้าสู่ระบบแล้วเท่านั้น</div>
     <button type="button" class="btn primary sm" onclick="openAuthGate('patients')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg>เข้าสู่ระบบเพื่อดูรายชื่อ</button>
   </div>
 
@@ -822,7 +822,7 @@ td.actions{text-align:right}
     <div class="card">
       <div class="card-head">
         <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg>Trauma Volume <small>7 วันล่าสุด</small></div>
-        <button type="button" class="btn sm ghost icon" onclick="refreshAll()" title="รีเฟรช" aria-label="รีเฟรช"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+        <button type="button" class="btn sm ghost icon" onclick="refreshDashboard()" title="รีเฟรช" aria-label="รีเฟรช"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-refresh"/></svg></button>
       </div>
       <canvas id="volumeChart" class="chart"></canvas>
     </div>
@@ -1519,6 +1519,7 @@ const database={
   caseHashes:new Map(),settingsHash:'',auditIds:new Set(),realtimeTimer:null,unlocked:false,
   cacheLoaded:false,pendingView:null,staffUsers:[],staffLoading:false
 };
+const publicDashboard={data:null,loading:false,error:''};
 
 function authIdentifierToEmail(value){
   const identifier=String(value||'').trim().toLowerCase();
@@ -1602,6 +1603,22 @@ function setApplicationAccess(unlocked,detail=''){
 function databaseResult(result,label){
   if(result?.error)throw new Error(`${label}: ${result.error.message}`);
   return result?.data;
+}
+async function loadPublicDashboardStats({force=false}={}){
+  if(!database.client||publicDashboard.loading||(!force&&publicDashboard.data))return;
+  publicDashboard.loading=true;publicDashboard.error='';renderDashboard();
+  try{
+    const result=await database.client.rpc('get_public_dashboard_stats');
+    publicDashboard.data=databaseResult(result,'โหลดตัวเลข Dashboard');
+  }catch(e){
+    publicDashboard.error=e.message;console.error(e);
+  }finally{
+    publicDashboard.loading=false;renderDashboard();
+  }
+}
+function refreshDashboard(){
+  if(databaseReady())refreshFromDatabase();
+  else loadPublicDashboardStats({force:true});
 }
 function setDatabaseStatus(status,detail=''){
   database.status=status;database.detail=detail;
@@ -1714,6 +1731,7 @@ async function connectDatabase(showToast=false){
         clearProtectedLocalData();
         setDatabaseStatus('auth',event==='SIGNED_OUT'?'ออกจากระบบแล้ว · ข้อมูลผู้ป่วยในเครื่องถูกล้าง':'กรุณาเข้าสู่ระบบ');
         if(event==='SIGNED_OUT')go('dashboard');
+        setTimeout(()=>loadPublicDashboardStats({force:true}),0);
       }else{
         restoreProtectedLocalData();
       }
@@ -1729,6 +1747,7 @@ async function connectDatabase(showToast=false){
     if(!database.session){
       database.unlocked=false;clearProtectedLocalData();
       setDatabaseStatus('auth','Project พร้อมแล้ว · กรุณาเข้าสู่ระบบ');
+      await loadPublicDashboardStats({force:true});
       if(showToast)toast('เชื่อม Project แล้ว กรุณาเข้าสู่ระบบ','warn');
       return true;
     }
@@ -1759,6 +1778,7 @@ async function disconnectSupabase(){
   if(database.client)await database.client.auth.signOut({scope:'local'}).catch(()=>{});
   await disconnectDatabaseClient();
   try{localStorage.removeItem(DB_CONFIG_KEY);localStorage.removeItem(DB_PROJECT_KEY);localStorage.removeItem(DB_DIRTY_KEY);localStorage.removeItem(DB_DELETE_KEY)}catch(e){}
+  publicDashboard.data=null;publicDashboard.error='';
   clearProtectedLocalData();
   if($('s_auth_password'))$('s_auth_password').value='';
   if($('authGatePassword'))$('authGatePassword').value='';
@@ -2396,15 +2416,45 @@ function setCase(id,val){
   if(active)active.scrollIntoView({block:'nearest',inline:'nearest'});
 }
 
+function dashboardMeter(label,val,target,n){
+  const has=val!=null;
+  const safeTarget=Math.max(1,+target||1);
+  const pct=has?Math.min(100,Math.round(val/safeTarget*100)):0;
+  const over=has&&val>safeTarget;
+  return `<div class="meter">
+    <div class="mtop"><span>${label}</span><b>${has?val:'—'}<small>${has?`นาที · เป้า ${safeTarget}`:'ยังไม่มีข้อมูล'}</small></b></div>
+    <div class="track"><i class="${over?'over':'good'}" style="width:${pct}%"></i></div>
+    <div class="t2" style="font-size:11px;color:var(--text-3)">${+n||0} เคสที่วัดได้${over?' · เกินเป้าหมาย':''}</div>
+  </div>`;
+}
+function renderDashboardPerformance(performance={},targets={}){
+  $('timeKpi').innerHTML=
+    dashboardMeter('Scene time',performance.sceneAvg,targets.scene??state.settings.sceneTarget,performance.sceneCount)+
+    dashboardMeter('Door-to-CT',performance.ctAvg,targets.ct??state.settings.ctTarget,performance.ctCount)+
+    dashboardMeter('Door-to-OR',performance.orAvg,targets.or??state.settings.orTarget,performance.orCount);
+}
 function renderDashboard(){
   const guest=!database.unlocked;
   $('dashboardGuestNotice')?.classList.toggle('hidden',!guest);
   if(guest){
-    ['kpiToday','kpiIncoming','kpiL1','kpiPips'].forEach(id=>$(id).textContent='—');
+    const stats=publicDashboard.data;
+    const pending=publicDashboard.loading?'…':'—';
+    $('kpiToday').textContent=stats?.today??pending;
+    $('kpiIncoming').textContent=stats?.incoming??pending;
+    $('kpiL1').textContent=stats?.level1??pending;
+    $('kpiPips').textContent=stats?.openPips??pending;
     $('liveCases').innerHTML=emptyState('i-lock','เข้าสู่ระบบเพื่อดูเคส','Dashboard สาธารณะจะไม่แสดงรายชื่อหรือรายละเอียดผู้ป่วย');
-    $('timeKpi').innerHTML=emptyState('i-lock','ข้อมูลประสิทธิภาพได้รับการปกป้อง','เข้าสู่ระบบด้วยบัญชีเจ้าหน้าที่เพื่อดูข้อมูล');
-    [...$('triageMix').children].forEach(x=>x.style.width='0%');
-    $('triageMixLabel').textContent='ต้องเข้าสู่ระบบ';
+    if(stats){
+      renderDashboardPerformance(stats.performance,stats.targets);
+      const n1=+stats.triage?.L1||0,n2=+stats.triage?.L2||0,n3=+stats.triage?.L3||0,nt=Math.max(1,n1+n2+n3);
+      const mix=$('triageMix').children;
+      mix[0].style.width=(n1/nt*100)+'%';mix[1].style.width=(n2/nt*100)+'%';mix[2].style.width=(n3/nt*100)+'%';
+      $('triageMixLabel').textContent=`L1 ${n1} · L2 ${n2} · L3 ${n3}`;
+    }else{
+      $('timeKpi').innerHTML=emptyState('i-refresh',publicDashboard.loading?'กำลังโหลดตัวเลขสรุป…':'ยังโหลดตัวเลขสรุปไม่ได้',publicDashboard.error||'กดรีเฟรชเพื่อลองอีกครั้ง');
+      [...$('triageMix').children].forEach(x=>x.style.width='0%');
+      $('triageMixLabel').textContent=publicDashboard.loading?'กำลังโหลด…':'—';
+    }
     $('latestAlerts').innerHTML=emptyState('i-lock','เข้าสู่ระบบเพื่อดู Alerts','ข้อมูล PIPS เชื่อมโยงกับเคสผู้ป่วย');
     drawVolume();drawMOI();
     return;
@@ -2439,20 +2489,11 @@ function renderDashboard(){
   const cts=collect(c=>mins(tl(c,'er_arrival'),tl(c,'ct_done')));
   const ors=collect(c=>mins(tl(c,'er_arrival'),tl(c,'or_arrival')));
   const avg=a=>a.length?Math.round(a.reduce((s,x)=>s+x,0)/a.length):null;
-  const meter=(label,val,target,n)=>{
-    const has=val!=null;
-    const pct=has?Math.min(100,Math.round(val/target*100)):0;
-    const over=has&&val>target;
-    return `<div class="meter">
-      <div class="mtop"><span>${label}</span><b>${has?val:'—'}<small>${has?`นาที · เป้า ${target}`:'ยังไม่มีข้อมูล'}</small></b></div>
-      <div class="track"><i class="${over?'over':'good'}" style="width:${pct}%"></i></div>
-      <div class="t2" style="font-size:11px;color:var(--text-3)">${n} เคสที่วัดได้${over?' · เกินเป้าหมาย':''}</div>
-    </div>`;
-  };
-  $('timeKpi').innerHTML=
-    meter('Scene time',avg(scenes),S.sceneTarget,scenes.length)+
-    meter('Door-to-CT',avg(cts),S.ctTarget,cts.length)+
-    meter('Door-to-OR',avg(ors),S.orTarget,ors.length);
+  renderDashboardPerformance({
+    sceneAvg:avg(scenes),sceneCount:scenes.length,
+    ctAvg:avg(cts),ctCount:cts.length,
+    orAvg:avg(ors),orCount:ors.length
+  },{scene:S.sceneTarget,ct:S.ctTarget,or:S.orTarget});
 
   const n1=state.cases.filter(c=>c.level==='L1').length,
         n2=state.cases.filter(c=>c.level==='L2').length,
@@ -2860,10 +2901,19 @@ function drawVolume(){
   const cv=$('volumeChart');if(!cv)return;
   const{ctx,w,h}=setupCanvas(cv),p=palette();
   const labels=[],vals=[];
-  for(let i=6;i>=0;i--){
-    const d=new Date();d.setDate(d.getDate()-i);
-    labels.push(d.toLocaleDateString('th-TH',{weekday:'short'}));
-    vals.push(state.cases.filter(c=>new Date(c.created).toDateString()===d.toDateString()).length);
+  const publicSeries=!database.unlocked&&Array.isArray(publicDashboard.data?.volume)?publicDashboard.data.volume:null;
+  if(publicSeries){
+    publicSeries.forEach(item=>{
+      const d=new Date(`${item.date}T12:00:00`);
+      labels.push(d.toLocaleDateString('th-TH',{weekday:'short'}));
+      vals.push(+item.count||0);
+    });
+  }else{
+    for(let i=6;i>=0;i--){
+      const d=new Date();d.setDate(d.getDate()-i);
+      labels.push(d.toLocaleDateString('th-TH',{weekday:'short'}));
+      vals.push(state.cases.filter(c=>new Date(c.created).toDateString()===d.toDateString()).length);
+    }
   }
   if(!vals.some(v=>v>0))return noData(ctx,w,h,'ยังไม่มีเคสใน 7 วันล่าสุด');
 
@@ -2899,8 +2949,13 @@ function drawVolume(){
 function drawMOI(){
   const cv=$('moiChart');if(!cv)return;
   const{ctx,w,h}=setupCanvas(cv),p=palette();
-  const map={};state.cases.forEach(c=>map[c.moi]=(map[c.moi]||0)+1);
-  const arr=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const publicSeries=!database.unlocked&&Array.isArray(publicDashboard.data?.mechanisms)?publicDashboard.data.mechanisms:null;
+  let arr;
+  if(publicSeries)arr=publicSeries.map(item=>[item.name,+item.count||0]);
+  else{
+    const map={};state.cases.forEach(c=>map[c.moi]=(map[c.moi]||0)+1);
+    arr=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  }
   if(!arr.length)return noData(ctx,w,h,'ยังไม่มีข้อมูล mechanism');
 
   const max=Math.max(...arr.map(x=>x[1]));
@@ -3066,7 +3121,8 @@ function buildSampleCases(total=78){
   const pad=n=>String(n).padStart(3,'0');
   return Array.from({length:total},(_,index)=>{
     const n=index+1,phase=index%10,level=n%10<=2?'L1':n%10<=6?'L2':'L3';
-    const incident=new Date(base.getTime()-(n*8+(n%5)*17)*3600000);
+    const hoursAgo=index<8?index*2+1:16+(index-7)*9+(n%4)*2;
+    const incident=new Date(base.getTime()-hoursAgo*3600000);
     const sceneOffset=10+n%6,departOffset=27+n%14,erOffset=49+n%26;
     const ctDelay=n%6===0?42:18+n%10,orDelay=n%8===0?78:35+n%20;
     const disposition=phase===6?'OR':phase===7?'ICU':phase===8?'Ward':phase===9?['Discharge','Refer','Death'][n%3]:'';
