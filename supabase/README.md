@@ -40,6 +40,15 @@ The browser keeps a local cache for temporary offline use. Supabase is the sourc
 of truth after the first successful connection. On a first connection, any cases
 already stored in the local browser are migrated into the empty project.
 
+## ALS / BLS assessments
+
+The full schema includes the protected `ems_assessments` table. For an existing
+project that already has the earlier schema, run
+[`ems-assessments.sql`](./ems-assessments.sql) once in SQL Editor. Each trauma
+case can store one ALS and one BLS form in `form_data`, with the case foreign key,
+assessment type, saved time, and updating Auth user recorded separately. Deleting
+a trauma case cascades to its assessments.
+
 ## Tables used by each menu
 
 | Menu | Tables |
@@ -48,6 +57,7 @@ already stored in the local browser are migrated into the empty project.
 | Dispatch | `trauma_cases`, `case_timeline`, `audit_logs` |
 | Pre-hospital | `trauma_cases`, `case_timeline`, `vital_signs`, `interventions` |
 | ER Command | `trauma_cases`, `case_timeline`, `investigations`, `consultations` |
+| ประเมิน ALS / BLS | `trauma_cases`, `ems_assessments`, `audit_logs` |
 | จัดการผู้ใช้ | Supabase Auth through the `admin-users` Edge Function |
 | Registry | `trauma_cases`, `ais_injuries`, `registry_records` |
 | PIPS | `pips_flags`, `trauma_cases` |

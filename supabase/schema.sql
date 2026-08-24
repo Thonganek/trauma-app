@@ -108,6 +108,18 @@ create table if not exists public.pips_flags (
   unique (case_id, flag)
 );
 
+-- Complete ALS / BLS source-form data. JSONB preserves every checkbox and
+-- field from the provincial paper forms while keeping one version per case.
+create table if not exists public.ems_assessments (
+  case_id text not null references public.trauma_cases(case_id) on delete cascade,
+  assessment_type text not null check (assessment_type in ('ALS','BLS')),
+  form_data jsonb not null default '{}'::jsonb check (jsonb_typeof(form_data) = 'object'),
+  assessed_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  updated_by uuid default auth.uid(),
+  primary key (case_id, assessment_type)
+);
+
 create table if not exists public.app_settings (
   id text primary key default 'default' check (id = 'default'),
   hospital text not null default 'Trauma Center',
@@ -145,6 +157,7 @@ create index if not exists investigations_case_time_idx on public.investigations
 create index if not exists consultations_case_time_idx on public.consultations (case_id, requested_at);
 create index if not exists ais_injuries_case_idx on public.ais_injuries (case_id);
 create index if not exists pips_flags_status_idx on public.pips_flags (status, detected_at desc);
+create index if not exists ems_assessments_type_time_idx on public.ems_assessments (assessment_type, assessed_at desc);
 create index if not exists audit_logs_time_idx on public.audit_logs (event_time desc);
 
 create or replace function public.set_updated_at()
@@ -168,6 +181,10 @@ for each row execute function public.set_updated_at();
 
 drop trigger if exists app_settings_set_updated_at on public.app_settings;
 create trigger app_settings_set_updated_at before update on public.app_settings
+for each row execute function public.set_updated_at();
+
+drop trigger if exists ems_assessments_set_updated_at on public.ems_assessments;
+create trigger ems_assessments_set_updated_at before update on public.ems_assessments
 for each row execute function public.set_updated_at();
 
 create or replace function public.next_trauma_case_id()
@@ -324,6 +341,24 @@ begin
   from jsonb_array_elements(coalesce(p_case->'pips', '[]'::jsonb)) x
   where nullif(x->>'id','') is not null and nullif(x->>'flag','') is not null;
 
+  -- Upsert only forms included by the client. We intentionally do not delete
+  -- omitted forms so an older browser tab cannot erase newer assessment data.
+  insert into public.ems_assessments (
+    case_id, assessment_type, form_data, assessed_at, updated_by
+  )
+  select
+    v_case_id,
+    upper(x.key),
+    x.value,
+    coalesce(nullif(x.value->>'savedAt','')::timestamptz, now()),
+    auth.uid()
+  from jsonb_each(coalesce(p_case->'assessments', '{}'::jsonb)) x
+  where upper(x.key) in ('ALS','BLS') and jsonb_typeof(x.value) = 'object'
+  on conflict (case_id, assessment_type) do update set
+    form_data = excluded.form_data,
+    assessed_at = excluded.assessed_at,
+    updated_by = excluded.updated_by;
+
   return v_case_id;
 end;
 $$;
@@ -458,7 +493,7 @@ revoke all on table
   public.trauma_cases, public.case_timeline, public.vital_signs,
   public.interventions, public.investigations, public.consultations,
   public.ais_injuries, public.registry_records, public.pips_flags,
-  public.app_settings, public.audit_logs, public.case_daily_sequences
+  public.ems_assessments, public.app_settings, public.audit_logs, public.case_daily_sequences
 from anon;
 
 revoke all on table public.case_daily_sequences from authenticated;
@@ -467,7 +502,7 @@ grant select, insert, update, delete on table
   public.trauma_cases, public.case_timeline, public.vital_signs,
   public.interventions, public.investigations, public.consultations,
   public.ais_injuries, public.registry_records, public.pips_flags,
-  public.app_settings, public.audit_logs
+  public.ems_assessments, public.app_settings, public.audit_logs
 to authenticated;
 
 revoke all on function public.next_trauma_case_id() from public, anon;
@@ -483,7 +518,7 @@ declare
 begin
   foreach table_name in array array[
     'trauma_cases','case_timeline','vital_signs','interventions','investigations',
-    'consultations','ais_injuries','registry_records','pips_flags','app_settings','audit_logs'
+    'consultations','ais_injuries','registry_records','pips_flags','ems_assessments','app_settings','audit_logs'
   ] loop
     execute format('alter table public.%I enable row level security', table_name);
     execute format('drop policy if exists authenticated_full_access on public.%I', table_name);
@@ -504,7 +539,7 @@ declare
 begin
   foreach table_name in array array[
     'trauma_cases','case_timeline','vital_signs','interventions','investigations',
-    'consultations','ais_injuries','registry_records','pips_flags','app_settings','audit_logs'
+    'consultations','ais_injuries','registry_records','pips_flags','ems_assessments','app_settings','audit_logs'
   ] loop
     begin
       execute format('alter publication supabase_realtime add table public.%I', table_name);

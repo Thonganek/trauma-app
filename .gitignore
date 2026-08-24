@@ -9,3 +9,8 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+tmp/
+
+# Local source documents used to implement the protected assessment forms
+250620175041109059.pdf
+250620175041111198.pdf

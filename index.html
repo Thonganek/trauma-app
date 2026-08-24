@@ -387,6 +387,38 @@ select.compact{width:auto;min-width:150px;padding:8px 32px 8px 11px;font-size:12
 .search .ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-3);pointer-events:none}
 .search input{padding-left:34px}
 
+/* EMS assessment forms derived from the provincial ALS / BLS records */
+.assessment-sheet{display:grid;gap:14px}
+.assessment-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 18px;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow-2)}
+.assessment-banner .assessment-code{font-size:30px;font-weight:800;line-height:1;letter-spacing:.04em}
+.assessment-banner.als{border-top:3px solid var(--ok)}
+.assessment-banner.als .assessment-code{color:var(--ok)}
+.assessment-banner.bls{border-top:3px solid #ef2b99}
+.assessment-banner.bls .assessment-code{color:#ef2b99}
+.assessment-progress{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--text-3)}
+.assessment-section{scroll-margin-top:80px}
+.assessment-section .card-title>span:first-of-type{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:var(--primary-soft);color:var(--primary);font-size:12px;font-weight:800}
+.assessment-help{font-size:11.5px;color:var(--text-3);line-height:1.55;margin-top:6px}
+.choice-block{display:grid;gap:8px;min-width:0}
+.choice-label{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3)}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:7px}
+.choice-grid.compact{grid-template-columns:repeat(auto-fit,minmax(128px,1fr))}
+.choice-option{position:relative;display:flex;align-items:flex-start;gap:8px;min-height:39px;padding:9px 10px;border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--surface-inset);color:var(--text-2);font-size:12.5px;font-weight:600;line-height:1.4;text-transform:none;letter-spacing:0;cursor:pointer;transition:border-color var(--t-fast),background var(--t-fast),color var(--t-fast)}
+.choice-option:hover{border-color:var(--text-3);background:var(--surface-3);color:var(--text)}
+.choice-option:has(input:checked){border-color:var(--primary);background:var(--primary-soft);color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary)}
+.choice-option input{width:16px;height:16px;flex:0 0 auto;margin:1px 0 0;padding:0;accent-color:var(--primary);box-shadow:none}
+.choice-option span{min-width:0}
+.assessment-subgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.assessment-subcard{padding:13px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface-inset)}
+.assessment-subcard h4{font-size:13px;margin:0 0 10px;color:var(--text-2)}
+.assessment-vitals{min-width:1120px}
+.assessment-vitals input{min-width:70px;padding:8px;font-size:12px}
+.assessment-vitals th,.assessment-vitals td{padding:7px 8px;text-align:center}
+.assessment-vitals th:first-child,.assessment-vitals td:first-child{position:sticky;left:0;z-index:2;background:var(--surface-2)}
+.assessment-vitals td:first-child{background:var(--surface-inset);font-weight:700;color:var(--text-3)}
+.computed-field input{background:var(--surface-3);color:var(--primary);font-weight:700}
+.assessment-actions{position:sticky;bottom:12px;z-index:8;display:flex;justify-content:flex-end;gap:8px;padding:10px;border:1px solid var(--line-2);border-radius:var(--r-md);background:var(--scrim);backdrop-filter:blur(18px);box-shadow:var(--shadow-3)}
+
 /* 4.7b Button pickers — every choice is a pressable button, no dropdowns */
 .field{display:grid;gap:7px;min-width:0}
 .flabel{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3)}
@@ -597,6 +629,9 @@ td.actions{text-align:right}
   .toolbar .left,.toolbar .right{width:100%;flex:0 0 auto!important}
   .toolbar .right .btn{flex:1 1 auto}
   .pickerrow{grid-template-columns:1fr}
+  .assessment-subgrid{grid-template-columns:1fr}
+  .assessment-banner{align-items:flex-start}
+  .assessment-actions{bottom:82px}
   .page-head h2{font-size:22px}
   .kpi b{font-size:26px}
   .toast{left:14px;right:14px;bottom:82px;max-width:none}
@@ -727,6 +762,9 @@ td.actions{text-align:right}
     <button type="button" data-view="prehospital"><svg class="ic" aria-hidden="true"><use href="#i-ambulance"/></svg><span class="txt">Pre-hospital</span></button>
     <button type="button" data-view="command"><svg class="ic" aria-hidden="true"><use href="#i-command"/></svg><span class="txt">ER Command</span></button>
     <button type="button" data-view="patients"><svg class="ic" aria-hidden="true"><use href="#i-team"/></svg><span class="txt">ทะเบียนรายชื่อ</span><span class="count" id="navCountPatients"></span></button>
+    <div class="nav-label">Assessment</div>
+    <button type="button" data-view="als"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg><span class="txt">ประเมิน ALS</span></button>
+    <button type="button" data-view="bls"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg><span class="txt">ประเมิน BLS</span></button>
     <div class="nav-label">Quality</div>
     <button type="button" data-view="registry"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="txt">Registry</span></button>
     <button type="button" data-view="pips"><svg class="ic" aria-hidden="true"><use href="#i-flag"/></svg><span class="txt">PIPS</span><span class="count" id="navCountPips"></span></button>
@@ -1177,6 +1215,40 @@ td.actions{text-align:right}
   </div>
 </section>
 
+<!-- ============ ALS ASSESSMENT ============ -->
+<section class="view" id="view-als" aria-label="แบบประเมินการแพทย์ฉุกเฉินระดับสูง ALS">
+  <div class="page-head">
+    <div class="eyebrow">EMS Assessment · ALS</div>
+    <h2>แบบบันทึกการปฏิบัติงานระดับสูง</h2>
+    <p class="sub">แบบประเมินดิจิทัลตามเอกสาร ALS ต้นฉบับ ครบทั้งข้อมูลปฏิบัติการ ผู้ป่วย การรักษา การรับรองการนำส่ง และผลติดตาม</p>
+  </div>
+  <div class="toolbar no-print">
+    <div class="left" style="flex:1 1 340px;min-width:0">
+      <span class="flabel" style="flex:0 0 auto">เคส</span>
+      <div class="caseswitch" id="als_caseBar" role="radiogroup" aria-label="เลือกเคสสำหรับประเมิน ALS"></div>
+      <input type="hidden" id="als_case">
+    </div>
+  </div>
+  <div id="alsAssessment"></div>
+</section>
+
+<!-- ============ BLS ASSESSMENT ============ -->
+<section class="view" id="view-bls" aria-label="แบบประเมินการแพทย์ฉุกเฉินระดับพื้นฐาน BLS">
+  <div class="page-head">
+    <div class="eyebrow">EMS Assessment · BLS</div>
+    <h2>แบบบันทึกการปฏิบัติงานระดับพื้นฐาน</h2>
+    <p class="sub">แบบประเมินดิจิทัลตามเอกสาร BLS ต้นฉบับ ครบทั้งข้อมูลปฏิบัติการ สภาพผู้ป่วย การช่วยเหลือ การรับรอง และผลติดตาม</p>
+  </div>
+  <div class="toolbar no-print">
+    <div class="left" style="flex:1 1 340px;min-width:0">
+      <span class="flabel" style="flex:0 0 auto">เคส</span>
+      <div class="caseswitch" id="bls_caseBar" role="radiogroup" aria-label="เลือกเคสสำหรับประเมิน BLS"></div>
+      <input type="hidden" id="bls_case">
+    </div>
+  </div>
+  <div id="blsAssessment"></div>
+</section>
+
 <!-- ============ REGISTRY ============ -->
 <section class="view" id="view-registry" aria-label="Registry">
   <div class="page-head">
@@ -1453,7 +1525,7 @@ function loadState(){
     raw.audit=Array.isArray(raw.audit)?raw.audit:[];
     raw.cases.forEach(c=>{
       c.timeline??=[];c.vitals??=[];c.interventions??=[];c.investigations??=[];
-      c.consults??=[];c.ais??=[];c.pips??=[];c.registry??={};
+      c.consults??=[];c.ais??=[];c.pips??=[];c.registry??={};c.assessments??={};
     });
     return raw;
   }catch(e){return structuredClone(defaultState)}
@@ -1856,7 +1928,7 @@ function groupDatabaseRows(rows){
   return grouped;
 }
 async function loadDatabaseState(){
-  const [cases,timeline,vitals,interventions,investigations,consultations,ais,registry,pips,settings,audit]=await Promise.all([
+  const [cases,timeline,vitals,interventions,investigations,consultations,ais,registry,pips,assessments,settings,audit]=await Promise.all([
     fetchDatabaseTable('trauma_cases','created_at',false),
     fetchDatabaseTable('case_timeline','event_time',true),
     fetchDatabaseTable('vital_signs','measured_at',true),
@@ -1866,12 +1938,14 @@ async function loadDatabaseState(){
     fetchDatabaseTable('ais_injuries'),
     fetchDatabaseTable('registry_records'),
     fetchDatabaseTable('pips_flags','detected_at',true),
+    fetchDatabaseTable('ems_assessments'),
     fetchDatabaseTable('app_settings'),
     fetchDatabaseTable('audit_logs','event_time',false,250)
   ]);
   const T=groupDatabaseRows(timeline),V=groupDatabaseRows(vitals),I=groupDatabaseRows(interventions);
   const X=groupDatabaseRows(investigations),C=groupDatabaseRows(consultations),A=groupDatabaseRows(ais),P=groupDatabaseRows(pips);
   const R=new Map(registry.map(x=>[x.case_id,x]));
+  const E=groupDatabaseRows(assessments);
   const mappedCases=cases.map(c=>{
     const reg=R.get(c.case_id);
     return{
@@ -1888,7 +1962,8 @@ async function loadDatabaseState(){
       consults:(C.get(c.case_id)||[]).map(x=>({id:x.id,time:x.requested_at,team:x.team,status:x.status,note:x.note||''})),
       ais:(A.get(c.case_id)||[]).map(x=>({id:x.id,region:x.body_region,sev:x.severity,desc:x.description||''})),
       pips:(P.get(c.case_id)||[]).map(x=>({id:x.id,flag:x.flag,time:x.detected_at,status:x.status,...(x.closed_at?{closed:x.closed_at}:{})})),
-      registry:reg?{dx:reg.final_diagnosis||'',icuLos:reg.icu_los_days,los:reg.hospital_los_days,outcome:reg.outcome||'',updated:reg.updated_at}:{}
+      registry:reg?{dx:reg.final_diagnosis||'',icuLos:reg.icu_los_days,los:reg.hospital_los_days,outcome:reg.outcome||'',updated:reg.updated_at}:{},
+      assessments:Object.fromEntries((E.get(c.case_id)||[]).map(x=>[x.assessment_type,{...(x.form_data||{}),savedAt:x.assessed_at||x.updated_at}]))
     };
   });
   const s=settings.find(x=>x.id==='default');
@@ -1977,6 +2052,10 @@ async function syncDatabaseSnapshot(snapshot,{force=false}={}){
     const changedCases=snapshot.cases.filter(c=>force||database.caseHashes.get(c.id)!==databaseHash(c));
     await runWithConcurrency(changedCases,4,async c=>{
       databaseResult(await database.client.rpc('save_trauma_case',{p_case:c}),`บันทึกเคส ${c.id}`);
+      const assessmentRows=Object.entries(c.assessments||{}).filter(([type,data])=>['ALS','BLS'].includes(type)&&data&&typeof data==='object').map(([type,data])=>({
+        case_id:c.id,assessment_type:type,form_data:data,assessed_at:data.savedAt||now(),updated_by:database.session?.user?.id||null
+      }));
+      if(assessmentRows.length)databaseResult(await database.client.from('ems_assessments').upsert(assessmentRows,{onConflict:'case_id,assessment_type'}),`บันทึกแบบประเมิน ${c.id}`);
       database.caseHashes.set(c.id,databaseHash(c));
     });
     const settingsHash=databaseHash(snapshot.settings);
@@ -2072,14 +2151,14 @@ $('nav').addEventListener('click',e=>{
   if(b)go(b.dataset.view);
 });
 function openCase(id,view){
-  const sel={prehospital:'ph_case',command:'er_case',registry:'reg_case'}[view];
+  const sel={prehospital:'ph_case',command:'er_case',als:'als_case',bls:'bls_case',registry:'reg_case'}[view];
   if(sel){fillCaseSelect(sel);const el=$(sel);if(el)el.value=id}
   go(view);
 }
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!$('authGate').hidden){closeAuthGate();return}
   if(!e.altKey||e.ctrlKey||e.metaKey)return;
-  const map={'1':'dashboard','2':'dispatch','3':'prehospital','4':'command','5':'patients','6':'registry','7':'pips','8':'users','9':'settings'};
+  const map={'1':'dashboard','2':'dispatch','3':'prehospital','4':'command','5':'patients','6':'als','7':'bls','8':'registry','9':'pips'};
   if(map[e.key]){e.preventDefault();go(map[e.key])}
 });
 
@@ -2153,7 +2232,7 @@ async function createCase(){
       destination:$('d_destination').value.trim()||state.settings.hospital,
       note:$('d_note').value.trim(),status:'Dispatched',level:'L3',
       timeline:[{key:'call_received',label:'Call received',time:now()},{key:'dispatch',label:'Dispatch',time:now()}],
-      vitals:[],interventions:[],investigations:[],consults:[],ais:[],pips:[],registry:{}
+      vitals:[],interventions:[],investigations:[],consults:[],ais:[],pips:[],registry:{},assessments:{}
     };
     state.cases.unshift(c);persist();audit('Create trauma case',c.id);
     clearDispatchForm();refreshAll();
@@ -2411,7 +2490,7 @@ function fillCaseSelect(id){
 function setCase(id,val){
   $(id).value=val;
   fillCaseSelect(id);
-  ({ph_case:loadPrehospitalCase,er_case:loadERCase,reg_case:loadRegistry}[id]||(()=>{}))();
+  ({ph_case:loadPrehospitalCase,er_case:loadERCase,als_case:()=>renderAssessment('ALS'),bls_case:()=>renderAssessment('BLS'),reg_case:loadRegistry}[id]||(()=>{}))();
   const active=$(id+'Bar').querySelector('[aria-checked="true"]');
   if(active)active.scrollIntoView({block:'nearest',inline:'nearest'});
 }
@@ -2720,6 +2799,301 @@ function renderPatientDirectory(){
     </div></td></tr>`).join(''):`<tr><td colspan="9">${emptyState('i-team',state.cases.length?'ไม่พบรายชื่อที่ตรงกับการค้นหา':'ยังไม่มีผู้ป่วยในทะเบียน','เพิ่มผู้ป่วยจากเมนู Dispatch')}</td></tr>`;
 }
 
+/* ---------- EMS ASSESSMENTS · digital ALS / BLS source forms ---------- */
+const ASSESSMENT_META={
+  ALS:{view:'als',title:'แบบบันทึกการปฏิบัติงานบริการการแพทย์ฉุกเฉินระดับสูง',tone:'als'},
+  BLS:{view:'bls',title:'แบบบันทึกการปฏิบัติงานหน่วยปฏิบัติการการแพทย์ฉุกเฉินระดับพื้นฐาน',tone:'bls'}
+};
+const BODY_REGION_OPTIONS=[
+  ['head_neck','ศีรษะ / คอ'],['face','ใบหน้า'],['spine_back','สันหลัง / หลัง'],
+  ['chest_clavicle','หน้าอก / ไหปลาร้า'],['abdomen','ช่องท้อง'],['pelvis','เชิงกราน'],
+  ['extremities','แขนขา (Extremities)'],['external_surface','ผิวหนัง / พื้นผิวภายนอก'],['multiple','บาดเจ็บหลายตำแหน่ง']
+];
+const INITIAL_OUTCOME_ALS=[
+  ['no_treatment','ไม่มีการรักษา'],['improved','ทุเลา'],['unchanged','คงเดิม'],['deteriorated','ทรุดหนัก'],
+  ['death_scene','เสียชีวิต ณ จุดเกิดเหตุ'],['death_transport','เสียชีวิตขณะนำส่ง']
+];
+const INITIAL_OUTCOME_BLS=[
+  ['refused','ไม่ยอมให้รักษา'],['improved','ทุเลา'],['unchanged','คงเดิม / คงที่'],['deteriorated','ทรุดหนัก'],
+  ['death_scene','เสียชีวิต ณ จุดเกิดเหตุ'],['death_transport','เสียชีวิตขณะนำส่ง']
+];
+const FOLLOWUP_OUTCOMES=[
+  ['improved','ทุเลา'],['transferred','รักษาต่อที่อื่น'],['in_hospital','ยังรักษาในโรงพยาบาล'],
+  ['death_hospital','เสียชีวิตในโรงพยาบาล'],['refused_absconded','ปฏิเสธการรักษา / หนีกลับ'],
+  ['death_home','กลับไปตายบ้าน'],['unknown','ติดตามแล้วไม่ทราบผล']
+];
+const REVIEW_STATUS=[
+  ['not_required','ไม่จำเป็น'],['not_done','ไม่ได้ทำ'],['appropriate','ทำและเหมาะสม'],['inappropriate','ทำแต่ไม่เหมาะสม']
+];
+
+function assessmentTimeValue(iso){return iso?tOnly(iso).replace('.',':').replace(/\s/g,'').slice(0,5):''}
+function assessmentDefaults(c,type){
+  const sex={Male:'male',Female:'female',Other:'other'}[c.sex]||'';
+  const date=(c.incidentTime||c.created||'').slice(0,10);
+  const defaults={
+    serviceUnit:c.unit||'',operationDate:date,operationNumber:c.id,cn:'',patientNumber:c.id,
+    operationResult:'found',incidentLocation:c.location||'',incidentDescription:[c.moi,c.note].filter(Boolean).join(' · '),
+    receivedAt:assessmentTimeValue(tl(c,'call_received')),orderedAt:assessmentTimeValue(tl(c,'dispatch')),
+    departedBaseAt:assessmentTimeValue(tl(c,'wheels_rolling')),arrivedSceneAt:assessmentTimeValue(tl(c,'scene_arrival')),
+    departedSceneAt:assessmentTimeValue(tl(c,'depart_scene')),arrivedHospitalAt:assessmentTimeValue(tl(c,'er_arrival')),
+    returnedBaseAt:assessmentTimeValue(tl(c,'return_base')),patientAge:c.age??'',patientSex:sex,
+    destinationHospital:c.destination||state.settings.hospital
+  };
+  (c.vitals||[]).slice(0,3).forEach((v,index)=>{
+    const p=`v${index+1}_`;
+    defaults[p+'time']=assessmentTimeValue(v.time);
+    defaults[p+'bp']=[v.sbp,v.dbp].filter(x=>x!=null).join('/');
+    defaults[p+'pr']=v.hr??'';defaults[p+'rr']=v.rr??'';defaults[p+'spo2']=v.spo2??'';
+  });
+  return defaults;
+}
+function assessmentData(c,type){return{...assessmentDefaults(c,type),...(c.assessments?.[type]||{})}}
+function aField(d,name,label,type='text',attrs='',className=''){
+  return `<label class="${className}">${label}<input type="${type}" name="${name}" value="${esc(d[name]??'')}" ${attrs}></label>`;
+}
+function aText(d,name,label,className='',placeholder=''){
+  return `<label class="${className}">${label}<textarea name="${name}" placeholder="${esc(placeholder)}">${esc(d[name]??'')}</textarea></label>`;
+}
+function aChoice(d,name,label,options,multi=false,className=''){
+  const current=d[name],selected=Array.isArray(current)?current.map(String):[];
+  return `<div class="choice-block ${className}"><div class="choice-label">${label}</div><div class="choice-grid ${options.length>5?'compact':''}">${options.map(([value,text])=>{
+    const checked=multi?selected.includes(String(value)):String(current??'')===String(value);
+    return `<label class="choice-option"><input type="${multi?'checkbox':'radio'}" name="${name}" value="${esc(value)}" ${checked?'checked':''}><span>${text}</span></label>`;
+  }).join('')}</div></div>`;
+}
+function aSection(number,title,body){
+  return `<section class="card assessment-section"><div class="card-head"><div class="card-title"><span>${number}</span>${title}</div></div>${body}</section>`;
+}
+function aTeamFields(d){
+  return `<div class="formgrid">${[1,2,3,4].map(n=>aField(d,`provider${n}Name`,`เจ้าหน้าที่ ${n}`)+aField(d,`provider${n}Code`,`รหัสเจ้าหน้าที่ ${n}`)).join('')}</div>`;
+}
+function aOperationSection(d){
+  return aSection('1','หน่วยบริการและผลการปฏิบัติงาน',`
+    <div class="formgrid">
+      ${aField(d,'serviceUnit','ชื่อหน่วยบริการ','text','required')}
+      ${aField(d,'operationDate','วันที่','date')}
+      ${aField(d,'operationNumber','เลขที่ปฏิบัติการ')}
+      ${aField(d,'cn','ลำดับผู้ป่วย (CN)')}
+      ${aField(d,'patientNumber','เลขที่ผู้ป่วย','text','required')}
+    </div>
+    <div class="assessment-subcard mt"><h4>เจ้าหน้าที่ผู้ให้บริการ</h4>${aTeamFields(d)}</div>
+    <div class="assessment-subgrid mt">
+      ${aChoice(d,'operationResult','ผลการปฏิบัติงาน',[['not_found','ไม่พบเหตุ'],['found','พบเหตุ']])}
+      ${aField(d,'incidentLocation','สถานที่เกิดเหตุ')}
+    </div>
+    ${aText(d,'incidentDescription','เหตุการณ์ / รายละเอียด','mt','ระบุเหตุการณ์และรายละเอียดที่พบ')}`);
+}
+function aTimeSection(d){
+  const timeFields=[
+    ['receivedAt','รับแจ้ง'],['orderedAt','สั่งการ'],['departedBaseAt','ออกจากฐาน'],['arrivedSceneAt','ถึงที่เกิดเหตุ'],
+    ['departedSceneAt','ออกจากที่เกิดเหตุ'],['arrivedHospitalAt','ถึงโรงพยาบาล'],['returnedBaseAt','ถึงฐาน']
+  ];
+  return aSection('2','ข้อมูลเวลา เลขกิโลเมตร และระยะทาง',`
+    <div class="formgrid">${timeFields.map(([name,label])=>aField(d,name,label,'time','data-assess-calc')).join('')}</div>
+    <div class="formgrid mt">
+      ${aField(d,'responseMinutes','Response time (นาที)','number','readonly','computed-field')}
+      ${aField(d,'sceneMinutes','เวลาที่จุดเกิดเหตุ (นาที)','number','readonly','computed-field')}
+      ${aField(d,'transportMinutes','เวลานำส่งโรงพยาบาล (นาที)','number','readonly','computed-field')}
+      ${aField(d,'totalMinutes','เวลาปฏิบัติการรวม (นาที)','number','readonly','computed-field')}
+    </div>
+    <div class="assessment-subcard mt"><h4>เลขกิโลเมตร</h4><div class="formgrid g2c">
+      ${aField(d,'odometerDepartBase','ออกจากฐาน','number','step="0.1" min="0" data-assess-calc')}
+      ${aField(d,'odometerArriveScene','ถึงที่เกิดเหตุ','number','step="0.1" min="0" data-assess-calc')}
+      ${aField(d,'odometerArriveHospital','ถึงโรงพยาบาล','number','step="0.1" min="0" data-assess-calc')}
+      ${aField(d,'odometerReturnBase','ถึงฐาน','number','step="0.1" min="0" data-assess-calc')}
+    </div></div>
+    <div class="formgrid mt">
+      ${aField(d,'distanceOutbound','รวมระยะทางไป (กม.)','number','readonly step="0.1"','computed-field')}
+      ${aField(d,'distanceToHospital','ระยะจากจุดเกิดเหตุไป รพ. (กม.)','number','readonly step="0.1"','computed-field')}
+      ${aField(d,'distanceReturn','ระยะทางกลับฐาน (กม.)','number','readonly step="0.1"','computed-field')}
+    </div>
+    <div class="assessment-help">ระบบคำนวณเวลาโดยรองรับการปฏิบัติการข้ามเที่ยงคืน และคำนวณระยะทางจากเลขกิโลเมตรตามลำดับ</div>`);
+}
+function aPatientIdentity(d){
+  return `<div class="formgrid">
+    ${aField(d,'patientPrefix','คำนำหน้า')}${aField(d,'patientName','ชื่อผู้ป่วย','text','', 'span2')}
+    ${aField(d,'patientAge','อายุ (ปี)','number','min="0" max="120"')}
+    ${aChoice(d,'patientSex','เพศ',[['male','ชาย'],['female','หญิง'],['other','อื่น ๆ']],false,'span2')}
+    ${aChoice(d,'nationalityType','สถานะบุคคล',[['thai','คนไทย'],['migrant','แรงงานต่างด้าว'],['foreign','ชาวต่างชาติ']],false,'span3')}
+    ${aField(d,'citizenId','เลขบัตรประชาชน','text','inputmode="numeric" maxlength="17"')}
+    ${aField(d,'nationalityCountry','ประเทศ')}${aField(d,'passportNumber','เลขที่หนังสือเดินทาง')}
+  </div>
+  ${aChoice(d,'coverage','สิทธิการรักษา',[['universal','บัตรทอง'],['government','ข้าราชการ'],['social_security','ประกันสังคม'],['migrant_registered','แรงงานต่างด้าวขึ้นทะเบียน'],['uninsured','ไม่มีหลักประกัน']],true,'mt')}
+  <div class="assessment-subcard mt"><h4>ประกันอื่น ๆ (ถ้ามี)</h4>
+    ${aChoice(d,'otherInsurance','ประเภทประกันอื่น',[['travel','ประกันท่องเที่ยว'],['road_victim','ผู้ประสบภัยจากรถ']],true)}
+    <div class="formgrid mt">${aField(d,'travelInsuranceCountry','ประเทศของประกันท่องเที่ยว')}${aField(d,'vehicleType','ประเภทรถ')}${aField(d,'vehicleRegistrationCategory','ทะเบียนรถหมวด')}${aField(d,'vehicleRegistrationNumber','เลขทะเบียน')}${aField(d,'vehicleProvince','จังหวัด')}</div>
+  </div>`;
+}
+function aVitalsTable(d,type){
+  const columns=type==='ALS'
+    ?[['time','Time','time'],['temp','T','number'],['bp','BP','text'],['pr','PR','number'],['rr','RR','number'],['e','E','number'],['v','V','number'],['m','M','number'],['rightPupil','Rt','number'],['rightReactive','Rt RTL','select'],['leftPupil','Lt','number'],['leftReactive','Lt RTL','select'],['spo2','O₂ Sat','number'],['dtx','DTX','number']]
+    :[['time','Time','time'],['temp','T','number'],['bp','BP','text'],['pr','PR','number'],['rr','RR','number'],['e','E','number'],['v','V','number'],['m','M','number'],['dtx','DTX','number']];
+  const input=(row,[key,,kind])=>{
+    const name=`v${row}_${key}`,value=esc(d[name]??'');
+    if(kind==='select')return `<select name="${name}"><option value=""></option><option value="Y" ${d[name]==='Y'?'selected':''}>Y</option><option value="N" ${d[name]==='N'?'selected':''}>N</option></select>`;
+    const attrs=kind==='number'?'step="any" min="0"':'';
+    return `<input type="${kind}" name="${name}" value="${value}" ${attrs} aria-label="${esc(key)} ครั้งที่ ${row}">`;
+  };
+  return `<div class="tablewrap"><table class="assessment-vitals"><thead><tr><th>ครั้ง</th>${columns.map(x=>`<th>${x[1]}</th>`).join('')}</tr></thead><tbody>${[1,2,3].map(row=>`<tr><td>${row}</td>${columns.map(col=>`<td>${input(row,col)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function aClinicalALS(d){
+  return `<div class="assessment-subcard"><h4>Trauma</h4>
+    ${aChoice(d,'traumaWounds','บาดแผล',[['none','ไม่มี'],['cut_laceration','Cut / Laceration'],['abrasion','Abrasion'],['contusion','Contusion'],['burn','Burn'],['stab','Stab wound'],['amputation','Amputate'],['gsw','GSW']],true)}
+    ${aChoice(d,'boneDeformity','กระดูกผิดรูป',[['none','ไม่มี'],['closed','Closed'],['open','Opened'],['dislocation','Dislocate']],true,'mt')}
+    ${aChoice(d,'bleeding','การเสียเลือด',[['none','ไม่มี'],['external_stopped','ภายนอก / หยุดแล้ว'],['external_active','ภายนอก / ยังไหล'],['internal','สงสัยเลือดออกภายใน']],true,'mt')}
+    ${aChoice(d,'bodyRegions','อวัยวะที่บาดเจ็บ',BODY_REGION_OPTIONS,true,'mt')}
+  </div>
+  <div class="assessment-subcard"><h4>Non-trauma</h4>
+    ${aChoice(d,'medicalSymptoms','อายุรกรรม',[['dyspnea','Dyspnea'],['high_fever','High fever'],['altered_consciousness','Alteration of consciousness'],['seizure','Seizure'],['chest_pain','Chest pain'],['poisoning','Poisoning'],['digestive','Digestive'],['other','Other']],true)}
+    ${aField(d,'medicalOther','อายุรกรรมอื่น ๆ','text','','mt')}
+    ${aChoice(d,'obgynSymptoms','สูติ-นรีเวช',[['labour_childbirth','Labour pain / child birth'],['pv_bleeding','Bleeding per vagina'],['high_risk_pregnancy','High-risk pregnancy'],['rape','Rape'],['other','Other']],true,'mt')}
+    ${aField(d,'obgynOther','สูติ-นรีเวชอื่น ๆ')}
+    ${aChoice(d,'pediatricSymptoms','กุมารเวช',[['convulsion','Convulsion'],['high_fever','High fever'],['dyspnea','Dyspnea'],['digestive','Digestive'],['other','Other']],true,'mt')}
+    ${aField(d,'pediatricOther','กุมารเวชอื่น ๆ')}
+    ${aChoice(d,'surgicalSymptoms','ศัลยกรรม',[['acute_abdominal_pain','Acute abdominal pain'],['gi_bleeding','GI bleeding'],['other','Other']],true,'mt')}
+    ${aField(d,'surgicalOther','ศัลยกรรมอื่น ๆ')}
+    ${aChoice(d,'otherSpecialties','อื่น ๆ',[['eye','Eye'],['ent','ENT'],['ortho','Ortho'],['psychological','Psychological problem']],true,'mt')}
+  </div>`;
+}
+function aClinicalBLS(d){
+  return `${aChoice(d,'patientType','ประเภทผู้ป่วย',[['injury','บาดเจ็บ / อุบัติเหตุ'],['emergency_illness','ป่วยฉุกเฉิน']],false)}
+  <div class="assessment-subgrid mt">
+    ${aChoice(d,'consciousness','ความรู้สึกตัว',[['alert','รู้สึกตัวดี'],['drowsy','ซึม'],['unconscious_arousable','หมดสติปลุกตื่น'],['unconscious_unarousable','หมดสติปลุกไม่ตื่น'],['agitated','เอะอะโวยวาย']])}
+    ${aChoice(d,'breathingPattern','การหายใจ',[['normal','ปกติ'],['fast','เร็ว'],['slow','ช้า'],['irregular','ไม่สม่ำเสมอ'],['apnea','ไม่หายใจ']])}
+  </div>
+  ${aChoice(d,'traumaWounds','บาดแผล',[['none','ไม่มี'],['abrasion','แผลถลอก'],['laceration_cut','ฉีกขาด / ตัด'],['contusion','แผลฟกช้ำ'],['burn','แผลไหม้'],['gsw','ถูกยิง'],['stab','ถูกแทง'],['amputation','อวัยวะตัดขาด'],['blast','ถูกระเบิด']],true,'mt')}
+  ${aChoice(d,'boneDeformity','กระดูกผิดรูป',[['none','ไม่มี'],['deformed','ผิดรูป']],false,'mt')}
+  ${aChoice(d,'bodyRegions','อวัยวะที่บาดเจ็บ',BODY_REGION_OPTIONS,true,'mt')}`;
+}
+function aPatientSection(d,type){
+  return aSection('3','ข้อมูลและสภาพผู้ป่วย',`${aPatientIdentity(d)}
+    <div class="assessment-subcard mt"><h4>Vital signs / Neuro signs ${type==='ALS'?'/ Pupils / O₂ Sat / DTX':'/ DTX'}</h4>${aVitalsTable(d,type)}</div>
+    <div class="assessment-subgrid mt">${type==='ALS'?aClinicalALS(d):`<div class="assessment-subcard" style="grid-column:1/-1"><h4>สภาพผู้ป่วย</h4>${aClinicalBLS(d)}</div>`}</div>`);
+}
+function aTreatmentSection(d,type){
+  const als=type==='ALS';
+  const airway=als
+    ?[['none','ไม่ทำ'],['clear_airway','Clear airway'],['suction','Suction'],['oral_airway','Oral airway'],['oxygen','O₂ cannula / mask'],['ambu','Ambu bag'],['et','ET']]
+    :[['none','ไม่ทำ'],['clear_airway','เปิดทางเดินหายใจ'],['oral_airway','ใส่ Oral airway'],['oxygen','ให้ O₂ cannula / mask'],['ambu','Ambu bag'],['pocket_mask','Pocket Mask']];
+  const wound=als?[['none','ไม่ทำ'],['pressure_dressing','Pressure dressing'],['dressing','Dressing']]:[['none','ไม่ทำ'],['direct_pressure','การกดห้ามเลือด'],['dressing','ทำแผล']];
+  const splint=[['none','ไม่ทำ'],['air_wood_sling','เฝือกลม / ไม้ดาม / Sling'],['collar_lsb','Collar + Long spinal board'],['ked','KED']];
+  return aSection('3.1',als?'การรักษา (Treatment)':'การช่วยเหลือ',`
+    ${aChoice(d,'airwayTreatment','ทางเดินหายใจ / การหายใจ',airway,true)}
+    ${aChoice(d,'woundTreatment','บาดแผล / ห้ามเลือด',wound,true,'mt')}
+    ${als?`${aChoice(d,'fluidTreatment','การให้สารน้ำ',[['none','ไม่ให้'],['nss','NSS'],['rls','RLS'],['dn2','5%DN/2'],['on_lock','On lock'],['other','อื่น ๆ']],true,'mt')}${aField(d,'fluidOther','สารน้ำอื่น ๆ')}`:''}
+    ${aChoice(d,'splintTreatment','การดามกระดูก',splint,true,'mt')}
+    ${aChoice(d,'cprTreatment',als?'การทำ CPR':'ช่วยฟื้นคืนชีพ',[['none',als?'ไม่ทำ':'ไม่ได้ทำ'],['yes','ทำ'],...(als?[['aed_defib','AED / Defib']]:[])],true,'mt')}
+    ${als?aText(d,'medications','ยา (ระบุวิธีใช้และขนาด)','mt','ชื่อยา ขนาด วิธีให้ และเวลา'):''}
+    ${aChoice(d,'initialOutcome','ผลการดูแลรักษาขั้นต้น',als?INITIAL_OUTCOME_ALS:INITIAL_OUTCOME_BLS,false,'mt')}
+    ${als?aChoice(d,'rcCode','ระดับการคัดแยก (RC code)',[['red','แดง (วิกฤติ)'],['yellow','เหลือง (เร่งด่วน)'],['green','เขียว (ไม่รุนแรง)'],['white','ขาว (ทั่วไป)'],['black','ดำ (รับบริการสาธารณสุขอื่น)']]):''}`);
+}
+function aDestinationSection(d){
+  return aSection('4','เกณฑ์การตัดสินใจส่งโรงพยาบาล',`
+    <div class="formgrid">${aField(d,'destinationHospital','นำส่งห้องฉุกเฉินโรงพยาบาล','text','required','span2')}${aChoice(d,'hospitalType','ประเภทโรงพยาบาล',[['public','รพ.รัฐ'],['private','รพ.เอกชน']])}</div>
+    ${aChoice(d,'destinationReasons','เหตุผล',[['appropriate','เหมาะสม / สามารถรักษาได้'],['nearby','อยู่ใกล้'],['coverage','มีหลักประกัน'],['existing_patient','เป็นผู้ป่วยเก่า'],['patient_preference','เป็นความประสงค์']],true,'mt')}
+    <div class="formgrid mt">${aField(d,'reporterName','ผู้สรุปรายงาน','text','','span2')}${aField(d,'reporterCode','รหัส')}</div>`);
+}
+function aReviewRow(d,key,label){
+  return `<div class="assessment-subcard"><h4>${label}</h4>${aChoice(d,`${key}Review`,label,REVIEW_STATUS)}${aField(d,`${key}ReviewNote`,'ระบุกรณีไม่เหมาะสม','text','','mt')}</div>`;
+}
+function aHospitalReviewSection(d,type){
+  return aSection('5','การประเมิน / รับรองการนำส่งโดยโรงพยาบาล',`
+    <div class="formgrid">${aField(d,'hn','HN')}${aField(d,'hospitalDiagnosis','การวินิจฉัยโรค','text','','span2')}</div>
+    ${aChoice(d,'erTriage','ระดับการคัดแยก (ER Triage)',[['red','แดง (วิกฤติ) L1, L2'],['yellow','เหลือง (เร่งด่วน) L3'],['green','เขียว (ไม่รุนแรง) L4'],['white','ขาว (ทั่วไป) L5'],['black','ดำ / ไม่ใช่ผู้ป่วย']],false,'mt')}
+    <div class="assessment-subgrid mt">
+      ${aReviewRow(d,'airway','ทางเดินหายใจ')}
+      ${aReviewRow(d,'bleedingControl','การห้ามเลือด')}
+      ${type==='ALS'?aReviewRow(d,'fluid','การให้สารน้ำ'):''}
+      ${aReviewRow(d,'splint','การดามกระดูก')}
+    </div>
+    <div class="formgrid mt">${aField(d,'evaluatorName','ชื่อผู้ประเมิน','text','','span2')}${aChoice(d,'evaluatorRole','ตำแหน่ง',[['doctor','แพทย์'],['nurse','พยาบาล'],...(type==='BLS'?[['other','อื่น ๆ']]:[])])}${type==='BLS'?aField(d,'evaluatorRoleOther','ตำแหน่งอื่น ๆ'):''}</div>`);
+}
+function aFollowupSection(d){
+  return aSection('6','ผลการรักษาที่ / ในโรงพยาบาล',`
+    ${aChoice(d,'admitted','Admitted',[['yes','Yes'],['no','No']])}
+    ${aChoice(d,'hospitalOutcome','ผลติดตามในวันสิ้นเดือน',FOLLOWUP_OUTCOMES,false,'mt')}`);
+}
+function assessmentCompleteness(form){
+  const controls=[...form.elements].filter(x=>x.name&&!['hidden','button','submit'].includes(x.type)&&!x.readOnly);
+  const groups=new Map();
+  controls.forEach(x=>{if(!groups.has(x.name))groups.set(x.name,[]);groups.get(x.name).push(x)});
+  const completed=[...groups.values()].filter(group=>group.some(x=>(x.type==='checkbox'||x.type==='radio')?x.checked:String(x.value||'').trim())).length;
+  return{completed,total:groups.size,pct:groups.size?Math.round(completed/groups.size*100):0};
+}
+function renderAssessment(type){
+  const meta=ASSESSMENT_META[type],caseInput=$(`${meta.view}_case`),host=$(`${meta.view}Assessment`);
+  if(!caseInput||!host)return;
+  const c=caseById(caseInput.value);
+  if(!c){host.innerHTML=emptyState('i-file','ยังไม่มีเคสสำหรับประเมิน','สร้างเคสที่เมนู Dispatch ก่อน');return}
+  const d=assessmentData(c,type),saved=c.assessments?.[type]?.savedAt;
+  host.innerHTML=`<form id="${meta.view}AssessmentForm" class="assessment-sheet" onsubmit="event.preventDefault();saveAssessment('${type}')" oninput="event.target.matches('[data-assess-calc]')?updateAssessmentCalculations('${type}'):updateAssessmentProgress('${type}')">
+    <div class="assessment-banner ${meta.tone}">
+      <div><div class="assessment-code">${type}</div><div class="assessment-help">${meta.title}</div></div>
+      <div class="assessment-progress"><span class="chip ${saved?'okv':''}">${saved?`บันทึกล่าสุด ${fmt(saved)}`:'ยังไม่เคยบันทึก'}</span><span id="${meta.view}AssessmentProgress"></span></div>
+    </div>
+    ${aOperationSection(d)}${aTimeSection(d)}${aPatientSection(d,type)}${aTreatmentSection(d,type)}${aDestinationSection(d)}${aHospitalReviewSection(d,type)}${aFollowupSection(d)}
+    <div class="assessment-actions no-print">
+      ${saved?`<button type="button" class="btn danger" onclick="clearAssessment('${type}')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg>ลบแบบประเมิน</button>`:''}
+      <button type="button" class="btn" onclick="window.print()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-printer"/></svg>พิมพ์</button>
+      <button type="submit" class="btn primary"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>บันทึกแบบประเมิน ${type}</button>
+    </div>
+  </form>`;
+  updateAssessmentCalculations(type);updateAssessmentProgress(type);
+}
+function assessmentClockMinutes(value){
+  if(!/^\d{2}:\d{2}$/.test(value||''))return null;
+  const [h,m]=value.split(':').map(Number);return h*60+m;
+}
+function assessmentTimeDiff(start,end){
+  start=assessmentClockMinutes(start);end=assessmentClockMinutes(end);
+  if(start==null||end==null)return '';
+  return end<start?end+1440-start:end-start;
+}
+function updateAssessmentCalculations(type){
+  const form=$(`${ASSESSMENT_META[type].view}AssessmentForm`);if(!form)return;
+  const val=name=>form.elements[name]?.value||'',set=(name,value)=>{if(form.elements[name])form.elements[name].value=value};
+  set('responseMinutes',assessmentTimeDiff(val('receivedAt'),val('arrivedSceneAt')));
+  set('sceneMinutes',assessmentTimeDiff(val('arrivedSceneAt'),val('departedSceneAt')));
+  set('transportMinutes',assessmentTimeDiff(val('departedSceneAt'),val('arrivedHospitalAt')));
+  set('totalMinutes',assessmentTimeDiff(val('receivedAt'),val('returnedBaseAt')));
+  const km=name=>{const raw=val(name);return raw===''?null:Number(raw)},diff=(a,b)=>a==null||b==null||b<a?'':+(b-a).toFixed(1);
+  const base=km('odometerDepartBase'),scene=km('odometerArriveScene'),hospital=km('odometerArriveHospital'),returned=km('odometerReturnBase');
+  set('distanceOutbound',diff(base,hospital));set('distanceToHospital',diff(scene,hospital));set('distanceReturn',diff(hospital,returned));
+  updateAssessmentProgress(type);
+}
+function updateAssessmentProgress(type){
+  const meta=ASSESSMENT_META[type],form=$(`${meta.view}AssessmentForm`),label=$(`${meta.view}AssessmentProgress`);if(!form||!label)return;
+  const p=assessmentCompleteness(form);label.textContent=`กรอกแล้ว ${p.completed}/${p.total} หมวดข้อมูล (${p.pct}%)`;
+}
+function serializeAssessment(form){
+  const data={};
+  [...form.elements].forEach(el=>{
+    if(!el.name||['button','submit'].includes(el.type))return;
+    if(el.type==='checkbox'){
+      data[el.name]??=[];if(el.checked)data[el.name].push(el.value);
+    }else if(el.type==='radio'){
+      if(el.checked)data[el.name]=el.value;else if(!(el.name in data))data[el.name]='';
+    }else data[el.name]=typeof el.value==='string'?el.value.trim():el.value;
+  });
+  return data;
+}
+function saveAssessment(type){
+  const meta=ASSESSMENT_META[type],c=requireCase(`${meta.view}_case`),form=$(`${meta.view}AssessmentForm`);if(!c||!form)return;
+  updateAssessmentCalculations(type);
+  c.assessments??={};c.assessments[type]={...serializeAssessment(form),savedAt:now(),sourceForm:type};
+  persist();audit(`Save ${type} EMS assessment`,c.id);renderAssessment(type);
+  toast(`บันทึกแบบประเมิน ${type} แล้ว · กำลังซิงก์ Supabase`);
+}
+async function clearAssessment(type){
+  const meta=ASSESSMENT_META[type],c=requireCase(`${meta.view}_case`);if(!c?.assessments?.[type])return;
+  if(!confirm(`ลบแบบประเมิน ${type} ของเคส ${c.id}?`))return;
+  try{
+    if(databaseReady())databaseResult(await database.client.from('ems_assessments').delete().eq('case_id',c.id).eq('assessment_type',type),`ลบแบบประเมิน ${type}`);
+    delete c.assessments[type];persist(false);database.caseHashes.set(c.id,databaseHash(c));audit(`Delete ${type} EMS assessment`,c.id);renderAssessment(type);
+    toast(`ลบแบบประเมิน ${type} แล้ว`,'warn');
+  }catch(e){toast('ลบแบบประเมินไม่สำเร็จ: '+e.message,'err')}
+}
+
 function renderPips(){
   const all=state.cases.flatMap(c=>(c.pips||[]).map(p=>({...p,caseId:c.id})));
   $('pipsCases').textContent=new Set(all.map(x=>x.caseId)).size;
@@ -2852,10 +3226,10 @@ function renderChrome(){
 }
 
 function refreshAll(){
-  ['ph_case','er_case','reg_case'].forEach(fillCaseSelect);
+  ['ph_case','er_case','als_case','bls_case','reg_case'].forEach(fillCaseSelect);
   state.cases.forEach(recalcCase);persist(false);
   renderDashboard();renderDispatch();loadPrehospitalCase();loadERCase();
-  renderPatientDirectory();loadRegistry();renderRegistryTable();renderPips();renderSettings();renderAudit();renderAdminUsers();renderChrome();
+  renderPatientDirectory();renderAssessment('ALS');renderAssessment('BLS');loadRegistry();renderRegistryTable();renderPips();renderSettings();renderAudit();renderAdminUsers();renderChrome();
   syncPickers();
 }
 
@@ -3071,7 +3445,7 @@ function importJSON(file){
       if(state.cases.length&&!confirm('การนำเข้าจะแทนที่ข้อมูลทั้งหมดในเครื่องนี้ ดำเนินการต่อ?'))return;
       queueClearCases();queueClearAudit();
       state=x;state.settings={...defaultState.settings,...state.settings};
-      state.cases.forEach(c=>{c.timeline??=[];c.vitals??=[];c.interventions??=[];c.investigations??=[];c.consults??=[];c.ais??=[];c.pips??=[];c.registry??={}});
+      state.cases.forEach(c=>{c.timeline??=[];c.vitals??=[];c.interventions??=[];c.investigations??=[];c.consults??=[];c.ais??=[];c.pips??=[];c.registry??={};c.assessments??={}});
       persist();refreshAll();audit('Import JSON backup');toast('นำเข้าข้อมูลสำเร็จ');
     }catch(e){toast('ไฟล์ JSON ไม่ถูกต้อง','err')}
   };
@@ -3176,7 +3550,7 @@ function buildSampleCases(total=78){
       primary:phase>=2?{x:low&&n%4===0?'Uncontrolled':'Controlled',a:n%7===0?'At risk':'Patent',b:low?'Distress':'Adequate',c:low?'Shock suspected':'Stable',de:'Completed',time:at(incident,sceneOffset+1)}:null,
       prearrival:phase>=4?`${level} trauma, ${diagnoses[index%diagnoses.length]}, ETA ${5+n%16} min`:'',
       disposition,dispositionNote:disposition?`${disposition} plan for sample case`:'',timeline,vitals,interventions,investigations,consults,ais,pips,
-      registry:phase>=6?{dx:diagnoses[index%diagnoses.length],icuLos:disposition==='ICU'?1+n%8:low?n%4:0,los:phase===9?1+n%15:0,outcome,updated:at(incident,erOffset+180)}:{}
+      registry:phase>=6?{dx:diagnoses[index%diagnoses.length],icuLos:disposition==='ICU'?1+n%8:low?n%4:0,los:phase===9?1+n%15:0,outcome,updated:at(incident,erOffset+180)}:{},assessments:{}
     };
   });
 }
