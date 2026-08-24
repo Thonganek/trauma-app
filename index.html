@@ -726,6 +726,7 @@ td.actions{text-align:right}
     <button type="button" data-view="dispatch"><svg class="ic" aria-hidden="true"><use href="#i-radio"/></svg><span class="txt">Dispatch</span></button>
     <button type="button" data-view="prehospital"><svg class="ic" aria-hidden="true"><use href="#i-ambulance"/></svg><span class="txt">Pre-hospital</span></button>
     <button type="button" data-view="command"><svg class="ic" aria-hidden="true"><use href="#i-command"/></svg><span class="txt">ER Command</span></button>
+    <button type="button" data-view="patients"><svg class="ic" aria-hidden="true"><use href="#i-team"/></svg><span class="txt">ทะเบียนรายชื่อ</span><span class="count" id="navCountPatients"></span></button>
     <div class="nav-label">Quality</div>
     <button type="button" data-view="registry"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="txt">Registry</span></button>
     <button type="button" data-view="pips"><svg class="ic" aria-hidden="true"><use href="#i-flag"/></svg><span class="txt">PIPS</span><span class="count" id="navCountPips"></span></button>
@@ -784,7 +785,7 @@ td.actions{text-align:right}
   <div class="callout info dashboard-guest" id="dashboardGuestNotice">
     <svg class="ic ic-sm" aria-hidden="true"><use href="#i-shield"/></svg>
     <div><b>Dashboard เปิดดูได้โดยไม่ต้องเข้าสู่ระบบ</b><br>รายชื่อผู้ป่วย รายละเอียดเคส และข้อมูลทางคลินิกสงวนไว้สำหรับเจ้าหน้าที่ที่เข้าสู่ระบบแล้วเท่านั้น</div>
-    <button type="button" class="btn primary sm" onclick="openAuthGate('registry')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg>เข้าสู่ระบบเพื่อดูรายชื่อ</button>
+    <button type="button" class="btn primary sm" onclick="openAuthGate('patients')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-lock"/></svg>เข้าสู่ระบบเพื่อดูรายชื่อ</button>
   </div>
 
   <div class="grid g4">
@@ -1132,6 +1133,42 @@ td.actions{text-align:right}
         <span></span>
         <button type="button" class="btn primary" onclick="saveDisposition()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>บันทึก Disposition</button>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PATIENT DIRECTORY ============ -->
+<section class="view" id="view-patients" aria-label="ทะเบียนรายชื่อผู้ป่วย">
+  <div class="page-head">
+    <div class="eyebrow">Protected Directory</div>
+    <h2>ทะเบียนรายชื่อผู้ป่วย</h2>
+    <p class="sub">ค้นหาและติดตามผู้ป่วยจากทุก Trauma Case ใน Supabase โดยข้อมูลหน้านี้เปิดให้เฉพาะเจ้าหน้าที่ที่เข้าสู่ระบบแล้ว</p>
+  </div>
+
+  <div class="grid g4">
+    <div class="kpi" data-tone="primary"><div><span class="eyebrow">ทั้งหมด</span><b id="patientTotal">0</b><span class="kpi-note">เคสในทะเบียน</span></div><span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-team"/></svg></span></div>
+    <div class="kpi" data-tone="danger"><div><span class="eyebrow">Level 1</span><b id="patientL1">0</b><span class="kpi-note">ผู้ป่วยวิกฤต</span></div><span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-siren"/></svg></span></div>
+    <div class="kpi" data-tone="warn"><div><span class="eyebrow">กำลังดูแล</span><b id="patientActive">0</b><span class="kpi-note">ยังไม่สิ้นสุดเคส</span></div><span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg></span></div>
+    <div class="kpi" data-tone="gold"><div><span class="eyebrow">มี Outcome</span><b id="patientOutcome">0</b><span class="kpi-note">บันทึกผลลัพธ์แล้ว</span></div><span class="ic-box"><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg></span></div>
+  </div>
+
+  <div class="card mt">
+    <div class="card-head">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>รายชื่อผู้ป่วย <small id="patientDirectoryCount">0 รายการ</small></div>
+      <div class="btn-group">
+        <div class="search"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="patientSearch">ค้นหารายชื่อ</label><input id="patientSearch" placeholder="ค้นหา Case ID / เหตุ / สถานที่ / หน่วย" oninput="renderPatientDirectory()" style="width:260px"></div>
+        <div class="segmented sm" data-picker="patientLevelFilter" data-onchange="renderPatientDirectory" role="radiogroup" aria-label="กรองระดับผู้ป่วย"
+             data-options="=ทุกระดับ|L1=Level 1!danger|L2=Level 2!warn|L3=Level 3!ok"></div>
+        <input type="hidden" id="patientLevelFilter" value="">
+        <button type="button" class="btn" onclick="exportPatientDirectoryCSV()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-download"/></svg>CSV</button>
+        <button type="button" class="btn primary" onclick="go('dispatch')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-plus"/></svg>เพิ่มผู้ป่วย</button>
+      </div>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Case ID</th><th>วันเวลาเกิดเหตุ</th><th>อายุ / เพศ</th><th>เหตุ</th><th>Level</th><th>สถานะ</th><th>หน่วย</th><th>ปลายทาง</th><th style="text-align:right">จัดการ</th></tr></thead>
+        <tbody id="patientDirectoryTable"></tbody>
+      </table>
     </div>
   </div>
 </section>
@@ -1489,7 +1526,7 @@ function renderAuthGate(detail=database.detail){
     status.dataset.kind=/ไม่สำเร็จ|invalid|error|ผิดพลาด/i.test(message)?'error':database.status==='online'?'ok':'';
   }
 }
-function openAuthGate(view='registry',detail='กรุณาเข้าสู่ระบบก่อนดูข้อมูลผู้ป่วย'){
+function openAuthGate(view='patients',detail='กรุณาเข้าสู่ระบบก่อนดูข้อมูลผู้ป่วย'){
   if(database.unlocked){go(view);return}
   database.pendingView=view;
   const gate=$('authGate'),shell=$('appShell');
@@ -1949,7 +1986,7 @@ function openCase(id,view){
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!$('authGate').hidden){closeAuthGate();return}
   if(!e.altKey||e.ctrlKey||e.metaKey)return;
-  const map={'1':'dashboard','2':'dispatch','3':'prehospital','4':'command','5':'registry','6':'pips','7':'settings'};
+  const map={'1':'dashboard','2':'dispatch','3':'prehospital','4':'command','5':'patients','6':'registry','7':'pips','8':'settings'};
   if(map[e.key]){e.preventDefault();go(map[e.key])}
 });
 
@@ -2540,6 +2577,35 @@ function renderRegistryTable(){
     </div></td></tr>`).join(''):`<tr><td colspan="9">${emptyState('i-database',state.cases.length?'ไม่พบเคสที่ตรงกับการค้นหา':'ยังไม่มีข้อมูลใน registry')}</td></tr>`;
 }
 
+function renderPatientDirectory(){
+  const q=($('patientSearch')?.value||'').trim().toLowerCase();
+  const lv=$('patientLevelFilter')?.value||'';
+  const rows=[...state.cases].filter(c=>{
+    if(lv&&c.level!==lv)return false;
+    if(!q)return true;
+    return [c.id,c.moi,c.location,c.unit,c.destination,c.status,c.disposition,c.age,c.sex].join(' ').toLowerCase().includes(q);
+  }).sort((a,b)=>new Date(b.incidentTime||b.created)-new Date(a.incidentTime||a.created));
+  const active=state.cases.filter(c=>!c.registry?.outcome&&!['Discharge','Death','Refer'].includes(c.disposition)).length;
+  $('patientTotal').textContent=state.cases.length;
+  $('patientL1').textContent=state.cases.filter(c=>c.level==='L1').length;
+  $('patientActive').textContent=active;
+  $('patientOutcome').textContent=state.cases.filter(c=>!!c.registry?.outcome).length;
+  $('patientDirectoryCount').textContent=`${rows.length} รายการ${rows.length!==state.cases.length?` จาก ${state.cases.length}`:''}`;
+  $('patientDirectoryTable').innerHTML=rows.length?rows.map(c=>`<tr>
+    <td class="mono">${esc(c.id)}</td>
+    <td>${fmt(c.incidentTime||c.created)}</td>
+    <td>${esc(c.age??'—')} / ${esc(c.sex||'—')}</td>
+    <td>${esc(c.moi||'—')}</td>
+    <td>${levelBadge(c.level)}</td>
+    <td><span class="chip">${esc(c.status||'—')}</span></td>
+    <td>${esc(c.unit||'—')}</td>
+    <td>${esc(c.destination||c.disposition||'—')}</td>
+    <td class="actions"><div class="btn-group" style="justify-content:flex-end;flex-wrap:nowrap">
+      <button type="button" class="btn xs" onclick="openCase('${esc(c.id)}','command')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-eye"/></svg>ดูเคส</button>
+      <button type="button" class="btn xs" onclick="openCase('${esc(c.id)}','registry')"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-file"/></svg>Registry</button>
+    </div></td></tr>`).join(''):`<tr><td colspan="9">${emptyState('i-team',state.cases.length?'ไม่พบรายชื่อที่ตรงกับการค้นหา':'ยังไม่มีผู้ป่วยในทะเบียน','เพิ่มผู้ป่วยจากเมนู Dispatch')}</td></tr>`;
+}
+
 function renderPips(){
   const all=state.cases.flatMap(c=>(c.pips||[]).map(p=>({...p,caseId:c.id})));
   $('pipsCases').textContent=new Set(all.map(x=>x.caseId)).size;
@@ -2596,6 +2662,7 @@ function clearAudit(){
 function renderChrome(){
   if(!database.unlocked){
     $('navCountLive').textContent='';
+    $('navCountPatients').textContent='';
     $('navCountPips').textContent='';
     $('footCases').textContent='ข้อมูลผู้ป่วย · ต้องเข้าสู่ระบบ';
     $('topClock').textContent=new Date().toLocaleString('th-TH',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
@@ -2604,6 +2671,7 @@ function renderChrome(){
   const openPips=state.cases.reduce((n,c)=>n+(c.pips||[]).filter(p=>p.status==='Open').length,0);
   const live=state.cases.filter(c=>['Incoming','Transport','En route','On scene','Dispatched'].includes(c.status)).length;
   $('navCountLive').textContent=live||'';
+  $('navCountPatients').textContent=state.cases.length||'';
   $('navCountPips').textContent=openPips||'';
   $('footCases').textContent=`${state.cases.length} เคสในระบบ`;
   $('topClock').textContent=new Date().toLocaleString('th-TH',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
@@ -2613,7 +2681,7 @@ function refreshAll(){
   ['ph_case','er_case','reg_case'].forEach(fillCaseSelect);
   state.cases.forEach(recalcCase);persist(false);
   renderDashboard();renderDispatch();loadPrehospitalCase();loadERCase();
-  loadRegistry();renderRegistryTable();renderPips();renderSettings();renderAudit();renderChrome();
+  renderPatientDirectory();loadRegistry();renderRegistryTable();renderPips();renderSettings();renderAudit();renderChrome();
   syncPickers();
 }
 
@@ -2828,6 +2896,14 @@ function exportAllCSV(){
   audit('Export cases CSV');toast('ส่งออก CSV แล้ว');
 }
 function exportRegistryCSV(){exportAllCSV()}
+function exportPatientDirectoryCSV(){
+  if(guardEmpty())return;
+  const header=['Case ID','Incident Time','Age','Sex','MOI','Location','Level','Status','EMS Unit','Destination','Disposition','Outcome'];
+  const rows=state.cases.map(c=>[c.id,c.incidentTime,c.age??'',c.sex||'',c.moi||'',c.location||'',c.level||'',c.status||'',c.unit||'',c.destination||'',c.disposition||'',c.registry?.outcome||'']);
+  const csv='﻿'+[header,...rows].map(r=>r.map(csvCell).join(',')).join('\r\n');
+  download(`patient-directory-${new Date().toISOString().slice(0,10)}.csv`,csv,'text/csv;charset=utf-8');
+  audit('Export patient directory CSV');toast('ส่งออกทะเบียนรายชื่อแล้ว');
+}
 function exportRegistryExcel(){
   if(guardEmpty())return;
   const table='<table border="1"><tr>'+CSV_HEADER.map(x=>`<th>${esc(x)}</th>`).join('')+'</tr>'+
@@ -2887,6 +2963,7 @@ $('d_incidentTime').value=dtLocal();
 $('i_detail').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addIntervention()}});
 $('er_invResult').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addInvestigation()}});
 $('ais_desc').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addAIS()}});
+$('patientSearch').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';renderPatientDirectory()}});
 $('regSearch').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';renderRegistryTable()}});
 
 let resizeTimer;
