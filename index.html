@@ -1399,8 +1399,11 @@ td.actions{text-align:right}
         <button type="button" class="btn block" onclick="exportJSON()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-download"/></svg>Export JSON Backup</button>
         <label class="btn block" style="text-transform:none;letter-spacing:0;font-size:13px"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-upload"/></svg>Import JSON Backup<input id="jsonImport" type="file" accept=".json" onchange="importJSON(this.files[0]);this.value=''"></label>
         <button type="button" class="btn block" onclick="exportAllCSV()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-file"/></svg>Export Cases CSV</button>
+        <button type="button" class="btn block ok" onclick="seedDemo()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-plus"/></svg>เพิ่ม / รีเซ็ตข้อมูลตัวอย่าง 78 เคส</button>
+        <button type="button" class="btn block danger" onclick="removeSampleData()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg>ลบเฉพาะข้อมูลตัวอย่าง <span id="sampleCaseCount">0 เคส</span></button>
         <button type="button" class="btn block danger" onclick="resetAll()"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-trash"/></svg>ล้างข้อมูลทั้งหมด</button>
       </div>
+      <div class="callout info" style="margin-top:14px"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-info"/></svg><div>ข้อมูลตัวอย่างใช้เลขเคสขึ้นต้น <span class="mono">TR-SAMPLE-</span> จึงลบแยกจากเคสจริงได้ หรือจะลบทีละเคสจากเมนูทะเบียนรายชื่อก็ได้</div></div>
       <div class="callout info" style="margin-top:14px"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-info"/></svg><div>เมื่อเชื่อมต่อแล้ว Supabase เป็นฐานข้อมูลหลัก ส่วน localStorage เป็น cache กรณีเครือข่ายขัดข้อง ระบบจะส่งการเปลี่ยนแปลงที่ค้างไว้เมื่อเข้าสู่ระบบอีกครั้ง</div></div>
     </div>
   </div>
@@ -2702,6 +2705,7 @@ function renderSettings(){
   $('s_hospital').value=S.hospital;$('s_si').value=S.siL1;$('s_ct').value=S.ctTarget;
   $('s_or').value=S.orTarget;$('s_scene').value=S.sceneTarget;$('s_webhook').value=S.webhook||'';
   $('hospitalNameTop').textContent=S.hospital;
+  if($('sampleCaseCount'))$('sampleCaseCount').textContent=`${state.cases.filter(isSampleCase).length} เคส`;
   document.title=`${S.hospital} — TraumaLink 360`;
   renderDatabaseControls();
 }
@@ -3048,41 +3052,93 @@ function resetAll(){
   state=structuredClone(defaultState);persist();refreshAll();
   toast('ล้างข้อมูลทั้งหมดแล้ว','warn');
 }
+const SAMPLE_CASE_PREFIX='TR-SAMPLE-';
+function isSampleCase(c){return new RegExp(`^${SAMPLE_CASE_PREFIX}\\d{3}$`).test(c?.id||'')}
+function buildSampleCases(total=78){
+  const base=new Date(),at=(date,minutes)=>new Date(date.getTime()+minutes*60000).toISOString();
+  const mois=['Motorcycle crash','Car crash','Pedestrian struck','Fall','Assault','Penetrating injury','Burn','Drowning','Industrial accident','Bicycle crash','Animal-related','Other'];
+  const locations=['ถนนมิตรภาพ กม.12','แยกตลาดเทศบาล','ถนนรอบเมือง','บ้านพักในชุมชน','โรงงานอุตสาหกรรม','พื้นที่ก่อสร้าง','ทางหลวงชนบท','สถานีขนส่ง','สวนสาธารณะ','คลองชลประทาน','โรงเรียนประจำอำเภอ','ฟาร์มปศุสัตว์'];
+  const notes=['รถจักรยานยนต์ชนรถกระบะ','รถยนต์เสียหลักชนเสาไฟ','คนเดินเท้าถูกรถชน','พลัดตกจากที่สูง','ถูกทำร้ายร่างกาย','บาดแผลจากของมีคม','แผลไหม้จากเปลวไฟ','จมน้ำและได้รับการช่วยขึ้นฝั่ง','อุบัติเหตุจากเครื่องจักร','จักรยานชนขอบทาง','ถูกสัตว์ทำร้าย','อุบัติเหตุไม่ทราบกลไกชัดเจน'];
+  const diagnoses=['Blunt abdominal injury','Traumatic brain injury','Closed femur fracture','Multiple rib fractures','Pelvic ring injury','Open forearm fracture','Burn injury','Aspiration pneumonitis','Crush injury','Soft tissue injury','Facial injury','Polytrauma'];
+  const regions=['Head/Neck','Face','Chest','Abdomen/Pelvic contents','Extremities/Pelvic girdle','External'];
+  const statuses=['Dispatched','En route','On scene','Transport','Incoming','ER','OR','ICU','Ward','Completed'];
+  const sexes=['Male','Female','Other'],unitLevels=['ALS','BLS','FR'];
+  const pad=n=>String(n).padStart(3,'0');
+  return Array.from({length:total},(_,index)=>{
+    const n=index+1,phase=index%10,level=n%10<=2?'L1':n%10<=6?'L2':'L3';
+    const incident=new Date(base.getTime()-(n*8+(n%5)*17)*3600000);
+    const sceneOffset=10+n%6,departOffset=27+n%14,erOffset=49+n%26;
+    const ctDelay=n%6===0?42:18+n%10,orDelay=n%8===0?78:35+n%20;
+    const disposition=phase===6?'OR':phase===7?'ICU':phase===8?'Ward':phase===9?['Discharge','Refer','Death'][n%3]:'';
+    const timeline=[
+      {key:'call_received',label:'Call received',time:at(incident,0)},
+      {key:'dispatch',label:'Dispatch',time:at(incident,3)}
+    ];
+    if(phase>=1)timeline.push({key:'wheels_rolling',label:'Wheels rolling',time:at(incident,5)});
+    if(phase>=2)timeline.push({key:'scene_arrival',label:'Scene arrival',time:at(incident,sceneOffset)},{key:'patient_contact',label:'Patient contact',time:at(incident,sceneOffset+1)});
+    if(phase>=3)timeline.push({key:'depart_scene',label:'Depart scene',time:at(incident,departOffset)});
+    if(phase>=4)timeline.push({key:'prearrival',label:'Pre-arrival notification',time:at(incident,departOffset+6)});
+    if(phase>=5)timeline.push({key:'er_arrival',label:'ER arrival',time:at(incident,erOffset)});
+    if(phase>=5&&n%2===0)timeline.push({key:'ct_done',label:'CT done',time:at(incident,erOffset+ctDelay)});
+    if(disposition==='OR')timeline.push({key:'or_arrival',label:'OR arrival',time:at(incident,erOffset+orDelay)});
+    if(phase>=6)timeline.push({key:'disposition',label:`Disposition: ${disposition}`,time:at(incident,erOffset+Math.max(90,orDelay))});
+
+    const low=level==='L1',medium=level==='L2';
+    const sbp=low?82+n%18:medium?102+n%17:118+n%23;
+    const hr=low?116+n%24:medium?88+n%25:68+n%25;
+    const rr=low?25+n%8:medium?20+n%7:16+n%6;
+    const spo2=low?88+n%9:medium?93+n%7:97+n%4;
+    const gcs=low?9+n%6:medium?13+n%3:15;
+    const vitals=phase>=2?[{id:`S78-${pad(n)}-V1`,time:at(incident,sceneOffset+2),sbp,dbp:Math.max(45,sbp-38),hr,rr,spo2:Math.min(100,spo2),gcs:Math.min(15,gcs)}]:[];
+    if(phase>=4)vitals.push({id:`S78-${pad(n)}-V2`,time:at(incident,departOffset+3),sbp:Math.min(180,sbp+8),dbp:Math.max(50,sbp-30),hr:Math.max(55,hr-8),rr:Math.max(12,rr-2),spo2:Math.min(100,spo2+3),gcs:Math.min(15,gcs+(n%4===0?-1:1))});
+
+    const interventions=[];
+    if(phase>=2&&n%3!==0)interventions.push({id:`S78-${pad(n)}-I1`,time:at(incident,sceneOffset+3),type:'Oxygen',detail:n%2?'NRBM 10 L/min':'Nasal cannula 3 L/min'});
+    if(phase>=2&&(low||medium))interventions.push({id:`S78-${pad(n)}-I2`,time:at(incident,sceneOffset+5),type:'IV',detail:low?'2 large-bore IV + balanced crystalloid':'IV access + NSS 500 mL'});
+    if(phase>=2&&['Fall','Motorcycle crash','Industrial accident','Bicycle crash'].includes(mois[index%mois.length]))interventions.push({id:`S78-${pad(n)}-I3`,time:at(incident,sceneOffset+7),type:'Splint',detail:'Immobilization of suspected extremity injury'});
+
+    const investigations=phase>=5?[{id:`S78-${pad(n)}-X1`,time:at(incident,erOffset+8),item:n%3===0?'eFAST':'Chest X-ray',status:phase>=6?'Resulted':'Ordered',result:phase>=6?(n%4===0?'Positive finding':'No acute abnormality'):''}]:[];
+    if(phase>=5&&n%2===0)investigations.push({id:`S78-${pad(n)}-X2`,time:at(incident,erOffset+ctDelay),item:n%3===0?'CT Abdomen':'CT Brain',status:'Resulted',result:n%5===0?'Acute traumatic finding':'No major intracranial or solid-organ injury'});
+    const consults=phase>=5?[{id:`S78-${pad(n)}-C1`,time:at(incident,erOffset+15),team:n%4===0?'Neurosurgery':n%4===1?'Orthopedics':'Trauma Surgery',status:phase>=6?'Arrived':'Requested',note:phase>=6?'Plan documented':'Awaiting assessment'}]:[];
+    const ais=phase>=5?[{id:`S78-${pad(n)}-A1`,region:regions[n%regions.length],sev:low?4+n%2:medium?2+n%2:1+n%2,desc:diagnoses[index%diagnoses.length]}]:[];
+    if(phase>=5&&n%2===0)ais.push({id:`S78-${pad(n)}-A2`,region:regions[(n+2)%regions.length],sev:low?3:2,desc:'Associated traumatic injury'});
+
+    const pips=[];
+    const flag=(text,suffix,status='Open')=>pips.push({id:`S78-${pad(n)}-P${suffix}`,flag:text,time:at(incident,erOffset+95),status,...(status==='Closed'?{closed:at(incident,erOffset+180)}:{})});
+    if(phase>=3&&departOffset-sceneOffset>state.settings.sceneTarget)flag(`Scene time > ${state.settings.sceneTarget} min`,'1',phase===9&&n%2===0?'Closed':'Open');
+    if(phase>=5&&n%2===0&&ctDelay>state.settings.ctTarget)flag(`Door-to-CT > ${state.settings.ctTarget} min`,'2');
+    if(disposition==='OR'&&orDelay>state.settings.orTarget)flag(`Door-to-OR > ${state.settings.orTarget} min`,'3');
+
+    const outcome=disposition==='Death'?'Death':disposition==='Refer'?'Transfer':disposition==='Discharge'?'Alive':'';
+    return{
+      id:`${SAMPLE_CASE_PREFIX}${pad(n)}`,created:at(incident,2),incidentTime:incident.toISOString(),
+      moi:mois[index%mois.length],count:n%19===0?2:1,age:3+(n*7)%82,sex:sexes[n%sexes.length],eta:phase<5?5+n%21:null,
+      protection:n%3===0?'Not used':n%3===1?'Used':'Unknown',alcohol:n%4===0?'Suspected':n%4===1?'Yes':'No',
+      location:locations[index%locations.length],gps:`${(16.10+(n%20)*0.01).toFixed(4)},${(103.20+(n%25)*0.012).toFixed(4)}`,
+      unit:`${unitLevels[n%unitLevels.length]}-${String(1+n%12).padStart(2,'0')}`,unitLevel:unitLevels[n%unitLevels.length],destination:state.settings.hospital,
+      note:`ข้อมูลตัวอย่าง: ${notes[index%notes.length]}`,status:statuses[phase],level,
+      primary:phase>=2?{x:low&&n%4===0?'Uncontrolled':'Controlled',a:n%7===0?'At risk':'Patent',b:low?'Distress':'Adequate',c:low?'Shock suspected':'Stable',de:'Completed',time:at(incident,sceneOffset+1)}:null,
+      prearrival:phase>=4?`${level} trauma, ${diagnoses[index%diagnoses.length]}, ETA ${5+n%16} min`:'',
+      disposition,dispositionNote:disposition?`${disposition} plan for sample case`:'',timeline,vitals,interventions,investigations,consults,ais,pips,
+      registry:phase>=6?{dx:diagnoses[index%diagnoses.length],icuLos:disposition==='ICU'?1+n%8:low?n%4:0,los:phase===9?1+n%15:0,outcome,updated:at(incident,erOffset+180)}:{}
+    };
+  });
+}
 function seedDemo(){
-  if(state.cases.length&&!confirm('เพิ่มข้อมูลตัวอย่างต่อจากข้อมูลปัจจุบัน?'))return;
-  const base=new Date(),mk=m=>new Date(base.getTime()-m*60000).toISOString();
-  const hosp=state.settings.hospital;
-  const demo=[
-    {id:'TR-DEMO-001',created:mk(45),incidentTime:mk(58),moi:'Motorcycle crash',location:'ถนนสายหลัก กม.12',gps:'16.0500,103.6500',
-     age:42,sex:'Male',eta:8,protection:'Not used',alcohol:'Suspected',unit:'ALS-01',unitLevel:'ALS',destination:hosp,
-     note:'MC vs pickup, ผู้ป่วยกระเด็นตกข้างทาง',status:'Incoming',level:'L1',
-     timeline:[{key:'call_received',label:'Call received',time:mk(55)},{key:'dispatch',label:'Dispatch',time:mk(53)},
-       {key:'scene_arrival',label:'Scene arrival',time:mk(45)},{key:'patient_contact',label:'Patient contact',time:mk(44)},
-       {key:'depart_scene',label:'Depart scene',time:mk(28)},{key:'prearrival',label:'Pre-arrival notification',time:mk(12)}],
-     primary:{x:'Controlled',a:'Patent',b:'Distress',c:'Shock suspected',de:'Completed',time:mk(42)},
-     vitals:[{id:uid(),time:mk(42),sbp:102,dbp:66,hr:108,rr:24,spo2:95,gcs:15},
-             {id:uid(),time:mk(22),sbp:88,dbp:54,hr:126,rr:28,spo2:91,gcs:13}],
-     interventions:[{id:uid(),time:mk(38),type:'Oxygen',detail:'NRBM 10 L/min'},
-       {id:uid(),time:mk(34),type:'IV',detail:'2 large-bore IV + NSS 500 mL'},
-       {id:uid(),time:mk(30),type:'Pelvic binder',detail:'Applied at scene'}],
-     investigations:[],consults:[],ais:[],pips:[],registry:{}},
-    {id:'TR-DEMO-002',created:mk(160),incidentTime:mk(180),moi:'Fall',location:'บ้านพัก ต.ในเมือง',gps:'',
-     age:67,sex:'Female',eta:18,protection:'Not applicable',alcohol:'No',unit:'BLS-03',unitLevel:'BLS',destination:hosp,
-     note:'พลัดตกบันได สูงประมาณ 2 เมตร',status:'Ward',level:'L2',disposition:'Ward',dispositionNote:'Admit observation',
-     timeline:[{key:'call_received',label:'Call received',time:mk(175)},{key:'dispatch',label:'Dispatch',time:mk(172)},
-       {key:'scene_arrival',label:'Scene arrival',time:mk(160)},{key:'depart_scene',label:'Depart scene',time:mk(148)},
-       {key:'er_arrival',label:'ER arrival',time:mk(126)},{key:'ct_done',label:'CT done',time:mk(88)},
-       {key:'disposition',label:'Disposition: Ward',time:mk(60)}],
-     vitals:[{id:uid(),time:mk(155),sbp:128,dbp:76,hr:92,rr:20,spo2:98,gcs:15}],
-     interventions:[{id:uid(),time:mk(150),type:'Splint',detail:'Left forearm splint'}],
-     investigations:[{id:uid(),item:'CT Brain',status:'Resulted',result:'No intracranial hemorrhage',time:mk(88)}],
-     consults:[{id:uid(),team:'Orthopedics',status:'Arrived',note:'Closed reduction',time:mk(80)}],
-     ais:[{id:uid(),region:'Head/Neck',sev:2,desc:'Scalp laceration'},{id:uid(),region:'Extremities/Pelvic girdle',sev:2,desc:'Left radius fracture'}],
-     pips:[],registry:{dx:'Scalp laceration, closed left radius fracture',icuLos:0,los:2,outcome:'Alive'}}
-  ];
-  state.cases=[...demo.filter(d=>!caseById(d.id)),...state.cases];
-  state.cases.forEach(recalcCase);persist();audit('Seed demo data');refreshAll();
-  toast('เพิ่มข้อมูลตัวอย่างแล้ว');
+  const existing=state.cases.filter(isSampleCase).length;
+  if(existing&&!confirm(`รีเซ็ตข้อมูลตัวอย่างเดิม ${existing} เคสเป็นชุดใหม่ 78 เคส?`))return;
+  const sample=buildSampleCases(78);
+  state.cases=[...sample,...state.cases.filter(c=>!isSampleCase(c))];
+  state.cases.forEach(recalcCase);persist();audit('Seed 78 sample cases');refreshAll();
+  toast('เพิ่มข้อมูลตัวอย่าง 78 เคสแล้ว · กำลังซิงก์ Supabase');
+}
+function removeSampleData(){
+  const ids=state.cases.filter(isSampleCase).map(c=>c.id);
+  if(!ids.length)return toast('ไม่พบข้อมูลตัวอย่างให้ลบ','warn');
+  if(!confirm(`ลบข้อมูลตัวอย่าง ${ids.length} เคสออกจาก Supabase และ local cache?\nเคสจริงจะไม่ถูกลบ`))return;
+  state.cases=state.cases.filter(c=>!isSampleCase(c));
+  ids.forEach(queueCaseDeletion);persist();audit(`Delete ${ids.length} sample cases`);refreshAll();
+  toast(`ลบข้อมูลตัวอย่าง ${ids.length} เคสแล้ว · กำลังซิงก์ Supabase`,'warn');
 }
 
 /* ---------- INIT ---------- */
